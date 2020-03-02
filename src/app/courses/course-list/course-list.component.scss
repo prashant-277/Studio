@@ -1,0 +1,27 @@
+ion-card {
+  background-color: #f4d1d0;
+  box-shadow: none;  
+  border-radius: 10px;
+  padding-bottom: 6px;
+
+  ion-card-title {
+    font-weight: bold;
+  }  
+  
+
+  .meta {
+    display: inline-block;
+    width: 70%;
+    vertical-align: top;
+    padding-top: 20px;
+  }
+  .icon {
+    display: inline-block;
+    width: 30%;
+    vertical-align: top;
+
+    img {
+      margin: 20px;
+    }
+  }
+}

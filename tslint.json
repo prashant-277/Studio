@@ -60,6 +60,7 @@
       true,
       "single"
     ],
+    "trailing-whitespace": true,
     "trailing-comma": false,
     "no-output-on-prefix": true,
     "no-inputs-metadata-property": true,

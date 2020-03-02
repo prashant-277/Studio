@@ -1,0 +1,15 @@
+ion-title, h1, h2, h3, h4 {
+  font-family: PlayfairDisplay;
+  font-weight: bold;
+}
+.header-md:after {
+  background-image: none;
+}
+ion-header {
+  padding-top: 30px;
+  color:#050505;
+
+  ion-title {
+    font-size: 26px;
+  }
+}

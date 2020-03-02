@@ -1,16 +1,15 @@
 import { NgModule } from '@angular/core';
+import { AuthGuard } from './_helpers';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
+import { CourseListComponent } from './courses/course-list/course-list.component';
+import { LoginComponent } from './login/login.component';
+import { AddCourseComponent } from './courses/add-course/add-course.component';
 
 const routes: Routes = [
-  {
-    path: '',
-    redirectTo: 'folder/Inbox',
-    pathMatch: 'full'
-  },
-  {
-    path: 'folder/:id',
-    loadChildren: () => import('./folder/folder.module').then( m => m.FolderPageModule)
-  }
+  { path: '', component: CourseListComponent, canActivate: [AuthGuard] },
+  { path: 'courses/add', component: AddCourseComponent, canActivate: [AuthGuard] },
+  { path: 'login', component: LoginComponent },
+  { path: '**', redirectTo: '', canActivate: [AuthGuard] }
 ];
 
 @NgModule({
