@@ -1,0 +1,52 @@
+.form {
+  margin-top: 40px;
+
+  .form-row {
+    margin-bottom: 40px;
+    width: 100%;
+  }
+
+  label {
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  input[type="text"] {
+    background: rgba(220, 233, 233, 0.4);
+    height: 50px;
+    display: block;
+    border:0;
+    width: 100%;
+    display: block;
+    border-bottom: 2px solid rgba(220, 233, 233, 0.8);;
+  }
+}
+.icons {
+  display: flex;
+  flex-direction: row;
+  align-content: flex-start;
+  flex-wrap: wrap;
+
+  .icon {
+    width: 25%;
+    display: inline-block;
+    border-radius: 100px;
+    overflow: hidden;
+
+    &.selected {
+      background-color: #c2c3d6;
+    }
+
+    img {
+      margin: 8px;
+      top: 3px;
+      position: relative;
+    }
+
+    b {
+      display: inline-block;
+      width: 80px;
+      height: 80px;
+    }
+  }
+}
