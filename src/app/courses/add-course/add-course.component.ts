@@ -17,6 +17,7 @@ export class AddCourseComponent implements OnInit {
   selectedIcon;
   selectedColor;
   colors;
+  loading;
 
   constructor(public toastController: ToastController,
               public router: Router,
@@ -44,6 +45,7 @@ export class AddCourseComponent implements OnInit {
                 color: this.selectedColor,
                 created: new Date()
               }).then( () => {
+                this.loading.dismiss();
                 this.router.navigate(['/courses']);
               }).catch(e => {
                 console.log(e);
@@ -61,13 +63,10 @@ export class AddCourseComponent implements OnInit {
   }
 
   async presentLoading() {
-    const loading = await this.loadingController.create({
-      message: 'Please wait...',
-      duration: 2000
+    this.loading = await this.loadingController.create({
+      message: 'Please wait...'
     });
-    await loading.present();
-
-    const { role, data } = await loading.onDidDismiss();
+    await this.loading.present();
   }
 
   async presentToast(text) {

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NavParams, ModalController, ToastController, LoadingController } from '@ionic/angular';
 import { StudioIOService, AuthenticationService } from 'src/app/_services';
+import { Subject } from 'src/app/_models';
 
 @Component({
   selector: 'app-add-subject',
@@ -22,24 +23,27 @@ export class AddSubjectComponent implements OnInit {
     this.subject = '';
   }
 
-  save() {
+  async save() {
     this.subject = this.subject.trim();
-    if(this.subject === '') {
+    if (this.subject === '') {
       this.presentToast('Insert a valid name');
       return;
     }
-    this.presentLoading();
+    const loading = await this.loadingController.create({
+      message: 'Please wait...'
+    });
+    await loading.present();
 
-    if (! this.course.subjects) {
-      this.course.subjects = [];
-    }
-    
-    this.course.subjects.push(this.subject);
+    const s = new Subject();
+    s.name = this.subject;
+    this.course.subjects.push(s);
     this.io.db.collection("users").doc(this.auth.currentUserValue.id)
-        .collection("courses").doc(this.course.id).set({
-          subjects: this.course.subjects
-        }, { merge: true }).then( () => {
-            this.io.listCourses(this.auth.currentUserValue.id, true).then( () => {
+        .collection("courses").doc(this.course.id)
+        .collection("subjects").add({
+          name: this.subject
+        }).then( () => {
+            this.io.refreshCourses(this.auth.currentUserValue.id).then( () => {
+              loading.dismiss();
               this.dismiss();
             });
           }).catch(e => {
@@ -48,28 +52,15 @@ export class AddSubjectComponent implements OnInit {
       });
   }
 
-  async presentLoading() {
-    const loading = await this.loadingController.create({
-      message: 'Please wait...',
-      duration: 2000
-    });
-    await loading.present();
-
-    const { role, data } = await loading.onDidDismiss();
-  }
-
   async presentToast(text) {
     const toast = await this.toastController.create({
-      message: text,
-      duration: 2000
+      message: text
     });
     toast.present();
   }
 
   dismiss() {
-    this.modalController.dismiss({
-      'dismissed': true
-    });
+    this.modalController.dismiss();
   }
 
   ngOnInit() {}

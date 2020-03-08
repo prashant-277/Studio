@@ -3,4 +3,5 @@ export class User {
   displayName: string;
   email: string;
   avatar: string;
+  courses: [string];
 }

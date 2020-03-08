@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthenticationService, StudioIOService } from '../../_services';
-import { User } from '../../_models';
+import { User, Course } from '../../_models';
 import { NavController } from '@ionic/angular';
 import { Observable } from 'rxjs';
 
@@ -12,17 +12,22 @@ import { Observable } from 'rxjs';
 export class CourseListComponent implements OnInit {
 
   private user: User;
-  public items;
+  private items: [Course];
+  private aaa: string;
 
   constructor(private auth: AuthenticationService,
               public io: StudioIOService,
               public navCtrl: NavController) {
     this.user = auth.currentUserValue;
+    this.io.currentCourses.subscribe(data => {
+      this.items = data;
+    });
+  }
+
+  ngOnInit() {
   }
 
   ionViewWillEnter() {
-    this.io.listCourses(this.auth.currentUserValue.id, true).then( data => {
-      this.items = data;
-    });
+    this.io.refreshCourses(this.auth.currentUserValue.id);
   }
 }
