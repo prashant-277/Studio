@@ -12,25 +12,17 @@ import { Observable } from 'rxjs';
 export class CourseListComponent implements OnInit {
 
   private user: User;
-  public items: any[];
+  public items;
 
   constructor(private auth: AuthenticationService,
               public io: StudioIOService,
               public navCtrl: NavController) {
     this.user = auth.currentUserValue;
-        
-    this.io.db.collection("users").doc(this.auth.currentUserValue.id)
-      .collection("courses").orderBy("name").get().then(data => {
-        this.items = [];
-        data.forEach( item => {
-          this.items.push({
-            name: item.data().name
-          });
-        });
-      }).catch( e => {
-        console.log(e)
-      });
   }
 
-  ngOnInit() {}
+  ionViewWillEnter() {
+    this.io.listCourses(this.auth.currentUserValue.id, true).then( data => {
+      this.items = data;
+    });
+  }
 }

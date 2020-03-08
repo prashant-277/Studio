@@ -36,3 +36,116 @@ ion-button {
 .label-stacked.sc-ion-label-md-h {
   font-size: 20px;
 }
+.bg-pink {
+  background-color: #F5D1D0;
+}
+.bg-green {
+  background-color: #DDE9E9;
+}
+.bg-aqua {
+  background-color: #CAECF2;
+}
+.bg-blue {
+  background-color: #BDD2EE;
+}
+.page-title {
+  margin-bottom: 40px;
+}
+ion-card {
+  margin-left: 0;
+  margin-right: 0;
+}
+.page-header {
+  padding: 16px;
+  display: flex;
+  flex-direction: row;
+
+  .meta {
+    width: 60%;
+  }
+  .course-icon {
+    width: 38%;
+    text-align: right;
+
+    img {
+      width: 80px;   
+      margin-top:20px;   
+    }
+  }
+}
+.searchbar-input.sc-ion-searchbar-md {
+  border-radius: 100px;
+  box-shadow: none;
+  border: 1px solid #ccc;
+}
+.form {
+  margin-top: 24px;
+  
+  .form-row {
+    margin-bottom: 20px;
+    width: 100%;
+    padding: 16px 8px;
+    background: #f9f9f9;
+    border-radius: 14px;
+
+    &.no-bg {
+      background-color: transparent;
+    }
+  }
+
+  label {
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  input[type="text"] {
+    background: rgba(220, 233, 233, 0.4);
+    height: 50px;
+    display: block;
+    border:0;
+    width: 100%;
+    display: block;
+    border-bottom: 2px solid rgba(220, 233, 233, 0.8);;
+  }
+}
+.icons {
+  display: flex;
+  flex-direction: row;
+  align-content: flex-start;
+  flex-wrap: wrap;
+
+  .icon {
+    width: 25%;
+    display: inline-block;
+    position: relative;
+
+    b {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      margin: -24px 0 0 -25px;
+      font-size: 26px;
+      z-index: 1;
+      background-color: rgba(255, 255, 255, .7);
+      width:50px;
+      height: 50px;
+      line-height: 63px;
+      border-radius: 100px;      
+      text-align: center;
+      font-size: 40px;
+      color: rgb(21, 2, 2);
+    }
+
+    img {
+      margin: 8px;
+      top: 3px;
+      position: relative;
+    }
+
+    &.color {
+      img {
+        width: 80%;
+      }
+    }
+  }
+}

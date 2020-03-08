@@ -1,13 +1,8 @@
-<ion-header>
-  <ion-toolbar>    
-    <ion-title>My courses</ion-title>
-  </ion-toolbar>
-</ion-header>
-
 <ion-content>
+  <h1 class="page-title">My courses</h1>
   <ion-progress-bar *ngIf="items == undefined" type="indeterminate"></ion-progress-bar>
   
-  <ion-card *ngFor="let item of items">
+  <ion-card *ngFor="let item of items" class="bg-{{ item.color }}" [routerLink]="['/courses/load', item.id]">
     <div class="meta">
       <ion-card-header>
         <ion-card-title>{{ item.name }}</ion-card-title>
@@ -21,7 +16,7 @@
       </ion-card-content>
     </div>
     <div class="icon">
-      <img src="assets/icons/004-notebook.svg">
+      <img src="/assets/icons/{{ item.icon }}">
     </div>
   </ion-card>
 

@@ -1,8 +1,5 @@
 <ion-header>
   <ion-toolbar>
-    <ion-nav>
-      
-    </ion-nav>
     <ion-title>Add new course</ion-title>
   </ion-toolbar>
 </ion-header>
@@ -17,18 +14,25 @@
       <label>Choose icon:</label>
       <div class="icons">
         <span class="icon {{ icon == selectedIcon ? 'selected' : '' }}" *ngFor="let icon of icons">
+          <b *ngIf="icon == selectedIcon">
+            <ion-icon name="checkmark-circle-outline"></ion-icon>
+          </b>
           <img src="/assets/icons/{{ icon }}" (click)="selectIcon(icon)">
         </span>      
       </div>
     </div>
     <div class="form-row">
+      <label>Choose color:</label>
       <div class="icons">
-        <span class="icon" *ngFor="let color of colors" [ngStyle]="{ 'background-color': color }">
-          <img src="/assets/square.svg">
+        <span class="icon color" *ngFor="let color of colors">
+          <b *ngIf="color == selectedColor">
+            <ion-icon name="checkmark-circle-outline"></ion-icon>
+          </b>
+          <img src="/assets/colors/{{ color }}.png" (click)="selectColor(color)">
         </span>
       </div>
     </div>
-    <div class="ion-text-center form-row">
+    <div class="ion-text-center form-row no-bg">
       <ion-button [routerLink]="['/courses']" size="default" color="light">Cancel</ion-button>
       <ion-button (click)="save()" size="default" color="primary">Save</ion-button>
     </div>

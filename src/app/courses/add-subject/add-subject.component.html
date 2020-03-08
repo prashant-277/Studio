@@ -1,0 +1,18 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Add new subject</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="form">
+    <div class="form-row">
+      <label>New subject name:</label>
+      <input type="text" placeholder="Enter subject name" required [(ngModel)]="subject" />
+    </div>
+    <div class="ion-text-center form-row no-bg">
+      <ion-button (click)="dismiss()" size="default" color="light">Cancel</ion-button>
+      <ion-button (click)="save()" size="default" color="primary">Save</ion-button>
+    </div>
+  </div>
+</ion-content>

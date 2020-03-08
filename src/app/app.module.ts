@@ -12,15 +12,21 @@ import { CourseListComponent } from './courses/course-list/course-list.component
 import { LoginComponent } from './login/login.component';
 import { AddCourseComponent } from './courses/add-course/add-course.component';
 import { FormsModule } from '@angular/forms';
+import { CourseComponent } from './courses/course/course.component';
+import { AddSubjectComponent } from './courses/add-subject/add-subject.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     CourseListComponent,
     LoginComponent,
-    AddCourseComponent
+    AddCourseComponent,
+    CourseComponent,
+    AddSubjectComponent
   ],
-  entryComponents: [],
+  entryComponents: [
+    AddSubjectComponent
+  ],
   imports: [
     BrowserModule,
     IonicModule.forRoot(),

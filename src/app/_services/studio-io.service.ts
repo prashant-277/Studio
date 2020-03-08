@@ -15,6 +15,8 @@ export class StudioIOService {
   public firebase: any;
   public db: any;
 
+  private courses = null;
+
   constructor() { 
     // Initialize Firebase
     this.firebase = window["firebase"];
@@ -22,6 +24,32 @@ export class StudioIOService {
     this.firebase.analytics();
 
     this.db = this.firebase.firestore();
+  }
+
+  listCourses(userId: string, force: boolean) {
+    return new Promise( (resolve, reject) => {
+      if(force) {
+        this.courses = null;
+      }
+
+      if (this.courses != null) {
+        resolve(this.courses);
+      }
+
+      this.db.collection("users").doc(userId)
+      .collection("courses").orderBy("name").get().then(data => {
+        this.courses = [];
+        data.forEach( item => {
+          const course = item.data();
+          course.id = item.id;
+          this.courses.push(course);
+        });
+        resolve(this.courses);
+      }).catch( e => {
+        console.log(e)
+        reject(e);
+      });
+    });
   }
 
 

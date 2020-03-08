@@ -1,0 +1,29 @@
+<header class="page-header bg-{{ course.color }}" *ngIf="course">
+  <div class="meta">
+    <ion-icon name="arrow-undo-outline" [routerLink]="['/courses']"></ion-icon>
+    <h1 class="page-title">{{ course.name }}</h1>    
+  </div>  
+  <div class="course-icon">
+    <img *ngIf="course.icon" src="/assets/icons/{{ course.icon }}" />
+  </div>
+</header>  
+
+<ion-content *ngIf="course">  
+  <h4>Subjects</h4>
+  <ion-searchbar *ngIf="course.subjects && course.subjects.length > 8"></ion-searchbar>
+
+  <ion-chip color="warning" *ngIf="!course.subjects || course.subjects.length == 0">
+    <ion-label>No subjects yet!</ion-label>
+  </ion-chip>
+  <ion-list>
+    <ion-item *ngFor="let subject of course.subjects">
+      {{ subject }}
+    </ion-item>
+  </ion-list>
+  
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed" *ngIf="course">
+    <ion-fab-button (click)="presentNewSubject()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>
