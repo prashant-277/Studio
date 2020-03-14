@@ -1,0 +1,47 @@
+<header class="page-header bg-{{ course.color }}" *ngIf="course">
+  <div class="meta">
+    <ion-icon name="arrow-undo-outline" [routerLink]="['/courses/load/' + course.id]"></ion-icon>
+    <h1 class="page-title">
+      <span *ngIf="subject">{{ subject.name }}</span>
+    </h1>    
+    <h2 class="page-subtitle">{{ course.name }}</h2>
+  </div>  
+  <div class="course-icon">
+    <img *ngIf="course.icon" src="/assets/icons/{{ course.icon }}" />
+  </div>
+</header>  
+
+<ion-content>
+  <ion-progress-bar *ngIf="subject == null" type="indeterminate"></ion-progress-bar>
+  <ion-segment scrollable="true" value="notes">
+    <ion-segment-button value="notes">
+      <ion-label>Notes</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="questions">
+      <ion-label>Questions</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="mind-maps">
+      <ion-label>Mind maps</ion-label>
+    </ion-segment-button>
+  </ion-segment>
+
+  <ion-list *ngIf="subject">
+    <ion-item button (click)="openNote(item)" detail *ngFor="let item of subject.items">
+      <ion-label>
+        {{ item.note }}
+      </ion-label>
+    </ion-item>
+  </ion-list>
+
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button>
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+    <ion-fab-list side="top">
+      <ion-fab-button (click)="newNote()"><ion-icon name="create-outline"></ion-icon></ion-fab-button>
+      <ion-fab-button><ion-icon name="help-outline"></ion-icon></ion-fab-button>
+      <ion-fab-button><ion-icon name="git-network-outline"></ion-icon></ion-fab-button>
+      <ion-fab-button (click)="askDelete()" color="danger"><ion-icon name="trash-outline"></ion-icon></ion-fab-button>
+    </ion-fab-list>    
+  </ion-fab>
+</ion-content>

@@ -11,23 +11,21 @@ import { Observable } from 'rxjs';
 })
 export class CourseListComponent implements OnInit {
 
-  private user: User;
-  private items: [Course];
-  private aaa: string;
+  private items: Array<Course>;
 
-  constructor(private auth: AuthenticationService,
-              public io: StudioIOService,
+  constructor(public io: StudioIOService,
               public navCtrl: NavController) {
-    this.user = auth.currentUserValue;
     this.io.currentCourses.subscribe(data => {
       this.items = data;
     });
   }
 
   ngOnInit() {
-  }
-
-  ionViewWillEnter() {
-    this.io.refreshCourses(this.auth.currentUserValue.id);
+    this.io.refreshCourses().then(data => {
+      console.log(data);
+      this.items = data;
+    }).catch(e => {
+      console.log(e);
+    });
   }
 }

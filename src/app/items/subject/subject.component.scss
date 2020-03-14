@@ -1,0 +1,25 @@
+.page-header {
+  h1 {
+    margin-bottom: 4px;
+  }
+  h2 {
+    margin-top:0;
+    margin-bottom: 40px;
+    font-size: 14px;
+  }
+}
+ion-segment {
+  margin-top: 10px;
+}
+ion-label {
+  margin: 0;
+  display: block;
+  overflow: hidden;
+  -webkit-box-flex: 1;
+  -webkit-flex: 1;
+  -ms-flex: 1;
+  flex: 1;
+  font-size: inherit;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

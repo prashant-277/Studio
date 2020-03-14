@@ -1,3 +1,4 @@
+/*
 ion-title, h1, h2, h3, h4 {
   font-family: PlayfairDisplay;
   font-weight: bold;
@@ -13,7 +14,7 @@ ion-header {
     font-size: 26px;
   }
 }
-
+*/
 ion-content {
   --padding-start: 16px;
   --padding-end: 16px;
@@ -50,6 +51,7 @@ ion-button {
 }
 .page-title {
   margin-bottom: 40px;
+  margin-top: 8px;
 }
 ion-card {
   margin-left: 0;
@@ -148,4 +150,14 @@ ion-card {
       }
     }
   }
+}
+
+.buttons {
+  margin-top: 50px;
+}
+.big-button {
+  padding: 20px 40px;
+  border-radius: 10px;
+  font-size: 17px;
+  color: #666;
 }

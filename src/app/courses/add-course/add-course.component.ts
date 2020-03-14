@@ -4,6 +4,7 @@ import { StudioIOService, AuthenticationService } from 'src/app/_services';
 import { Router } from '@angular/router';
 import { icons } from '../../_helpers/icons';
 import { AddSubjectComponent } from '../add-subject/add-subject.component';
+import { Course } from 'src/app/_models';
 
 @Component({
   selector: 'app-add-course',
@@ -12,10 +13,10 @@ import { AddSubjectComponent } from '../add-subject/add-subject.component';
 })
 export class AddCourseComponent implements OnInit {
 
-  name;
+  name: string;
   icons;
-  selectedIcon;
-  selectedColor;
+  selectedIcon: string;
+  selectedColor: string;
   colors;
   loading;
 
@@ -38,19 +39,22 @@ export class AddCourseComponent implements OnInit {
       this.presentToast('Choose an icon and a color');
     } else {
       this.presentLoading();
-      this.io.db.collection("users").doc(this.auth.currentUserValue.id)
-              .collection("courses").add({
-                name: this.name,
-                icon: this.selectedIcon,
-                color: this.selectedColor,
-                created: new Date()
-              }).then( () => {
-                this.loading.dismiss();
-                this.router.navigate(['/courses']);
-              }).catch(e => {
-                console.log(e);
-                this.presentToast(e);
-              });
+
+      const course = new Course();
+      course.name = this.name;
+      course.icon = this.selectedIcon;
+      course.color = this.selectedColor;
+
+      this.io.addCourse(course).then( () => {
+          this.io.refreshCourses().then( () => {
+            this.loading.dismiss();
+            this.router.navigate(['/courses']);
+          });
+        }).catch(e => {
+          this.loading.dismiss();
+          console.log(e);
+          this.presentToast(e);
+      });
     }
   }
 

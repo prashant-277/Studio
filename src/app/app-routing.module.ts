@@ -5,13 +5,16 @@ import { CourseListComponent } from './courses/course-list/course-list.component
 import { LoginComponent } from './login/login.component';
 import { AddCourseComponent } from './courses/add-course/add-course.component';
 import { CourseComponent } from './courses/course/course.component';
+import { SubjectComponent } from './items/subject/subject.component';
 
 const routes: Routes = [
-  { path: '', component: CourseListComponent, canActivate: [AuthGuard] },
-  { path: 'courses/add', component: AddCourseComponent, canActivate: [AuthGuard] },
-  { path: 'courses/load/:id', component: CourseComponent, canActivate: [AuthGuard] },
+  /*{ path: '', component: CourseListComponent }, canActivate: \[AuthGuard\]*/
+  { path: '', component: CourseListComponent },
+  { path: 'courses/add', component: AddCourseComponent },
+  { path: 'courses/load/:id', component: CourseComponent },
+  { path: 'subjects/load/:courseid/:id', component: SubjectComponent },
   { path: 'login', component: LoginComponent },
-  { path: '**', redirectTo: '', canActivate: [AuthGuard] }
+  { path: '**', redirectTo: '' }
 ];
 
 @NgModule({

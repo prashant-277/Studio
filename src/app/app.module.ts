@@ -14,6 +14,9 @@ import { AddCourseComponent } from './courses/add-course/add-course.component';
 import { FormsModule } from '@angular/forms';
 import { CourseComponent } from './courses/course/course.component';
 import { AddSubjectComponent } from './courses/add-subject/add-subject.component';
+import { SubjectComponent } from './items/subject/subject.component';
+import { NoteComponent } from './items/note/note.component';
+import { Camera } from '@ionic-native/camera/ngx';
 
 @NgModule({
   declarations: [
@@ -22,10 +25,13 @@ import { AddSubjectComponent } from './courses/add-subject/add-subject.component
     LoginComponent,
     AddCourseComponent,
     CourseComponent,
-    AddSubjectComponent
+    AddSubjectComponent,
+    SubjectComponent,
+    NoteComponent
   ],
   entryComponents: [
-    AddSubjectComponent
+    AddSubjectComponent,
+    NoteComponent
   ],
   imports: [
     BrowserModule,
@@ -36,6 +42,7 @@ import { AddSubjectComponent } from './courses/add-subject/add-subject.component
   providers: [
     StatusBar,
     SplashScreen,
+    Camera,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
   bootstrap: [AppComponent]

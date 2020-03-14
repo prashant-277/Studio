@@ -1,4 +1,16 @@
-<header class="page-header bg-{{ course.color }}" *ngIf="course">
+<ion-header *ngIf="course">
+  <ion-toolbar color="{{ course.color }}">
+    <ion-buttons slot="start">
+      <ion-icon slot="icon-only" name="chevron-back-outline" [routerLink]="['/courses']"></ion-icon>
+    </ion-buttons>
+    <ion-title>{{ course.name }}</ion-title>
+    <ion-buttons slot="end">
+      <img *ngIf="course.icon" src="/assets/icons/{{ course.icon }}" />
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<!--<header class="page-header bg-{{ course.color }}" *ngIf="course">
   <div class="meta">
     <ion-icon name="arrow-undo-outline" [routerLink]="['/courses']"></ion-icon>
     <h1 class="page-title">{{ course.name }}</h1>    
@@ -6,7 +18,7 @@
   <div class="course-icon">
     <img *ngIf="course.icon" src="/assets/icons/{{ course.icon }}" />
   </div>
-</header>  
+</header>-->
 
 <ion-content *ngIf="course">  
   <h4>Subjects</h4>
@@ -16,11 +28,11 @@
     <ion-label>No subjects yet!</ion-label>
   </ion-chip>
   <ion-list>
-    <ion-item button *ngFor="let subject of course.subjects">
+    <ion-item detail button [routerLink]="['/subjects/load/' + course.id + '/' + subject.id]" *ngFor="let subject of course.subjects">
       <ion-label>
         {{ subject.name }}        
       </ion-label>
-      <ion-icon name="chevron-forward-outline"></ion-icon>
+      <!--<ion-icon name="chevron-forward-outline"></ion-icon>-->
     </ion-item>
   </ion-list>
 

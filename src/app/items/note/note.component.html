@@ -1,0 +1,29 @@
+<header class="page-header bg-{{ course.color }}" *ngIf="subject">
+  <div class="meta">    
+    <ion-icon name="arrow-undo-outline" (click)="close()"></ion-icon>
+    <h1 class="page-title">{{ subject.name }}</h1>    
+    <h2 class="page-subtitle">{{ course.name }}</h2>
+  </div>  
+  <div class="course-icon">
+    <img *ngIf="course.icon" src="/assets/icons/{{ course.icon }}" />
+  </div>
+</header>  
+<ion-content>  
+  <div class="form" *ngIf="(!note.id)">
+    <div class="form-row">
+      <label>New note:</label>
+      <ion-textarea [(ngModel)]="note.note" rows="6" auto-grow="true" autofocus="true" required="true" spellcheck="true"></ion-textarea>
+    </div>
+    <div class="actions">
+        <ion-icon (click)="takePhoto()" name="camera-outline"></ion-icon>
+        <ion-icon name="mic-outline"></ion-icon>
+    </div>
+    <div class="ion-text-center buttons">
+      <ion-button (click)="close()" size="default" color="light">Cancel</ion-button>
+      <ion-button (click)="save()" size="default" color="primary">Save</ion-button>
+    </div>
+  </div>
+  <div *ngIf="note.id">
+    <p class="note" *ngIf="note.note">{{ note.note }}</p>
+  </div>
+</ion-content>

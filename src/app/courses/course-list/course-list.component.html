@@ -1,6 +1,11 @@
-<ion-content>
-  <h1 class="page-title">My courses {{ aaa }}</h1>
-  <ion-progress-bar *ngIf="items.length == 0" type="indeterminate"></ion-progress-bar>
+  <ion-header>
+    <ion-toolbar>
+      <ion-title>My courses</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+<ion-content>  
+  <ion-progress-bar *ngIf="items == null" type="indeterminate"></ion-progress-bar>
   
   <ion-card *ngFor="let item of items" class="bg-{{ item.color }}" [routerLink]="['/courses/load', item.id]">
     <div class="meta">

@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { NavParams, ModalController, ToastController, LoadingController } from '@ionic/angular';
 import { StudioIOService, AuthenticationService } from 'src/app/_services';
-import { Subject } from 'src/app/_models';
+import { Subject, Course } from 'src/app/_models';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-add-subject',
@@ -10,17 +11,16 @@ import { Subject } from 'src/app/_models';
 })
 export class AddSubjectComponent implements OnInit {
 
-  course;
+  course: Course;
   subject: string;
 
-  constructor(private navParams: NavParams,
-              public io: StudioIOService,
+  constructor(public io: StudioIOService,
+              private navParams: NavParams,
               public auth: AuthenticationService,
               public loadingController: LoadingController,
               public toastController: ToastController,
               public modalController: ModalController) {
-    this.course = navParams.data;
-    this.subject = '';
+
   }
 
   async save() {
@@ -36,25 +36,20 @@ export class AddSubjectComponent implements OnInit {
 
     const s = new Subject();
     s.name = this.subject;
-    this.course.subjects.push(s);
-    this.io.db.collection("users").doc(this.auth.currentUserValue.id)
-        .collection("courses").doc(this.course.id)
-        .collection("subjects").add({
-          name: this.subject
-        }).then( () => {
-            this.io.refreshCourses(this.auth.currentUserValue.id).then( () => {
-              loading.dismiss();
-              this.dismiss();
-            });
-          }).catch(e => {
-              console.log(e);
-              this.presentToast(e);
+    s.courseId = this.course.id;
+
+    this.io.addSubject(s).then( () => {
+      this.io.refreshCourses().then( () => {
+        loading.dismiss();
+        this.dismiss();
       });
+    });
   }
 
   async presentToast(text) {
     const toast = await this.toastController.create({
-      message: text
+      message: text,
+      duration: 2000
     });
     toast.present();
   }
@@ -63,6 +58,8 @@ export class AddSubjectComponent implements OnInit {
     this.modalController.dismiss();
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.course = this.navParams.get('course');
+  }
 
 }
