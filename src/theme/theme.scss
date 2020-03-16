@@ -1,20 +1,14 @@
-/*
-ion-title, h1, h2, h3, h4 {
-  font-family: PlayfairDisplay;
-  font-weight: bold;
-}
-.header-md:after {
-  background-image: none;
-}
-ion-header {
-  padding-top: 30px;
-  color:#050505;
 
-  ion-title {
-    font-size: 26px;
+ion-title, h1, h2, h3, h4 {
+  font-family: Fira Sans;
+  font-weight: 500;
+}
+ion-card { 
+  ion-card-title {
+    font-family: Fira Sans;
+    font-weight: 500;
   }
 }
-*/
 ion-content {
   --padding-start: 16px;
   --padding-end: 16px;
@@ -49,6 +43,15 @@ ion-button {
 .bg-blue {
   background-color: #BDD2EE;
 }
+ion-header {
+  img {
+    width: 30px;
+    margin-right: 10px;
+  }
+}
+.subtitle ion-title {
+  opacity: .5;
+}     
 .page-title {
   margin-bottom: 40px;
   margin-top: 8px;

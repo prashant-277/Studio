@@ -17,6 +17,7 @@ import { AddSubjectComponent } from './courses/add-subject/add-subject.component
 import { SubjectComponent } from './items/subject/subject.component';
 import { NoteComponent } from './items/note/note.component';
 import { Camera } from '@ionic-native/camera/ngx';
+import { QuestionComponent } from './items/question/question.component';
 
 @NgModule({
   declarations: [
@@ -27,7 +28,8 @@ import { Camera } from '@ionic-native/camera/ngx';
     CourseComponent,
     AddSubjectComponent,
     SubjectComponent,
-    NoteComponent
+    NoteComponent,
+    QuestionComponent
   ],
   entryComponents: [
     AddSubjectComponent,

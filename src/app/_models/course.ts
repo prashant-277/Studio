@@ -9,6 +9,7 @@ export class Course extends DbItem {
   color: string;
   subjects: Array<Subject>;
   created: Date;
+  modified: Date;
 
   constructor() {
     super();

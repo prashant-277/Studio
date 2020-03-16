@@ -58,7 +58,6 @@ class Collection {
       const items = [];
       this.storage.forEach( (value, key) => {
         if (key.startsWith(this.prefix)) {
-          console.log(value);
           if (this.condition) {
             /** TODO: dynamic condition (==, >, <, etc.) */
             if (value[this.condition.field] !== this.condition.value) {
@@ -76,6 +75,10 @@ class Collection {
         reject(e);
       });
     });
+  }
+
+  set(item) {
+    return this.storage.set(this.prefix + item.id, item);
   }
 
   add(item: any) {

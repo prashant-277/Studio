@@ -11,7 +11,7 @@ import { Observable } from 'rxjs';
 })
 export class CourseListComponent implements OnInit {
 
-  private items: Array<Course>;
+  items: Array<Course>;
 
   constructor(public io: StudioIOService,
               public navCtrl: NavController) {
@@ -22,7 +22,6 @@ export class CourseListComponent implements OnInit {
 
   ngOnInit() {
     this.io.refreshCourses().then(data => {
-      console.log(data);
       this.items = data;
     }).catch(e => {
       console.log(e);

@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Subject, Course, Note } from 'src/app/_models';
-import { NavParams, ModalController, LoadingController, ToastController } from '@ionic/angular';
+import { NavParams, ModalController, LoadingController, ToastController, NavController, ActionSheetController, AlertController } from '@ionic/angular';
 import { StudioIOService, AuthenticationService } from 'src/app/_services';
 import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
+import { ActivatedRoute, Router } from '@angular/router';
 
 
 @Component({
@@ -16,17 +17,47 @@ export class NoteComponent implements OnInit {
   subject: Subject;
   note: Note;
 
-  constructor(private navParams: NavParams,
-              private loadingController: LoadingController,
+  constructor(private loadingController: LoadingController,
+              private route: ActivatedRoute,
+              private alertController: AlertController,
+              private actionSheetController: ActionSheetController,
+              private router: Router,
               private toastController: ToastController,
               private io: StudioIOService,
               private camera: Camera,
-              private modalController: ModalController) {
+              private navCtrl: NavController) {
+    this.note = new Note();
   }
 
+  ionViewWillEnter() {
+    if (! this.io.currentCourse) {
+      this.router.navigate(['/']);
+      return;
+    }
+
+    this.course = this.io.currentCourse;
+    this.subject = this.io.currentSubject;
+
+    this.route.paramMap.subscribe(pdata => {
+      if (!pdata.get('id')) {
+        return;
+      }
+
+      this.io.getNote(pdata.get('id')).then(note => {
+        console.log(this.note);
+        this.note = note;
+      }).catch(e => {
+        console.log(e);
+        alert(e);
+      });
+    });
+  }
+
+  ngOnInit() {}
+
   async save() {
-    this.note.note = this.note.note.trim();
-    if (this.note.note.length === 0) {
+    this.note.text = this.note.text.trim();
+    if (this.note.text.length === 0) {
       this.presentToast('Enter some text');
       return;
     }
@@ -39,11 +70,16 @@ export class NoteComponent implements OnInit {
     this.note.subjectId = this.subject.id;
 
     this.io.addNote(this.note).then( () => {
+      this.io.clearCurrentSubject();
       loading.dismiss();
       this.close();
     }).catch(e => {
       alert(e);
     });
+  }
+
+  close() {
+    this.navCtrl.navigateBack('/subjects/load/' + this.course.id + '/' + this.subject.id);
   }
 
   async presentToast(text) {
@@ -72,14 +108,58 @@ export class NoteComponent implements OnInit {
     });
   }
 
-  close() {
-    this.modalController.dismiss();
+  async askDelete() {
+    const alert = await this.alertController.create({
+      header: this.subject.name,
+      message: 'Delete this note?',
+      buttons: [{
+        text: 'Cancel',
+        role: 'cancel',
+        cssClass: 'secondary'
+      }, {
+        text: 'Delete',
+        handler: async () => {
+          const loading = await this.loadingController.create({
+            message: 'Please wait...'
+          });
+          await loading.present();
+          this.io.deleteNote(this.note.id).then( () => {
+            loading.dismiss();
+            this.router.navigate(['/subjects/load/' + this.course.id + '/' + this.subject.id ]);
+          });
+        }
+      }]
+    });
+
+    await alert.present();
   }
 
-  ngOnInit() {
-    if (! this.note) {
-      this.note = new Note('');
-    }
+  async presentActionSheet() {
+    const actionSheet = await this.actionSheetController.create({
+      header: this.subject.name,
+      buttons: [{
+        text: 'Delete',
+        role: 'destructive',
+        icon: 'trash',
+        handler: () => {
+          this.askDelete();
+        }
+      }, {
+        text: 'Edit',
+        icon: 'pencil-outline',
+        handler: () => {
+          console.log('Edit clicked');
+        }
+      },
+      {
+        text: 'Cancel',
+        icon: 'close',
+        role: 'cancel',
+        handler: () => {
+          console.log('Cancel clicked');
+        }
+      }]
+    });
+    await actionSheet.present();
   }
-
 }

@@ -8,13 +8,13 @@
   <div class="form">
     <div class="form-row">
       <label>New course name:</label>
-      <input type="text" placeholder="Enter course name" required [(ngModel)]="name" />
+      <input type="text" placeholder="Enter course name" required [(ngModel)]="course.name" />
     </div>
     <div class="form-row">
       <label>Choose icon:</label>
       <div class="icons">
-        <span class="icon {{ icon == selectedIcon ? 'selected' : '' }}" *ngFor="let icon of icons">
-          <b *ngIf="icon == selectedIcon">
+        <span class="icon {{ icon == course.icon ? 'selected' : '' }}" *ngFor="let icon of icons">
+          <b *ngIf="icon == course.icon">
             <ion-icon name="checkmark-circle-outline"></ion-icon>
           </b>
           <img src="/assets/icons/{{ icon }}" (click)="selectIcon(icon)">
@@ -25,7 +25,7 @@
       <label>Choose color:</label>
       <div class="icons">
         <span class="icon color" *ngFor="let color of colors">
-          <b *ngIf="color == selectedColor">
+          <b *ngIf="color == course.color">
             <ion-icon name="checkmark-circle-outline"></ion-icon>
           </b>
           <img src="/assets/colors/{{ color }}.png" (click)="selectColor(color)">

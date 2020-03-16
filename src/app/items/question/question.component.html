@@ -1,0 +1,37 @@
+<ion-header *ngIf="course && subject">
+  <ion-toolbar color="{{ course.color }}">
+    <ion-title>{{ subject.name }}</ion-title>
+    <ion-buttons slot="end">
+      <img *ngIf="course.icon" src="/assets/icons/{{ course.icon }}" />
+    </ion-buttons>
+  </ion-toolbar>
+  <ion-toolbar class="subtitle" color="{{ course.color }}">
+    <ion-title>Question</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>  
+  <div class="form" *ngIf="(!question.id)">
+    <div class="form-row">
+      <label>New question:</label>
+      <ion-textarea [(ngModel)]="question.text" rows="4" auto-grow="true" autofocus="true" required="true" spellcheck="true"></ion-textarea>
+    </div>
+    <div class="form-row">
+      <label>Answer:</label>
+      <ion-textarea [(ngModel)]="question.answer" rows="2" auto-grow="true" required="true" spellcheck="true"></ion-textarea>
+    </div>
+    <div class="ion-text-center buttons">
+      <ion-button (click)="close()" size="default" color="light">Cancel</ion-button>
+      <ion-button (click)="save()" size="default" color="primary">Save</ion-button>
+    </div>
+  </div>
+  <div *ngIf="question.id">
+    <p class="question" *ngIf="question.text">{{ question.text }}</p>
+  </div>
+
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed" *ngIf="course && question.id">
+    <ion-fab-button color="{{ course.color }}" (click)="close()">
+      <ion-icon name="chevron-back-outline"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>

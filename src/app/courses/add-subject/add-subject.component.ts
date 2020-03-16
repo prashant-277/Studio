@@ -39,7 +39,7 @@ export class AddSubjectComponent implements OnInit {
     s.courseId = this.course.id;
 
     this.io.addSubject(s).then( () => {
-      this.io.refreshCourses().then( () => {
+      this.io.refreshSubjects(this.course.id).then( data => {
         loading.dismiss();
         this.dismiss();
       });

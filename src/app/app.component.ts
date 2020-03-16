@@ -33,7 +33,7 @@ export class AppComponent implements OnInit {
     private auth: AuthenticationService
   ) {
     this.initializeApp();
-    this.user = auth.currentUserValue;
+    //this.user = auth.currentUserValue;
   }
 
   initializeApp() {

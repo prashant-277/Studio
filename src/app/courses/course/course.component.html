@@ -6,6 +6,7 @@
     <ion-title>{{ course.name }}</ion-title>
     <ion-buttons slot="end">
       <img *ngIf="course.icon" src="/assets/icons/{{ course.icon }}" />
+      <ion-icon (click)="presentActionSheet()" style="margin-right: 10px;" name="ellipsis-vertical-outline"></ion-icon>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
@@ -22,24 +23,22 @@
 
 <ion-content *ngIf="course">  
   <h4>Subjects</h4>
-  <ion-searchbar *ngIf="course.subjects && course.subjects.length > 8"></ion-searchbar>
+  <ion-searchbar *ngIf="subjects && subjects.length > 8"></ion-searchbar>
 
-  <ion-chip color="warning" *ngIf="!course.subjects || course.subjects.length == 0">
+  <ion-chip color="warning" *ngIf="!subjects || subjects.length == 0">
     <ion-label>No subjects yet!</ion-label>
   </ion-chip>
   <ion-list>
-    <ion-item detail button [routerLink]="['/subjects/load/' + course.id + '/' + subject.id]" *ngFor="let subject of course.subjects">
+    <ion-item detail button [routerLink]="['/subjects/load/' + course.id + '/' + subject.id]" *ngFor="let subject of subjects">
       <ion-label>
         {{ subject.name }}        
       </ion-label>
       <!--<ion-icon name="chevron-forward-outline"></ion-icon>-->
     </ion-item>
   </ion-list>
-
-  <ion-button style="margin-top:40px;" (click)="askDelete()" size="small" fill="outline" color="danger">Delete</ion-button>
   
   <ion-fab vertical="bottom" horizontal="end" slot="fixed" *ngIf="course">
-    <ion-fab-button (click)="presentNewSubject()">
+    <ion-fab-button color="{{ course.color }}" (click)="presentNewSubject()">
       <ion-icon name="add"></ion-icon>
     </ion-fab-button>
   </ion-fab>

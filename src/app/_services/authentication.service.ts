@@ -12,14 +12,14 @@ export class AuthenticationService {
   private currentUser: Observable<User>;
 
   constructor(public io: StudioIOService) {
-    this.currentUserSubject = new BehaviorSubject<User>(JSON.parse(localStorage.getItem('currentUser')));
+    /*this.currentUserSubject = new BehaviorSubject<User>(JSON.parse(localStorage.getItem('currentUser')));
     this.currentUser = this.currentUserSubject.asObservable();
 
     this.io.firebase.auth().onAuthStateChanged((user) => {
       if (user) {
         this.setUser(user);
       }
-    });
+    });*/
   }
 
   public setUser(user: any) {

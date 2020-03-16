@@ -1,10 +1,9 @@
 import { Item } from './item';
 
 export class Note extends Item {
-  note: string;
+  text: string;
 
-  constructor(note: string) {
+  constructor() {
     super('note');
-    this.note = note;
   }
 }

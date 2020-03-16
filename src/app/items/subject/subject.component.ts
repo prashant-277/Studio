@@ -3,8 +3,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { StudioIOService, AuthenticationService } from 'src/app/_services';
 import { Course, Subject, Note } from 'src/app/_models';
 import { strictEqual } from 'assert';
-import { ModalController, AlertController, LoadingController } from '@ionic/angular';
+import { ModalController, AlertController, LoadingController, NavController, IonNav, ActionSheetController } from '@ionic/angular';
 import { NoteComponent } from '../note/note.component';
+import { Question } from 'src/app/_models/question';
 
 @Component({
   selector: 'app-subject',
@@ -15,6 +16,9 @@ export class SubjectComponent implements OnInit {
 
   course: Course;
   subject: Subject;
+  notes: Array<Note>;
+  questions: Array<Question>;
+  currentView: string;
 
   constructor(
     private route: ActivatedRoute,
@@ -22,17 +26,37 @@ export class SubjectComponent implements OnInit {
     private io: StudioIOService,
     private alertController: AlertController,
     private loadingController: LoadingController,
+    private actionSheetController: ActionSheetController,
     private auth: AuthenticationService,
-    public modalController: ModalController,
-  ) { }
+    public navCtrl: NavController
+  ) {
+    this.notes = new Array<Note>();
+    this.questions = new Array<Question>();
+    this.currentView = 'notes';
+  }
+
+  filter(ev) {
+    console.log(ev);
+  }
 
   ionViewWillEnter() {
+    console.log("subject ionViewWillEnter");
+    this.notes = new Array<Note>();
+    this.questions = new Array<Question>();
+
     this.route.paramMap.subscribe(pdata => {
       this.io.getCourse(pdata.get('courseid')).then(course => {
         this.course = course;
         this.io.getSubject(pdata.get('id')).then( subject => {
           this.subject = subject;
-          console.log(this.subject);
+          this.subject.items.forEach(item => {
+            if (item.type === 'note') {
+              this.notes.push(item);
+            }
+            if (item.type === 'question') {
+              this.questions.push(item);
+            }
+          })
         }).catch(e => {
           console.log(e);
           alert(e);
@@ -42,7 +66,7 @@ export class SubjectComponent implements OnInit {
         alert(e);
       });
     });
-  }
+  } 
 
   ngOnInit() {}
 
@@ -72,19 +96,44 @@ export class SubjectComponent implements OnInit {
     await alert.present();
   }
 
-  async openNote(note: Note) {
-    const modal = await this.modalController.create({
-      component: NoteComponent,
-      componentProps: { course: this.course, subject: this.subject, note }
-    });
-    return await modal.present();
+  openNote(note: Note) {
+    this.navCtrl.navigateForward('/note/' + note.id);
   }
 
-  async newNote() {
-    const modal = await this.modalController.create({
-      component: NoteComponent,
-      componentProps: { course: this.course, subject: this.subject }
+  newNote() {
+    this.navCtrl.navigateForward('/note');
+  }
+
+  newQuestion() {
+    this.navCtrl.navigateForward('/question');
+  }
+
+  async presentActionSheet() {
+    const actionSheet = await this.actionSheetController.create({
+      header: this.subject.name,
+      buttons: [{
+        text: 'Delete',
+        role: 'destructive',
+        icon: 'trash',
+        handler: () => {
+          this.askDelete();
+        }
+      }, {
+        text: 'Edit',
+        icon: 'pencil-outline',
+        handler: () => {
+          console.log('Edit clicked');
+        }
+      },
+      {
+        text: 'Cancel',
+        icon: 'close',
+        role: 'cancel',
+        handler: () => {
+          console.log('Cancel clicked');
+        }
+      }]
     });
-    return await modal.present();
+    await actionSheet.present();
   }
 }
