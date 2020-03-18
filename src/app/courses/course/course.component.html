@@ -1,7 +1,8 @@
 <ion-header *ngIf="course">
-  <ion-toolbar color="{{ course.color }}">
+  <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-icon slot="icon-only" name="chevron-back-outline" [routerLink]="['/courses']"></ion-icon>
+      <!--<ion-icon slot="icon-only" name="chevron-back-outline" [routerLink]="['/courses']"></ion-icon>-->
+      <ion-menu-button color="primary"></ion-menu-button>
     </ion-buttons>
     <ion-title>{{ course.name }}</ion-title>
     <ion-buttons slot="end">
@@ -11,16 +12,6 @@
   </ion-toolbar>
 </ion-header>
 
-<!--<header class="page-header bg-{{ course.color }}" *ngIf="course">
-  <div class="meta">
-    <ion-icon name="arrow-undo-outline" [routerLink]="['/courses']"></ion-icon>
-    <h1 class="page-title">{{ course.name }}</h1>    
-  </div>  
-  <div class="course-icon">
-    <img *ngIf="course.icon" src="/assets/icons/{{ course.icon }}" />
-  </div>
-</header>-->
-
 <ion-content *ngIf="course">  
   <h4>Subjects</h4>
   <ion-searchbar *ngIf="subjects && subjects.length > 8"></ion-searchbar>
@@ -29,17 +20,17 @@
     <ion-label>No subjects yet!</ion-label>
   </ion-chip>
   <ion-list>
-    <ion-item detail button [routerLink]="['/subjects/load/' + course.id + '/' + subject.id]" *ngFor="let subject of subjects">
+    <ion-item  button [routerLink]="['/subjects/load/' + course.id + '/' + subject.id]" *ngFor="let subject of subjects">
       <ion-label>
         {{ subject.name }}        
       </ion-label>
-      <!--<ion-icon name="chevron-forward-outline"></ion-icon>-->
+      <ion-icon color="primary" name="chevron-forward-outline"></ion-icon>
     </ion-item>
   </ion-list>
   
   <ion-fab vertical="bottom" horizontal="end" slot="fixed" *ngIf="course">
-    <ion-fab-button color="{{ course.color }}" (click)="presentNewSubject()">
-      <ion-icon name="add"></ion-icon>
+    <ion-fab-button color="primary" (click)="presentNewSubject()">
+      <ion-icon color="white" name="add"></ion-icon>
     </ion-fab-button>
   </ion-fab>
 </ion-content>

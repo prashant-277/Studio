@@ -54,15 +54,22 @@ export class StudioIOService {
     return this.subjectsSubject.value;
   }
 
-  addNote(note: Note) {
+  saveNote(note: Note) {
     return new Promise( (resolve, reject) => {
-      note.userId = this.userId;
-      this.db.collection('items')
-            .add(Object.assign({}, note)).then( data => {
-              resolve(data);
-            }).catch(e => {
-              reject(e);
-            });
+      let promise = null;
+      if(note.id) {
+        note.modified = new Date();
+        promise = this.db.collection('items').doc(note.id).set(Object.assign({}, note));
+      } else {
+        note.userId = this.userId;
+        promise = this.db.collection('items').add(Object.assign({}, note))
+      }
+      promise.then( data => {
+        this.currentSubject = null;
+        resolve(data);
+      }).catch(e => {
+        reject(e);
+      });
     });
   }
 
@@ -155,13 +162,13 @@ export class StudioIOService {
               .orderBy('created', 'desc').get().then( list => {
                 list.forEach(ii => {
                   const itemData = ii.data();
-                  if( itemData.type === 'note' ) {
+                  if ( itemData.type === 'note' ) {
                     const note = new Note();
                     note.text = itemData.text;
                     note.id = ii.id;
                     subject.items.push(note);
                   }
-                  if( itemData.type === 'question' ) {
+                  if ( itemData.type === 'question' ) {
                     const question = new Question();
                     question.text = itemData.text;
                     question.answer = itemData.answer;
@@ -170,6 +177,7 @@ export class StudioIOService {
                   }
                 });
                 this.currentSubject = subject;
+                
                 resolve(subject);
             }).catch(e => {
               reject(e);
@@ -262,11 +270,18 @@ export class StudioIOService {
     });
   }
 
-  addSubject(subject: Subject) {
+  saveSubject(subject: Subject) {
     subject.userId = this.userId;
 
     return new Promise( (resolve, reject) => {
-      this.db.collection('subjects').add(Object.assign({}, subject)).then( data => {
+      let promise = null;
+      if (!subject.id) {
+        promise = this.db.collection('subjects').add(Object.assign({}, subject));
+      } else {
+        subject.modified = new Date();
+        promise = this.db.collection('subjects').doc(subject.id).set(Object.assign({}, subject));
+      }
+      promise.then( data => {
         resolve(data);
       }).catch(e => {
         reject(e);

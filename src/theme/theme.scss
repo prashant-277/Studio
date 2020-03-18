@@ -91,7 +91,8 @@ ion-card {
     width: 100%;
     padding: 16px 8px;
     background: #f9f9f9;
-    border-radius: 14px;
+    border-radius: 4px;
+    box-shadow: rgba(0,0,0,.12) 0 0 20px;
 
     &.no-bg {
       background-color: transparent;
@@ -163,4 +164,43 @@ ion-card {
   border-radius: 10px;
   font-size: 17px;
   color: #666;
+}
+.note {
+  line-height: 1.5;
+  background-color: #f9f9f9;
+  padding: 10px;
+  border-radius: 8px;
+}
+.header-md:after {
+  display: none;
+}
+
+ion-fab {
+  ion-fab-button {
+    --box-shadow: none;
+  }
+}
+ion-fab {
+  ion-fab-button {
+    --box-shadow: none;
+  }
+}
+.with-tabs ion-fab {
+  bottom:70px;
+}
+ion-header, ion-segment {
+  --ion-color-base: #fff;
+  box-shadow: rgba(0,0,0,.12) 0 0 20px;
+  margin-bottom: 20px;
+}
+.item-detail-icon {
+  color:#e69c59;
+}
+.icon-inner {
+  color: #fff !important;
+}
+:host {
+  .ionicon {
+    stroke: #fff;
+  }
 }

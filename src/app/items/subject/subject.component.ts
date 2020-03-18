@@ -6,6 +6,7 @@ import { strictEqual } from 'assert';
 import { ModalController, AlertController, LoadingController, NavController, IonNav, ActionSheetController } from '@ionic/angular';
 import { NoteComponent } from '../note/note.component';
 import { Question } from 'src/app/_models/question';
+import { AddSubjectComponent } from 'src/app/courses/add-subject/add-subject.component';
 
 @Component({
   selector: 'app-subject',
@@ -16,7 +17,7 @@ export class SubjectComponent implements OnInit {
 
   course: Course;
   subject: Subject;
-  notes: Array<Note>;
+  noteList: Array<Note>;
   questions: Array<Question>;
   currentView: string;
 
@@ -27,36 +28,44 @@ export class SubjectComponent implements OnInit {
     private alertController: AlertController,
     private loadingController: LoadingController,
     private actionSheetController: ActionSheetController,
-    private auth: AuthenticationService,
+    private modalController: ModalController,
     public navCtrl: NavController
   ) {
-    this.notes = new Array<Note>();
     this.questions = new Array<Question>();
     this.currentView = 'notes';
   }
 
   filter(ev) {
-    console.log(ev);
+    this.currentView = ev.detail.value;
   }
 
-  ionViewWillEnter() {
-    console.log("subject ionViewWillEnter");
-    this.notes = new Array<Note>();
-    this.questions = new Array<Question>();
+  itemTrack(index, item) {
+    return item.id;
+  }
 
+  ngOnInit() {
     this.route.paramMap.subscribe(pdata => {
       this.io.getCourse(pdata.get('courseid')).then(course => {
         this.course = course;
         this.io.getSubject(pdata.get('id')).then( subject => {
-          this.subject = subject;
-          this.subject.items.forEach(item => {
+          this.subject = new Subject();
+          this.subject.courseId = subject.courseId;
+          this.subject.id = subject.id;
+          this.subject.name =subject.name;
+          this.noteList = new Array<Note>();
+          this.questions = new Array<Question>();
+
+          subject.items.forEach(item => {
+            console.log(item.text);
             if (item.type === 'note') {
-              this.notes.push(item);
+              this.noteList.push(item);
             }
             if (item.type === 'question') {
               this.questions.push(item);
             }
-          })
+          });
+
+          console.log(this.noteList)
         }).catch(e => {
           console.log(e);
           alert(e);
@@ -66,9 +75,7 @@ export class SubjectComponent implements OnInit {
         alert(e);
       });
     });
-  } 
-
-  ngOnInit() {}
+  }
 
   async askDelete() {
     const alert = await this.alertController.create({
@@ -96,9 +103,9 @@ export class SubjectComponent implements OnInit {
     await alert.present();
   }
 
-  openNote(note: Note) {
+  /*openNote(note: Note) {
     this.navCtrl.navigateForward('/note/' + note.id);
-  }
+  }*/
 
   newNote() {
     this.navCtrl.navigateForward('/note');
@@ -106,6 +113,14 @@ export class SubjectComponent implements OnInit {
 
   newQuestion() {
     this.navCtrl.navigateForward('/question');
+  }
+
+  async presentEditSubject() {
+    const modal = await this.modalController.create({
+      component: AddSubjectComponent,
+      componentProps: { course: this.course, subject: this.subject }
+    });
+    return await modal.present();
   }
 
   async presentActionSheet() {
@@ -122,7 +137,7 @@ export class SubjectComponent implements OnInit {
         text: 'Edit',
         icon: 'pencil-outline',
         handler: () => {
-          console.log('Edit clicked');
+          this.presentEditSubject();
         }
       },
       {

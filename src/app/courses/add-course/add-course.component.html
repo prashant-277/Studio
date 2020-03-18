@@ -21,7 +21,7 @@
         </span>      
       </div>
     </div>
-    <div class="form-row">
+    <!--<div class="form-row">
       <label>Choose color:</label>
       <div class="icons">
         <span class="icon color" *ngFor="let color of colors">
@@ -31,8 +31,8 @@
           <img src="/assets/colors/{{ color }}.png" (click)="selectColor(color)">
         </span>
       </div>
-    </div>
-    <div class="ion-text-center form-row no-bg">
+    </div>-->
+    <div class="ion-text-center no-bg">
       <ion-button [routerLink]="['/courses']" size="default" color="light">Cancel</ion-button>
       <ion-button (click)="save()" size="default" color="primary">Save</ion-button>
     </div>

@@ -30,15 +30,11 @@ export class CourseComponent implements OnInit {
   ngOnInit() {
     this.route.paramMap.subscribe(pdata => {
       this.io.refreshSubjects(pdata.get('id'));
-      if (!this.io.currentCourse) {
-        this.io.getCourse(pdata.get('id')).then( data => {
-          this.course = data;
-        }).catch(e => {
-          alert(e);
-        });
-      } else {
-        this.course = this.io.currentCourse;
-      }
+      this.io.getCourse(pdata.get('id')).then( data => {
+        this.course = data;
+      }).catch(e => {
+        alert(e);
+      });
     });
   }
 
@@ -100,6 +96,14 @@ export class CourseComponent implements OnInit {
   }
 
   async presentNewSubject() {
+    const modal = await this.modalController.create({
+      component: AddSubjectComponent,
+      componentProps: { course: this.course }
+    });
+    return await modal.present();
+  }
+
+  async presentEditSubject() {
     const modal = await this.modalController.create({
       component: AddSubjectComponent,
       componentProps: { course: this.course }

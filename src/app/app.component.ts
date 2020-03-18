@@ -7,6 +7,7 @@ import { StudioIOService } from './_services/studio-io.service';
 import { AuthenticationService } from './_services/authentication.service';
 import { Router } from '@angular/router';
 import { User } from './_models/user';
+import { Course } from './_models';
 
 @Component({
   selector: 'app-root',
@@ -23,22 +24,34 @@ export class AppComponent implements OnInit {
     }
   ];
   user: User;
+  courses: Array<Course>;
 
   constructor(
     private platform: Platform,
     private splashScreen: SplashScreen,
     private statusBar: StatusBar,
-    private studioio: StudioIOService,
+    private io: StudioIOService,
     private router: Router,
-    private auth: AuthenticationService
+    private auth: AuthenticationService,
   ) {
     this.initializeApp();
+    this.io.currentCourses.subscribe(data => {
+      this.courses = data;
+      console.log(data)
+      this.courses.forEach(c => {
+        this.appPages.push({
+          title: c.name,
+          url: '/courses/load/' + c.id,
+          icon: ''
+        });
+      });
+    });
     //this.user = auth.currentUserValue;
   }
 
   initializeApp() {
     this.platform.ready().then(() => {
-      this.statusBar.styleDefault();
+      this.statusBar.styleLightContent();
       this.splashScreen.hide();
     });
   }

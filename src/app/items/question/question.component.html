@@ -1,11 +1,11 @@
 <ion-header *ngIf="course && subject">
-  <ion-toolbar color="{{ course.color }}">
+  <ion-toolbar>
     <ion-title>{{ subject.name }}</ion-title>
     <ion-buttons slot="end">
       <img *ngIf="course.icon" src="/assets/icons/{{ course.icon }}" />
     </ion-buttons>
   </ion-toolbar>
-  <ion-toolbar class="subtitle" color="{{ course.color }}">
+  <ion-toolbar class="subtitle">
     <ion-title>Question</ion-title>
   </ion-toolbar>
 </ion-header>
@@ -26,11 +26,12 @@
     </div>
   </div>
   <div *ngIf="question.id">
-    <p class="question" *ngIf="question.text">{{ question.text }}</p>
+    <p class="note" *ngIf="question.text">{{ question.text }}</p>
+    <p>{{ question.answer }}</p>
   </div>
 
   <ion-fab vertical="bottom" horizontal="end" slot="fixed" *ngIf="course && question.id">
-    <ion-fab-button color="{{ course.color }}" (click)="close()">
+    <ion-fab-button color="primary" (click)="close()">
       <ion-icon name="chevron-back-outline"></ion-icon>
     </ion-fab-button>
   </ion-fab>

@@ -16,6 +16,7 @@ export class NoteComponent implements OnInit {
   course: Course;
   subject: Subject;
   note: Note;
+  edit: boolean;
 
   constructor(private loadingController: LoadingController,
               private route: ActivatedRoute,
@@ -27,6 +28,7 @@ export class NoteComponent implements OnInit {
               private camera: Camera,
               private navCtrl: NavController) {
     this.note = new Note();
+    this.edit = false;
   }
 
   ionViewWillEnter() {
@@ -40,11 +42,11 @@ export class NoteComponent implements OnInit {
 
     this.route.paramMap.subscribe(pdata => {
       if (!pdata.get('id')) {
+        this.edit = true;
         return;
       }
 
       this.io.getNote(pdata.get('id')).then(note => {
-        console.log(this.note);
         this.note = note;
       }).catch(e => {
         console.log(e);
@@ -69,8 +71,7 @@ export class NoteComponent implements OnInit {
     this.note.courseId = this.course.id;
     this.note.subjectId = this.subject.id;
 
-    this.io.addNote(this.note).then( () => {
-      this.io.clearCurrentSubject();
+    this.io.saveNote(this.note).then( () => {
       loading.dismiss();
       this.close();
     }).catch(e => {
@@ -148,7 +149,7 @@ export class NoteComponent implements OnInit {
         text: 'Edit',
         icon: 'pencil-outline',
         handler: () => {
-          console.log('Edit clicked');
+          this.edit = true;
         }
       },
       {

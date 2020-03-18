@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { AuthenticationService, StudioIOService } from '../../_services';
 import { User, Course } from '../../_models';
 import { NavController } from '@ionic/angular';
@@ -12,6 +12,7 @@ import { Observable } from 'rxjs';
 export class CourseListComponent implements OnInit {
 
   items: Array<Course>;
+  @Output() open: EventEmitter<any> = new EventEmitter();
 
   constructor(public io: StudioIOService,
               public navCtrl: NavController) {

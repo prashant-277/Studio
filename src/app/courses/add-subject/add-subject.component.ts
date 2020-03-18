@@ -12,7 +12,7 @@ import { ActivatedRoute } from '@angular/router';
 export class AddSubjectComponent implements OnInit {
 
   course: Course;
-  subject: string;
+  subject: Subject;
 
   constructor(public io: StudioIOService,
               private navParams: NavParams,
@@ -20,12 +20,20 @@ export class AddSubjectComponent implements OnInit {
               public loadingController: LoadingController,
               public toastController: ToastController,
               public modalController: ModalController) {
+    this.subject = new Subject();
+  }
 
+  ionViewWillEnter() {
+    this.course = this.navParams.get('course');
+    if (this.navParams.get('subject')) {
+      this.subject = this.navParams.get('subject');
+    }
+    this.subject.courseId = this.course.id;
   }
 
   async save() {
-    this.subject = this.subject.trim();
-    if (this.subject === '') {
+    this.subject.name = this.subject.name.trim();
+    if (this.subject.name === '') {
       this.presentToast('Insert a valid name');
       return;
     }
@@ -34,11 +42,7 @@ export class AddSubjectComponent implements OnInit {
     });
     await loading.present();
 
-    const s = new Subject();
-    s.name = this.subject;
-    s.courseId = this.course.id;
-
-    this.io.addSubject(s).then( () => {
+    this.io.saveSubject(this.subject).then( () => {
       this.io.refreshSubjects(this.course.id).then( data => {
         loading.dismiss();
         this.dismiss();
@@ -58,8 +62,6 @@ export class AddSubjectComponent implements OnInit {
     this.modalController.dismiss();
   }
 
-  ngOnInit() {
-    this.course = this.navParams.get('course');
-  }
+  ngOnInit() {}
 
 }
