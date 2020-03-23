@@ -90,9 +90,9 @@ ion-card {
     margin-bottom: 20px;
     width: 100%;
     padding: 16px 8px;
-    background: #f9f9f9;
+    background: #fff;
     border-radius: 4px;
-    box-shadow: rgba(0,0,0,.12) 0 0 20px;
+    box-shadow:rgba(0, 0, 0, 0.05) 0 0 20px;
 
     &.no-bg {
       background-color: transparent;
@@ -188,7 +188,7 @@ ion-fab {
 .with-tabs ion-fab {
   bottom:70px;
 }
-ion-header, ion-segment {
+ion-header {
   --ion-color-base: #fff;
   box-shadow: rgba(0,0,0,.12) 0 0 20px;
   margin-bottom: 20px;

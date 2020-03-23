@@ -1,0 +1,76 @@
+<ion-header *ngIf="course && subject">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <!--<ion-icon color="primary" slot="icon-only" name="chevron-back-outline" [routerLink]="['/courses/load/' + course.id]"></ion-icon>-->
+      <ion-menu-button color="primary"></ion-menu-button>
+    </ion-buttons>
+    <ion-title>{{ subject.name }}</ion-title>
+    <ion-buttons slot="end">
+      <img *ngIf="course.icon" src="/assets/icons/{{ course.icon }}" />
+      <ion-icon (click)="presentActionSheet()" style="margin-right: 10px;" name="ellipsis-vertical-outline"></ion-icon>
+    </ion-buttons>
+  </ion-toolbar>
+  <!--<ion-toolbar class="subtitle">
+    <ion-title>{{ subject.name }}</ion-title>
+  </ion-toolbar>
+  <ion-toolbar>
+    <ion-segment scrollable="true" value="{{ currentView }}" (ionChange)="filter($event)">
+      <ion-segment-button value="notes">
+        <ion-label>Notes</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="questions">
+        <ion-label>Questions</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="map">
+        <ion-label>Mind maps</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>-->
+</ion-header>
+
+<ion-content *ngIf="subject">
+  <ion-progress-bar *ngIf="subject == null" type="indeterminate"></ion-progress-bar>
+  <!--<ion-segment scrollable="true" value="{{ currentView }}" (ionChange)="filter($event)">
+    <ion-segment-button value="notes">
+      <ion-label>Notes</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="questions">
+      <ion-label>Questions</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="map">
+      <ion-label>Mind maps</ion-label>
+    </ion-segment-button>
+  </ion-segment>-->
+
+  <ion-list *ngIf="currentView === 'notes'">
+    <ion-item button [routerLink]="'/note/' + item.id" detail *ngFor="let item of noteList">
+      <ion-label>
+        {{ item.text }}
+      </ion-label>
+    </ion-item>
+  </ion-list>
+
+  <ion-list *ngIf="currentView === 'questions'">
+    <ion-item button [routerLink]="'/question/' + item.id" detail *ngFor="let item of questions">
+      <ion-label>
+        {{ item.text }}
+      </ion-label>
+    </ion-item>
+  </ion-list>
+
+  <div *ngIf="currentView === 'map'">
+    <ion-chip color="warning" *ngIf="!subjects || subjects.length == 0">
+      <ion-label>Premium feature</ion-label>
+    </ion-chip>
+  </div>
+
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed" *ngIf="course">
+    <ion-fab-button color="primary">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+    <ion-fab-list side="top">
+      <ion-fab-button (click)="newNote()"><ion-icon name="create-outline"></ion-icon></ion-fab-button>
+      <ion-fab-button (click)="newQuestion()"><ion-icon name="help-outline"></ion-icon></ion-fab-button>
+    </ion-fab-list>    
+  </ion-fab>
+</ion-content>

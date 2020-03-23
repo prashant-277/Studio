@@ -5,7 +5,7 @@ import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { StudioIOService } from './_services/studio-io.service';
 import { AuthenticationService } from './_services/authentication.service';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
 import { User } from './_models/user';
 import { Course } from './_models';
 
@@ -16,13 +16,7 @@ import { Course } from './_models';
 })
 export class AppComponent implements OnInit {
   public selectedIndex = 0;
-  public appPages = [
-    {
-      title: 'My courses',
-      url: '/courses',
-      icon: 'book'
-    }
-  ];
+  public appPages = [];
   user: User;
   courses: Array<Course>;
 
@@ -33,27 +27,59 @@ export class AppComponent implements OnInit {
     private io: StudioIOService,
     private router: Router,
     private auth: AuthenticationService,
+    private route: ActivatedRoute
   ) {
     this.initializeApp();
-    this.io.currentCourses.subscribe(data => {
-      this.courses = data;
-      console.log(data)
-      this.courses.forEach(c => {
-        this.appPages.push({
-          title: c.name,
-          url: '/courses/load/' + c.id,
-          icon: ''
-        });
-      });
-    });
-    //this.user = auth.currentUserValue;
   }
 
   initializeApp() {
     this.platform.ready().then(() => {
       this.statusBar.styleLightContent();
       this.splashScreen.hide();
+
+      this.router.events.subscribe(e => {
+        if(e instanceof NavigationEnd) {
+          console.log('URL', e.url);
+          this.buildMenu(e);
+        }
+      });
+
+      this.io.currentCourses.subscribe(data => {
+        this.courses = data;
+      });
+      this.io.refreshCourses();
     });
+  }
+
+  buildMenu(e: any) {
+    if (e.url.startsWith('/courses')) {
+      this.appPages = [];
+      this.courses.forEach(c => {
+        this.appPages.push({
+          title: c.name,
+          url: '/course/' + c.id,
+          icon: 'library',
+          detail: true
+        });
+      });
+    } else if (e.url.startsWith('/subject/')) {
+      this.appPages = [{
+        title: 'Notes',
+        url: '',
+        icon: 'create',
+        detail: false
+      }, {
+        title: 'Questions',
+        url: '',
+        icon: 'help',
+        detail: false
+      }, {
+        title: 'Mind map',
+        url: '',
+        icon: 'git-network',
+        detail: false
+      }];
+    }
   }
 
   logout() {

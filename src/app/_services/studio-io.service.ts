@@ -155,6 +155,7 @@ export class StudioIOService {
             const data = ss.data();
             const subject = new Subject();
             subject.id = ss.id;
+            subject.courseId = data.courseId;
             subject.name = data.name;
             subject.items = new Array<any>();
 

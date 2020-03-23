@@ -9,4 +9,20 @@ export class Subject extends DbItem {
   constructor() {
     super();
   }
+
+  getNotes(): Array<any> {
+    if (this.items) {
+      return this.items.filter(e => e.type == 'note');
+    }
+
+    return new Array<any>();
+  }
+
+  getQuestions(): Array<any> {
+    if (this.items) {
+      return this.items.filter(e => e.type == 'question');
+    }
+
+    return new Array<any>();
+  }
 }

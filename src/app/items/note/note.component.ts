@@ -80,7 +80,7 @@ export class NoteComponent implements OnInit {
   }
 
   close() {
-    this.navCtrl.navigateBack('/subjects/load/' + this.course.id + '/' + this.subject.id);
+    this.navCtrl.navigateBack('/subject/' + this.subject.id);
   }
 
   async presentToast(text) {
@@ -126,7 +126,7 @@ export class NoteComponent implements OnInit {
           await loading.present();
           this.io.deleteNote(this.note.id).then( () => {
             loading.dismiss();
-            this.router.navigate(['/subjects/load/' + this.course.id + '/' + this.subject.id ]);
+            this.router.navigate(['/subjects/' + this.subject.id ]);
           });
         }
       }]

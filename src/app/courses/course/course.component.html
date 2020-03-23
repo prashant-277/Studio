@@ -20,7 +20,7 @@
     <ion-label>No subjects yet!</ion-label>
   </ion-chip>
   <ion-list>
-    <ion-item  button [routerLink]="['/subjects/load/' + course.id + '/' + subject.id]" *ngFor="let subject of subjects">
+    <ion-item  button [routerLink]="['/subject/', subject.id]" *ngFor="let subject of subjects">
       <ion-label>
         {{ subject.name }}        
       </ion-label>

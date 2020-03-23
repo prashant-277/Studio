@@ -4,13 +4,28 @@
       <ion-content>
         <ion-list id="inbox-list">
           <ion-list-header style="margin-bottom: 40px;">Studio</ion-list-header>
+          <ion-menu-toggle auto-hide="false">
+            <ion-item routerDirection="root" routerLink="/" lines="none" detail="false">
+              <ion-icon slot="start" name="home-outline"></ion-icon>
+              <ion-label>Home</ion-label>
+            </ion-item>
+          </ion-menu-toggle> 
+          <ion-menu-toggle auto-hide="false">
+            <ion-item routerDirection="root" routerLink="/test" lines="none" detail="false">
+              <ion-icon slot="start" name="rocket-outline"></ion-icon>
+              <ion-label>Test</ion-label>
+            </ion-item>
+          </ion-menu-toggle> 
           <ion-menu-toggle auto-hide="false" *ngFor="let p of appPages; let i = index">
-            <ion-item (click)="selectedIndex = i" routerDirection="root" [routerLink]="[p.url]" lines="none" detail="false" [class.selected]="selectedIndex == i">
+            <ion-item (click)="selectedIndex = i" routerDirection="root" [routerLink]="[p.url]" lines="none" [detail]="[p.detail]" [class.selected]="selectedIndex == i">
+              <!--<img slot="start" style="width: 24px;" src="/assets/icons/{{ p.icon }}">-->
+              <ion-icon slot="start" name="{{ p.icon }}-outline"></ion-icon>
               <ion-label>{{ p.title }}</ion-label>
             </ion-item>            
           </ion-menu-toggle>
           <ion-menu-toggle auto-hide="false">
             <ion-item>
+              <ion-icon slot="start" name="information-circle-outline"></ion-icon>
               <ion-label>About</ion-label>
             </ion-item>
           </ion-menu-toggle> 

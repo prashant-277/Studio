@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { StudioIOService, AuthenticationService } from 'src/app/_services';
+import { StudioIOService } from 'src/app/_services';
 import { Course, Subject, Note } from 'src/app/_models';
 import { strictEqual } from 'assert';
 import { ModalController, AlertController, LoadingController, NavController, IonNav, ActionSheetController } from '@ionic/angular';
@@ -45,27 +45,26 @@ export class SubjectComponent implements OnInit {
 
   ngOnInit() {
     this.route.paramMap.subscribe(pdata => {
-      this.io.getCourse(pdata.get('courseid')).then(course => {
-        this.course = course;
-        this.io.getSubject(pdata.get('id')).then( subject => {
-          this.subject = new Subject();
-          this.subject.courseId = subject.courseId;
-          this.subject.id = subject.id;
-          this.subject.name =subject.name;
-          this.noteList = new Array<Note>();
-          this.questions = new Array<Question>();
+      this.io.getSubject(pdata.get('id')).then( subject => {
+        this.subject = subject;
+        /*this.subject.courseId = subject.courseId;
+        this.subject.id = subject.id;
+        this.subject.name =subject.name;
+        this.noteList = new Array<Note>();
+        this.questions = new Array<Question>();*/
 
-          subject.items.forEach(item => {
-            console.log(item.text);
-            if (item.type === 'note') {
-              this.noteList.push(item);
-            }
-            if (item.type === 'question') {
-              this.questions.push(item);
-            }
-          });
+        /*subject.items.forEach(item => {
+          console.log(item.text);
+          if (item.type === 'note') {
+            this.noteList.push(item);
+          }
+          if (item.type === 'question') {
+            this.questions.push(item);
+          }
+        });*/
 
-          console.log(this.noteList)
+        this.io.getCourse(this.subject.courseId).then(course => {
+          this.course = course;
         }).catch(e => {
           console.log(e);
           alert(e);

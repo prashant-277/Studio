@@ -7,7 +7,7 @@
 <ion-content>  
   <ion-progress-bar *ngIf="items == null" type="indeterminate"></ion-progress-bar>
   
-  <ion-card *ngFor="let item of items" class="bg-{{ item.color }}" [routerLink]="['/courses/load', item.id]">
+  <ion-card *ngFor="let item of items" [routerLink]="['/course/', item.id]">
     <div class="meta">
       <ion-card-header>
         <ion-card-title>{{ item.name }}</ion-card-title>
