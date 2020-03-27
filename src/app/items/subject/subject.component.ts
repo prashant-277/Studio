@@ -107,11 +107,11 @@ export class SubjectComponent implements OnInit {
   }*/
 
   newNote() {
-    this.navCtrl.navigateForward('/note');
+    this.navCtrl.navigateForward('/subject/' + this.subject.id + '/note');
   }
 
   newQuestion() {
-    this.navCtrl.navigateForward('/question');
+    this.navCtrl.navigateForward('/subject/' + this.subject.id + '/question');
   }
 
   async presentEditSubject() {

@@ -52,6 +52,8 @@ export class AppComponent implements OnInit {
   }
 
   buildMenu(e: any) {
+    console.log(e);
+    this.appPages = [];
     if (e.url.startsWith('/courses')) {
       this.appPages = [];
       this.courses.forEach(c => {
@@ -62,15 +64,23 @@ export class AppComponent implements OnInit {
           detail: true
         });
       });
-    } else if (e.url.startsWith('/subject/')) {
+    } else if (e.url.match(/course\/(\w+)/)) {
+      let m = e.url.match(/course\/(\w+)/);
+      this.appPages.push({
+        title: 'Test',
+        url: '/course/' + m[1] + '/test',
+        icon: 'library',
+        detail: true
+      });
+    } else if (e.url.match(/subject\/(\w+)/)) {
       this.appPages = [{
         title: 'Notes',
-        url: '',
+        url: e.url + '/notes',
         icon: 'create',
         detail: false
       }, {
         title: 'Questions',
-        url: '',
+        url: e.url + '/questions',
         icon: 'help',
         detail: false
       }, {

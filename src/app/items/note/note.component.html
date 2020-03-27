@@ -17,10 +17,11 @@
       <label>New note:</label>
       <ion-textarea [(ngModel)]="note.text" rows="6" auto-grow="true" autofocus="true" required="true" spellcheck="true"></ion-textarea>
     </div>
-    <!--<div class="actions">
+    <div class="actions">
         <ion-icon (click)="takePhoto()" name="camera-outline"></ion-icon>
+        <ion-icon name="document-attach-outline"></ion-icon>
         <ion-icon name="mic-outline"></ion-icon>
-    </div>-->
+    </div>
     <div class="ion-text-center buttons">
       <ion-button (click)="close()" size="default" color="light">Cancel</ion-button>
       <ion-button (click)="save()" size="default" color="primary">Save</ion-button>

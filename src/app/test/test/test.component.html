@@ -1,18 +1,40 @@
-<ion-header>
+<ion-header *ngIf="course">
   <ion-toolbar>
     <ion-buttons slot="start">
       <!--<ion-icon slot="icon-only" name="chevron-back-outline" [routerLink]="['/courses']"></ion-icon>-->
       <ion-menu-button color="primary"></ion-menu-button>
     </ion-buttons>
-    <ion-title>Test</ion-title>
-    <ion-buttons slot="end">
-      
-    </ion-buttons>
+    <ion-title>{{ course.name }}</ion-title>
   </ion-toolbar>
   <ion-toolbar>
-    <ion-select placeholder="Select One">
-      <ion-select-option value="f">Female</ion-select-option>
-      <ion-select-option value="m">Male</ion-select-option>
-    </ion-select>
+    <ion-title>New test</ion-title>
   </ion-toolbar>
 </ion-header>
+
+<ion-content>
+
+  <div *ngIf="subjects != null">
+    <p>Select the subjects:</p>
+
+    <ion-list>
+      <ion-item>
+        <ion-label>
+          All subjects
+        </ion-label>
+        <ion-toggle [(ngModel)]="all" (ionChange)="toggleAll()"></ion-toggle>
+      </ion-item>
+      <ion-item *ngFor="let item of subjects">
+        <ion-label>
+          {{ item.name }}        
+        </ion-label>
+        <ion-toggle [(ngModel)]="selected[item.id]" (ionChange)="toggle(item.id)"></ion-toggle>
+      </ion-item>
+    </ion-list>
+
+    <div *ngIf="subjects.length == 0">
+      <p>We can make a test without question! Create at least a subject with at least 10 questions</p>
+    </div>
+  </div>
+
+
+</ion-content>

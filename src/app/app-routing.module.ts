@@ -17,13 +17,13 @@ const routes: Routes = [
   { path: 'courses/add', component: AddCourseComponent },
   { path: 'courses/edit/:id', component: AddCourseComponent },
   { path: 'course/:id', component: CourseComponent },
+  { path: 'course/:id/test', component: TestComponent },
   { path: 'subject/:id', component: SubjectComponent },
+  { path: 'subject/:subjectid/note', component: NoteComponent },
+  { path: 'subject/:subjectid/question', component: QuestionComponent },
   { path: 'subject/:subjectid/:type', component: NotesComponent },
-  { path: 'note', component: NoteComponent },
   { path: 'note/:id', component: NoteComponent },
-  { path: 'question', component: QuestionComponent },
-  { path: 'question/:id', component: QuestionComponent },
-  { path: 'test', component: TestComponent },
+  { path: 'question/:id', component: QuestionComponent },  
   { path: 'login', component: LoginComponent },
   { path: '**', redirectTo: '' }
 ];
