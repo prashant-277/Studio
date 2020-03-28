@@ -1,0 +1,54 @@
+<ion-header *ngIf="course">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <!--<ion-icon slot="icon-only" name="chevron-back-outline" [routerLink]="['/courses']"></ion-icon>-->
+      <ion-menu-button color="primary"></ion-menu-button>
+    </ion-buttons>
+    <ion-title>{{ course.name }}</ion-title>
+  </ion-toolbar>
+  <ion-toolbar>
+    <ion-title>New test</ion-title>
+    <ion-buttons slot="end">
+      <ion-button [disabled]="!canMakeTests" (click)="start()">
+        Start
+        <ion-icon name="chevron-forward-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-chip *ngIf="!canMakeTests" color="warning">
+    <ion-icon name="alert-circle-outline"></ion-icon>
+    <ion-label>Not enough questions to start a test</ion-label>
+  </ion-chip>
+
+  <div *ngIf="subjects != null">  
+      <ion-list>
+        <ion-item>
+          <ion-label>
+            <strong>Subjects</strong>
+          </ion-label>
+          <div slot="end">
+            <ion-button (click)="selectAll()" color="secondary" size="small">All</ion-button>
+          </div>          
+        </ion-item>
+        <ion-item *ngFor="let item of subjects">
+          <ion-label>
+            {{ item.name }}<br>
+            <em>{{ item.getQuestions().length }} questions</em>
+          </ion-label>
+          <ion-toggle [disabled]="item.getQuestions().length == 0" [(ngModel)]="selected[item.id]" (ionChange)="toggle($event, item.id)"></ion-toggle>
+        </ion-item>
+      </ion-list>
+
+      <!--<div *ngIf="canMakeTests; else elseBlock" class="ion-text-center ion-margin-top">
+        <ion-button color="primary" [disabled]="!canMakeTests">
+          Start
+          <ion-icon name="chevron-forward-outline"></ion-icon>
+        </ion-button>
+      </div>-->      
+  </div>
+
+
+</ion-content>

@@ -54,10 +54,33 @@ export class StudioIOService {
     return this.subjectsSubject.value;
   }
 
+  getQuestions(courseId: string) {
+    return new Promise<Array<Question>>( (resolve, reject) => {
+      this.db.collection('items').where('courseId', '==', courseId).get().then( list => {
+        const questions = new Array<Question>();
+        list.forEach(item => {
+          const data = item.data();
+          if (data.type == 'question') {
+            const question = new Question();
+            question.id = item.id;
+            question.answer = data.answer;
+            question.text = data.text;
+            question.courseId = data.courseId;
+            question.subjectId = data.subjectId;
+            questions.push(question);
+          }
+        });
+        resolve(questions);
+      }).catch(e => {
+        reject(e);
+      });
+    });
+  }
+
   saveNote(note: Note) {
     return new Promise( (resolve, reject) => {
       let promise = null;
-      if(note.id) {
+      if (note.id) {
         note.modified = new Date();
         promise = this.db.collection('items').doc(note.id).set(Object.assign({}, note));
       } else {

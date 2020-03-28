@@ -65,31 +65,39 @@ export class AppComponent implements OnInit {
         });
       });
     } else if (e.url.match(/course\/(\w+)/)) {
-      let m = e.url.match(/course\/(\w+)/);
+      const m = e.url.match(/course\/(\w+)/);
       this.appPages.push({
         title: 'Test',
-        url: '/course/' + m[1] + '/test',
-        icon: 'library',
+        url: '/course/' + m[1] + '/test-start',
+        icon: 'checkbox',
         detail: true
       });
+      this.addSubjectMenuItems(e);
     } else if (e.url.match(/subject\/(\w+)/)) {
-      this.appPages = [{
-        title: 'Notes',
-        url: e.url + '/notes',
-        icon: 'create',
-        detail: false
-      }, {
-        title: 'Questions',
-        url: e.url + '/questions',
-        icon: 'help',
-        detail: false
-      }, {
-        title: 'Mind map',
-        url: '',
-        icon: 'git-network',
-        detail: false
-      }];
+      this.appPages = [];
+      this.addSubjectMenuItems(e);
     }
+  }
+
+  addSubjectMenuItems(e: any) {
+    this.appPages.push({
+      title: 'Notes',
+      url: e.url + '/notes',
+      icon: 'create',
+      detail: false
+    });
+    this.appPages.push({
+      title: 'Questions',
+      url: e.url + '/questions',
+      icon: 'help',
+      detail: false
+    });
+    this.appPages.push({
+      title: 'Mind map',
+      url: '',
+      icon: 'git-network',
+      detail: false
+    });
   }
 
   logout() {

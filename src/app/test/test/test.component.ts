@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { Course } from 'src/app/_models';
 import { StudioIOService } from 'src/app/_services';
-import { Course, Subject } from 'src/app/_models';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-test',
@@ -11,39 +11,14 @@ import { Course, Subject } from 'src/app/_models';
 export class TestComponent implements OnInit {
 
   course: Course;
-  subjects: Array<Subject>;
-  selected: any;
-  all: boolean;
 
   constructor(private route: ActivatedRoute,
-              private io: StudioIOService) {
-                this.subjects = null;
-                this.all = true;
-                this.selected = {}
-                this.io.currentSubjects.subscribe(data => {
-                  this.subjects = data;
-                  this.selectAll();
-                });
-              }
+              private router: Router,
+              private io: StudioIOService) { }
 
-  selectAll() {
-    this.subjects.forEach(s => {
-      this.selected[s.id] = true;
-    })
-  }
 
-  toggle(id: string) {
-    if (! this.selected[id]) {
-      this.all = false;
-    }
-  }
-
-  toggleAll() {
-    if (this.all) {
-      this.subjects.forEach(s => {
-        this.selected[s.id] = true;
-      })
-    }
+  back() {
+    this.router.navigateByUrl('/course/' + this.course.id + '/test-start');
   }
 
   ngOnInit() {
@@ -51,7 +26,6 @@ export class TestComponent implements OnInit {
       this.io.refreshSubjects(pdata.get('id'));
       this.io.getCourse(pdata.get('id')).then( data => {
         this.course = data;
-        console.log(this.course)
       }).catch(e => {
         alert(e);
       });

@@ -20,7 +20,6 @@ export class Subject extends DbItem {
 
   getQuestions(): Array<any> {
     if (this.items) {
-      console.log(this.items)
       return this.items.filter(e => e.type === 'question');
     }
 

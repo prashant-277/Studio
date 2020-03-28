@@ -18,8 +18,9 @@ import { SubjectComponent } from './items/subject/subject.component';
 import { NoteComponent } from './items/note/note.component';
 import { Camera } from '@ionic-native/camera/ngx';
 import { QuestionComponent } from './items/question/question.component';
-import { TestComponent } from './test/test/test.component';
+import { TestStartComponent } from './test/start/test-start.component';
 import { NotesComponent } from './items/notes/notes.component';
+import { TestComponent } from './test/test/test.component';
 
 @NgModule({
   declarations: [
@@ -32,8 +33,9 @@ import { NotesComponent } from './items/notes/notes.component';
     SubjectComponent,
     NoteComponent,
     QuestionComponent,
-    TestComponent,
-    NotesComponent
+    TestStartComponent,
+    NotesComponent,
+    TestComponent
   ],
   entryComponents: [
     AddSubjectComponent,

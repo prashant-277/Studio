@@ -8,8 +8,9 @@ import { CourseComponent } from './courses/course/course.component';
 import { SubjectComponent } from './items/subject/subject.component';
 import { NoteComponent } from './items/note/note.component';
 import { QuestionComponent } from './items/question/question.component';
-import { TestComponent } from './test/test/test.component';
+import { TestStartComponent } from './test/start/test-start.component';
 import { NotesComponent } from './items/notes/notes.component';
+import { TestComponent } from './test/test/test.component';
 
 const routes: Routes = [
   /*{ path: '', component: CourseListComponent }, canActivate: \[AuthGuard\]*/
@@ -17,13 +18,14 @@ const routes: Routes = [
   { path: 'courses/add', component: AddCourseComponent },
   { path: 'courses/edit/:id', component: AddCourseComponent },
   { path: 'course/:id', component: CourseComponent },
+  { path: 'course/:id/test-start', component: TestStartComponent },
   { path: 'course/:id/test', component: TestComponent },
   { path: 'subject/:id', component: SubjectComponent },
   { path: 'subject/:subjectid/note', component: NoteComponent },
   { path: 'subject/:subjectid/question', component: QuestionComponent },
   { path: 'subject/:subjectid/:type', component: NotesComponent },
   { path: 'note/:id', component: NoteComponent },
-  { path: 'question/:id', component: QuestionComponent },  
+  { path: 'question/:id', component: QuestionComponent },
   { path: 'login', component: LoginComponent },
   { path: '**', redirectTo: '' }
 ];
