@@ -1,0 +1,17 @@
+.see-answer {
+  width: 120px;
+  height: 120px;
+  --border-radius: 100px;  
+}
+
+ion-card-content {
+  p {
+    font-size: 1.5rem;
+    color: #262626;
+  }
+}
+
+ion-footer {
+  padding: 20px;
+  text-align: center;
+}

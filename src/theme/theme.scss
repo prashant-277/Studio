@@ -83,6 +83,14 @@ ion-card {
   box-shadow: none;
   border: 1px solid #ccc;
 }
+
+.boxed {
+  padding: 26px 12px;
+  background: #fff;
+  border-radius: 4px;
+  box-shadow:rgba(0, 0, 0, 0.05) 0 0 20px;
+}
+
 .form {
   margin-top: 24px;
   

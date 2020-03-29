@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { StudioIOService } from 'src/app/_services';
 import { Course, Subject, Item } from 'src/app/_models';
+import { GlobalDataService } from 'src/app/_services/global-data.service';
 
 @Component({
   selector: 'app-test-start',
@@ -19,6 +20,7 @@ export class TestStartComponent implements OnInit {
 
   constructor(private route: ActivatedRoute,
               private router: Router,
+              private global: GlobalDataService,
               private io: StudioIOService) {
                 this.subjects = null;
                 this.all = true;
@@ -63,6 +65,15 @@ export class TestStartComponent implements OnInit {
   }
 
   start() {
+    const selected = [];
+
+    this.subjects.forEach(s => {
+      if (this.selected[s.id]) {
+        selected.push(s);
+      }
+    });
+
+    this.global.data = selected;
     this.router.navigateByUrl('/course/' + this.course.id + '/test');
   }
 
