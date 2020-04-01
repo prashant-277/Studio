@@ -18,6 +18,8 @@ export class TestComponent implements OnInit {
   answerVisible: boolean;
   correct: number;
   progress: number;
+  isTesting: boolean;
+  result: string;
 
   constructor(private route: ActivatedRoute,
               private router: Router,
@@ -28,6 +30,7 @@ export class TestComponent implements OnInit {
                 this.answerVisible = false;
                 this.correct = 0;
                 this.progress = 0;
+                this.isTesting = true;
               }
 
 
@@ -35,9 +38,18 @@ export class TestComponent implements OnInit {
     this.router.navigateByUrl('/course/' + this.course.id + '/test-start');
   }
 
+  showResult() {
+    this.result = Math.round( (this.correct / this.questions.length) * 100) + '%';
+  }
+
   next() {
-    this.answerVisible = false;
-    this.current++;
+    if (this.current + 1 === this.questions.length) {
+      this.isTesting = false;
+      this.showResult();
+    } else {
+      this.answerVisible = false;
+      this.current++;
+    }
   }
 
   wasCorrect() {
@@ -76,7 +88,6 @@ export class TestComponent implements OnInit {
         }
 
         this.selected = this.global.data;
-
         this.progress = 1 / this.selected.length;
         this.start();
       }).catch(e => {

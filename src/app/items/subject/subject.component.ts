@@ -20,6 +20,7 @@ export class SubjectComponent implements OnInit {
   noteList: Array<Note>;
   questions: Array<Question>;
   currentView: string;
+  slider: boolean;
 
   constructor(
     private route: ActivatedRoute,
@@ -43,17 +44,21 @@ export class SubjectComponent implements OnInit {
     return item.id;
   }
 
+  toggleSlider() {
+    this.slider = ! this.slider;
+  }
+
   ngOnInit() {
     this.route.paramMap.subscribe(pdata => {
       this.io.getSubject(pdata.get('id')).then( subject => {
         this.subject = subject;
-        /*this.subject.courseId = subject.courseId;
+        this.subject.courseId = subject.courseId;
         this.subject.id = subject.id;
         this.subject.name =subject.name;
         this.noteList = new Array<Note>();
-        this.questions = new Array<Question>();*/
+        this.questions = new Array<Question>();
 
-        /*subject.items.forEach(item => {
+        subject.items.forEach(item => {
           console.log(item.text);
           if (item.type === 'note') {
             this.noteList.push(item);
@@ -61,7 +66,7 @@ export class SubjectComponent implements OnInit {
           if (item.type === 'question') {
             this.questions.push(item);
           }
-        });*/
+        });
 
         this.io.getCourse(this.subject.courseId).then(course => {
           this.course = course;

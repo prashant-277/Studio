@@ -9,6 +9,15 @@
   }
 }
 
+.rotate-90 {
+  transform: rotate(90deg);
+}
+
+ion-slides {
+  height: calc(100% - 100px);
+  margin: 0 20px;
+}
+
 ion-card {
   border: 0;
   box-shadow: rgba(0,0,0,.1) 0 0 20px;

@@ -24,23 +24,31 @@
   </ion-chip>
 
   <div *ngIf="subjects != null">  
-      <ion-list>
-        <ion-item>
-          <ion-label>
-            <strong>Subjects</strong>
-          </ion-label>
-          <div slot="end">
-            <ion-button (click)="selectAll()" color="secondary" size="small">All</ion-button>
-          </div>          
-        </ion-item>
-        <ion-item *ngFor="let item of subjects">
-          <ion-label>
-            {{ item.name }}<br>
-            <em>{{ item.getQuestions().length }} questions</em>
-          </ion-label>
-          <ion-toggle [disabled]="item.getQuestions().length == 0" [(ngModel)]="selected[item.id]" (ionChange)="toggle($event, item.id)"></ion-toggle>
-        </ion-item>
-      </ion-list>
+    <ion-list>
+      <ion-item>
+        <ion-label>
+          <strong>Number of questions</strong>
+        </ion-label>
+        <div slot="end">
+          10
+        </div>          
+      </ion-item>
+      <ion-item>
+        <ion-label>
+          <strong>Subjects</strong>
+        </ion-label>
+        <div slot="end">
+          <ion-button (click)="selectAll()" color="secondary" size="small">All</ion-button>
+        </div>          
+      </ion-item>
+      <ion-item *ngFor="let item of subjects">
+        <ion-label>
+          {{ item.name }}<br>
+          <em>{{ item.getQuestions().length }} questions</em>
+        </ion-label>
+        <ion-toggle [disabled]="item.getQuestions().length == 0" [(ngModel)]="selected[item.id]" (ionChange)="toggle($event, item.id)"></ion-toggle>
+      </ion-item>
+    </ion-list>
 
       <!--<div *ngIf="canMakeTests; else elseBlock" class="ion-text-center ion-margin-top">
         <ion-button color="primary" [disabled]="!canMakeTests">
