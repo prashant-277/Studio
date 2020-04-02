@@ -53,11 +53,12 @@
     </ion-chip>
   </div>
 
-  <ion-slides *ngIf="currentView === 'notes' && slider">
-    <ion-slide class="boxed" *ngFor="let item of noteList">
-      <p>{{ item.text }}</p>
+  <ion-slides [options]="sliderOptions" *ngIf="currentView === 'notes' && slider">
+    <ion-slide *ngFor="let item of noteList">
+      <p class="boxed">{{ item.text }}</p>
     </ion-slide>
   </ion-slides>
+  <div class="swiper-pagination" *ngIf="currentView === 'notes' && slider"></div>
 
   <ion-fab vertical="bottom" horizontal="end" slot="fixed" *ngIf="course">
     <ion-fab-button color="primary">
@@ -66,7 +67,8 @@
     </ion-fab-button>
     <ion-fab-list side="top">
       <ion-fab-button *ngIf="currentView === 'notes'" (click)="newNote()"><ion-icon name="create-outline"></ion-icon></ion-fab-button>
-      <ion-fab-button *ngIf="currentView === 'notes'" (click)="toggleSlider()"><ion-icon class="rotate-90" name="watch-outline"></ion-icon></ion-fab-button>
+      <ion-fab-button *ngIf="currentView === 'notes' && !slider" (click)="toggleSlider()"><ion-icon class="rotate-90" name="watch-outline"></ion-icon></ion-fab-button>
+      <ion-fab-button *ngIf="currentView === 'notes' && slider" (click)="toggleSlider()"><ion-icon name="list-outline"></ion-icon></ion-fab-button>
       <ion-fab-button *ngIf="currentView === 'questions'" (click)="newQuestion()"><ion-icon name="help-outline"></ion-icon></ion-fab-button>
     </ion-fab-list>    
   </ion-fab>

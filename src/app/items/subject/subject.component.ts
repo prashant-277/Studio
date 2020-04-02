@@ -21,6 +21,15 @@ export class SubjectComponent implements OnInit {
   questions: Array<Question>;
   currentView: string;
   slider: boolean;
+  sliderOptions = {
+    slidesPerView: 1.2,
+    spaceBetween: 0,
+    centeredSlides: true,
+    pagination: {
+      el: '.swiper-pagination',
+      dynamicBullets: true,
+    },
+  };
 
   constructor(
     private route: ActivatedRoute,

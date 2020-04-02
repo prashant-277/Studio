@@ -212,3 +212,7 @@ ion-header {
     stroke: #fff;
   }
 }
+
+.swiper-pagination-bullets-dynamic .swiper-pagination-bullet {
+  transition: all .2s;
+}

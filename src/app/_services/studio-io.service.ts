@@ -96,7 +96,37 @@ export class StudioIOService {
     });
   }
 
+  saveQuestion(question: Question) {
+    return new Promise( (resolve, reject) => {
+      let promise = null;
+      if (question.id) {
+        question.modified = new Date();
+        promise = this.db.collection('items').doc(question.id).set(Object.assign({}, question));
+      } else {
+        question.userId = this.userId;
+        promise = this.db.collection('items').add(Object.assign({}, question))
+      }
+      promise.then( data => {
+        this.currentSubject = null;
+        resolve(data);
+      }).catch(e => {
+        reject(e);
+      });
+    });
+  }
+
   deleteNote(id: string) {
+    return new Promise( (resolve, reject) => {
+      this.db.collection('items').doc(id).delete().then( data => {
+        this.currentSubject = null;
+        resolve(data);
+      }).catch(e => {
+        reject(e);
+      });
+    });
+  }
+
+  deleteQuestion(id: string) {
     return new Promise( (resolve, reject) => {
       this.db.collection('items').doc(id).delete().then( data => {
         this.currentSubject = null;
