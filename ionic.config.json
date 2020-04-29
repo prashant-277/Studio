@@ -1,7 +1,0 @@
-{
-  "name": "Studio",
-  "integrations": {
-    "cordova": {}
-  },
-  "type": "angular"
-}

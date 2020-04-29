@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "76436391410",
+    "firebase_url": "https://studio-977ad.firebaseio.com",
+    "project_id": "studio-977ad",
+    "storage_bucket": "studio-977ad.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:76436391410:android:c252552d8057614943176b",
+        "android_client_info": {
+          "package_name": "com.greentreelabs.studio"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "76436391410-fi09jt9pr93e9n1s3l6qk378rnn4ntmi.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.greentreelabs.studio",
+            "certificate_hash": "1894ecedfcd2a9cde256febf952a74f263296356"
+          }
+        },
+        {
+          "client_id": "76436391410-p7smqfk5d6nlhmjq4ptsa0lt3b219l1m.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBjtPjV2i7RR46vTsPnM0OS8weDknny6vg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "76436391410-p7smqfk5d6nlhmjq4ptsa0lt3b219l1m.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "76436391410-opfo2imfvr78s0bafa6ic8qq04cjegn9.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.greentreelabs.studio"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
