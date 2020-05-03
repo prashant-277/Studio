@@ -2,10 +2,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:mobx/mobx.dart';
+import 'package:studio/screens/edit_subject_screen.dart';
 import 'package:studio/screens/subject_screen.dart';
 import 'package:studio/screens/courses_screen.dart';
 import 'package:studio/screens/home_screen.dart';
-import 'package:studio/screens/new_course_screen.dart';
+import 'package:studio/screens/edit_course_screen.dart';
 import 'auth_store.dart';
 import 'constants.dart';
 import 'courses_store.dart';
@@ -39,8 +40,9 @@ class StudioApp extends StatelessWidget {
       initialRoute: SplashScreen.id,
       routes: {
         SplashScreen.id: (context) => SplashScreen(),
-        AddCourseScreen.id: (context) => AddCourseScreen(coursesStore),
-        CoursesScreen.id: (context) => CoursesScreen(coursesStore)
+        EditCourseScreen.id: (context) => EditCourseScreen(coursesStore, null),
+        CoursesScreen.id: (context) => CoursesScreen(coursesStore),
+        EditSubjectScreen.id: (context) => EditSubjectScreen(coursesStore, null, null)
       },
     );
   }

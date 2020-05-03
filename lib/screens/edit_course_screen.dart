@@ -1,24 +1,33 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:studio/courses_store.dart';
+import 'package:studio/models/course.dart';
 import 'package:studio/screens/courses_screen.dart';
 import 'package:studio/widgets/buttons.dart';
 
 import '../constants.dart';
 
-class AddCourseScreen extends StatefulWidget {
+// ignore: must_be_immutable
+class EditCourseScreen extends StatefulWidget {
   static final id = 'add_course_screen';
-  final CoursesStore store;
+  CoursesStore store;
+  Course data;
 
-  AddCourseScreen(this.store);
+  EditCourseScreen(CoursesStore store, Course data)
+  {
+    this.store = store;
+    this.data = data;
+  }
 
   @override
-  _AddCourseScreenState createState() => _AddCourseScreenState();
+  _EditCourseScreenState createState() => _EditCourseScreenState();
 }
 
-class _AddCourseScreenState extends State<AddCourseScreen> {
+class _EditCourseScreenState extends State<EditCourseScreen> {
   String name;
+  String title = 'Add course';
   String selectedIcon = '';
+  TextEditingController textCtrl = TextEditingController();
 
   double iconOpacity(String icon) {
     return icon == selectedIcon ? 1 : 0;
@@ -71,10 +80,21 @@ class _AddCourseScreenState extends State<AddCourseScreen> {
   }
 
   @override
+  void initState() {
+    if(widget.data != null) {
+      textCtrl.text = widget.data.name;
+      name = widget.data.name;
+      title = 'Edit course';
+      selectedIcon = widget.data.icon;
+    }
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Add course'),
+        title: Text(title),
         centerTitle: true,
         leading: Container(
             child: FlatButton(
@@ -94,6 +114,7 @@ class _AddCourseScreenState extends State<AddCourseScreen> {
           children: <Widget>[
             TextField(
               autocorrect: true,
+              controller: textCtrl,
               decoration: InputDecoration(
                   focusedBorder: OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.white, width: 0),
@@ -139,14 +160,18 @@ class _AddCourseScreenState extends State<AddCourseScreen> {
             ),
             Padding(
               padding: const EdgeInsets.fromLTRB(0, 20, 0, 10),
-              child: PrimaryButton(
-                'Save',
-                () {
-                  widget.store.addCourse(name, selectedIcon, () {
-                    print("Saved!");
-                    Navigator.pop(context);
-                  });
-                },
+              child: SizedBox(
+                width: double.infinity,
+                child: PrimaryButton(
+                  'Save',
+                  () {
+                    String id = widget.data == null ? null : widget.data.id;
+                    widget.store.saveCourse(id: id, name: name, icon: selectedIcon, callback: () {
+                      print("Saved!");
+                      Navigator.pop(context);
+                    });
+                  },
+                ),
               ),
             )
           ],
