@@ -1,4 +1,7 @@
+import 'package:studio/models/question.dart';
 import 'package:studio/models/subject_item.dart';
+
+import 'note.dart';
 
 class Subject {
   String id;
@@ -7,5 +10,6 @@ class Subject {
   String name;
   String nameDb;
   DateTime created;
-  List<SubjectItem> items;
+  List<Note> notes;
+  List<Question> questions;
 }

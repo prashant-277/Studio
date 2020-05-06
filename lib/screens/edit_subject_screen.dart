@@ -63,7 +63,8 @@ class _EditSubjectScreenState extends State<EditSubjectScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
-              Container(
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 16),
                 child: Text(
                     title + ':',
                   style: TextStyle(
@@ -109,7 +110,7 @@ class _EditSubjectScreenState extends State<EditSubjectScreen> {
                 padding: const EdgeInsets.fromLTRB(0, 20, 0, 10),
                 child: PrimaryButton(
                   'Save', () {
-                    widget.store.saveSubject(name: name, courseId: widget.course.id);
+                    widget.store.saveSubject(id: widget.data.id, name: name, courseId: widget.course.id);
                     Navigator.pop(context);
                   }
                 ),

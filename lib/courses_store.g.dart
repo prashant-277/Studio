@@ -45,55 +45,21 @@ mixin _$CoursesStore on _CoursesStore, Store {
     }, _$loadingAtom, name: '${_$loadingAtom.name}_set');
   }
 
-  final _$courseFutureAtom = Atom(name: '_CoursesStore.courseFuture');
+  final _$courseAtom = Atom(name: '_CoursesStore.course');
 
   @override
-  ObservableFuture<Course> get courseFuture {
-    _$courseFutureAtom.context.enforceReadPolicy(_$courseFutureAtom);
-    _$courseFutureAtom.reportObserved();
-    return super.courseFuture;
+  Course get course {
+    _$courseAtom.context.enforceReadPolicy(_$courseAtom);
+    _$courseAtom.reportObserved();
+    return super.course;
   }
 
   @override
-  set courseFuture(ObservableFuture<Course> value) {
-    _$courseFutureAtom.context.conditionallyRunInAction(() {
-      super.courseFuture = value;
-      _$courseFutureAtom.reportChanged();
-    }, _$courseFutureAtom, name: '${_$courseFutureAtom.name}_set');
-  }
-
-  final _$coursesFutureAtom = Atom(name: '_CoursesStore.coursesFuture');
-
-  @override
-  ObservableFuture<List<Course>> get coursesFuture {
-    _$coursesFutureAtom.context.enforceReadPolicy(_$coursesFutureAtom);
-    _$coursesFutureAtom.reportObserved();
-    return super.coursesFuture;
-  }
-
-  @override
-  set coursesFuture(ObservableFuture<List<Course>> value) {
-    _$coursesFutureAtom.context.conditionallyRunInAction(() {
-      super.coursesFuture = value;
-      _$coursesFutureAtom.reportChanged();
-    }, _$coursesFutureAtom, name: '${_$coursesFutureAtom.name}_set');
-  }
-
-  final _$subjectsFutureAtom = Atom(name: '_CoursesStore.subjectsFuture');
-
-  @override
-  ObservableFuture<List<Subject>> get subjectsFuture {
-    _$subjectsFutureAtom.context.enforceReadPolicy(_$subjectsFutureAtom);
-    _$subjectsFutureAtom.reportObserved();
-    return super.subjectsFuture;
-  }
-
-  @override
-  set subjectsFuture(ObservableFuture<List<Subject>> value) {
-    _$subjectsFutureAtom.context.conditionallyRunInAction(() {
-      super.subjectsFuture = value;
-      _$subjectsFutureAtom.reportChanged();
-    }, _$subjectsFutureAtom, name: '${_$subjectsFutureAtom.name}_set');
+  set course(Course value) {
+    _$courseAtom.context.conditionallyRunInAction(() {
+      super.course = value;
+      _$courseAtom.reportChanged();
+    }, _$courseAtom, name: '${_$courseAtom.name}_set');
   }
 
   final _$coursesAtom = Atom(name: '_CoursesStore.courses');
@@ -130,66 +96,28 @@ mixin _$CoursesStore on _CoursesStore, Store {
     }, _$subjectsAtom, name: '${_$subjectsAtom.name}_set');
   }
 
-  final _$_CoursesStoreActionController =
-      ActionController(name: '_CoursesStore');
+  final _$saveCourseAsyncAction = AsyncAction('saveCourse');
 
   @override
-  void saveCourse({String id, String name, String icon, Function callback}) {
-    final _$actionInfo = _$_CoursesStoreActionController.startAction();
-    try {
-      return super
-          .saveCourse(id: id, name: name, icon: icon, callback: callback);
-    } finally {
-      _$_CoursesStoreActionController.endAction(_$actionInfo);
-    }
+  Future<void> saveCourse(
+      {String id, String name, String icon, Function callback}) {
+    return _$saveCourseAsyncAction.run(() =>
+        super.saveCourse(id: id, name: name, icon: icon, callback: callback));
   }
 
+  final _$saveSubjectAsyncAction = AsyncAction('saveSubject');
+
   @override
-  void saveSubject(
+  Future<void> saveSubject(
       {String id, String name, String courseId, Function callback}) {
-    final _$actionInfo = _$_CoursesStoreActionController.startAction();
-    try {
-      return super.saveSubject(
-          id: id, name: name, courseId: courseId, callback: callback);
-    } finally {
-      _$_CoursesStoreActionController.endAction(_$actionInfo);
-    }
-  }
-
-  @override
-  Future<dynamic> fetchCourses() {
-    final _$actionInfo = _$_CoursesStoreActionController.startAction();
-    try {
-      return super.fetchCourses();
-    } finally {
-      _$_CoursesStoreActionController.endAction(_$actionInfo);
-    }
-  }
-
-  @override
-  Future<dynamic> fetchSubjects(String courseId) {
-    final _$actionInfo = _$_CoursesStoreActionController.startAction();
-    try {
-      return super.fetchSubjects(courseId);
-    } finally {
-      _$_CoursesStoreActionController.endAction(_$actionInfo);
-    }
-  }
-
-  @override
-  dynamic fetchCourse(String courseId) {
-    final _$actionInfo = _$_CoursesStoreActionController.startAction();
-    try {
-      return super.fetchCourse(courseId);
-    } finally {
-      _$_CoursesStoreActionController.endAction(_$actionInfo);
-    }
+    return _$saveSubjectAsyncAction.run(() => super.saveSubject(
+        id: id, name: name, courseId: courseId, callback: callback));
   }
 
   @override
   String toString() {
     final string =
-        'loading: ${loading.toString()},courseFuture: ${courseFuture.toString()},coursesFuture: ${coursesFuture.toString()},subjectsFuture: ${subjectsFuture.toString()},courses: ${courses.toString()},subjects: ${subjects.toString()},isCourseLoading: ${isCourseLoading.toString()},isCoursesLoading: ${isCoursesLoading.toString()},isSubjectsLoading: ${isSubjectsLoading.toString()}';
+        'loading: ${loading.toString()},course: ${course.toString()},courses: ${courses.toString()},subjects: ${subjects.toString()},isCourseLoading: ${isCourseLoading.toString()},isCoursesLoading: ${isCoursesLoading.toString()},isSubjectsLoading: ${isSubjectsLoading.toString()}';
     return '{$string}';
   }
 }

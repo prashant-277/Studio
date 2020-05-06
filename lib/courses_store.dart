@@ -13,23 +13,23 @@ const String kCourse = 'course';
 const String kCourses = 'courses';
 const String kSubject = 'subject';
 const String kSubjects = 'subjects';
+const String kCounterIncrement = 'increment';
+const String kCounterDecrease = 'decrease';
 
 // The store-class
 abstract class _CoursesStore with Store {
   final CollectionReference _courses = Firestore.instance.collection('courses');
-  final CollectionReference _subjects = Firestore.instance.collection('subjects');
+  final CollectionReference _subjects =
+      Firestore.instance.collection('subjects');
+  final CollectionReference _notes = Firestore.instance.collection('notes');
+  final CollectionReference _questions =
+      Firestore.instance.collection('questions');
 
   @observable
   ObservableMap<String, dynamic> loading = ObservableMap.of({});
 
   @observable
-  ObservableFuture<Course> courseFuture;
-
-  @observable
-  ObservableFuture<List<Course>> coursesFuture;
-
-  @observable
-  ObservableFuture<List<Subject>> subjectsFuture;
+  Course course;
 
   @observable
   ObservableList<Course> courses = ObservableList<Course>();
@@ -38,33 +38,37 @@ abstract class _CoursesStore with Store {
   ObservableList<Subject> subjects = ObservableList<Subject>();
 
   void addLoading(String id) {
-    print("add loading $id");
     loading[id] = true;
   }
 
   void stopLoading(String id) {
-    print("stopLoading $id");
     loading[id] = false;
   }
 
   @computed
-  bool get isCourseLoading => loading[kCourse] != null ? loading[kCourse] : false;
+  bool get isCourseLoading =>
+      loading[kCourse] != null ? loading[kCourse] : false;
 
   @computed
-  bool get isCoursesLoading => loading[kCourses] != null ? loading[kCourses] : false;
+  bool get isCoursesLoading =>
+      loading[kCourses] != null ? loading[kCourses] : false;
 
   @computed
-  bool get isSubjectsLoading => loading[kSubjects] != null ? loading[kSubjects] : false;
+  bool get isSubjectsLoading =>
+      loading[kSubjects] != null ? loading[kSubjects] : false;
 
   @action
-  void saveCourse({ String id, String name, String icon, Function callback }) {
+  Future<void> saveCourse(
+      {String id, String name, String icon, Function callback}) async {
+
+    addLoading(kCourse);
     DocumentReference doc;
     var data = Map<String, Object>();
     data['name'] = name;
     data['nameDb'] = name.toLowerCase();
     data['icon'] = icon;
     data['updated'] = DateTime.now();
-    if(id == null) {
+    if (id == null) {
       doc = _courses.document();
       data['userId'] = Globals.userId;
       data['created'] = DateTime.now();
@@ -72,17 +76,41 @@ abstract class _CoursesStore with Store {
     } else {
       doc = _courses.document(id);
     }
-    doc.setData(data, merge: true).then((data) {
-      loadCourses();
-      if(id != null)
-        loadCourse(id);
+    await doc.setData(data, merge: true);
+    if (id != null) await loadCourse(id);
+
+    stopLoading(kCourse);
+    if(callback != null)
       callback();
-    });
   }
 
   @action
-  void saveSubject({ String id, String name, String courseId, Function callback}) {
-    print("save subject");
+  Future<void> saveSubject(
+      {String id, String name, String courseId, Function callback}) async {
+    DocumentReference doc;
+    var data = Map<String, Object>();
+    data['courseId'] = courseId;
+    data['name'] = name;
+    data['nameDb'] = name.toLowerCase();
+    data['updated'] = DateTime.now();
+    if (id == null) {
+      doc = _subjects.document();
+      data['userId'] = Globals.userId;
+      data['created'] = DateTime.now();
+    } else {
+      doc = _subjects.document(id);
+    }
+    doc.setData(data, merge: true);
+
+    if (id == null) {
+      await alterCourseSubjects(courseId, kCounterIncrement);
+      await loadSubjects(id);
+    }
+
+    await loadCourses();
+    if (callback != null) callback();
+
+    /*
     Firestore.instance.runTransaction( (Transaction tx) async {
       if(id == null) {
         var doc = _subjects.document();
@@ -116,124 +144,108 @@ abstract class _CoursesStore with Store {
       loadSubjects(courseId);
       if(callback != null)
         callback();
-    });
+    });*/
   }
 
-  @action
-  Future fetchCourses() => coursesFuture =
-      ObservableFuture(_courses.where('userId', isEqualTo: Globals.userId)
-          .orderBy('nameDb', descending: false).getDocuments().then( (snapshot) {
-        print('snap length: ${snapshot.documents.length}');
-        List<Course> _courses = List();
-        if (snapshot.documents.length > 0) {
-          for (var doc in snapshot.documents) {
-            var c = Course();
-            c.id = doc.documentID;
-            c.userId = doc.data['userId'];
-            c.icon = doc.data['icon'];
-            c.name = doc.data['name'];
-            c.nameDb = doc.data['nameDb'];
-            c.subjectsCount = doc.data['subjectsCount'];
-            _courses.add(c);
-            print('fullname docID: ${doc.documentID}');
-          }
-        }
-        return _courses;
-      }).catchError((onError) {
-        print("Error fetching courses");
-        print(onError);
-        return List();
-      }));
+  Future<void> deleteCourse(courseId) async {
+    throw Exception("Not yet implemented");
+  }
 
-  @action
-  Future fetchSubjects(String courseId) => subjectsFuture =
-      ObservableFuture(_subjects
-          .where('userId', isEqualTo: Globals.userId)
-          .where('courseId', isEqualTo: courseId)
-          .getDocuments().then( (snapshot) {
-        print('snap length: ${snapshot.documents.length}');
-        List<Subject> _subjects = List();
-        if (snapshot.documents.length > 0) {
-          for (var doc in snapshot.documents) {
-            var c = Subject();
-            c.id = doc.documentID;
-            c.userId = doc.data['userId'];
-            c.courseId = doc.data['courseId'];
-            c.name = doc.data['name'];
-            c.nameDb = doc.data['nameDb'];
-            _subjects.add(c);
-            print('fullname docID: ${doc.documentID}');
-          }
-        }
-        return _subjects;
-      }));
+  Future<void> deleteSubject(subjectId, courseId) async {
+    addLoading(kSubjects);
+    _notes
+        .where('subjectId', isEqualTo: subjectId)
+        .getDocuments()
+        .then((snapshot) {
+      snapshot.documents.forEach((doc) async {
+        await doc.reference.delete();
+      });
+    });
+    _questions
+        .where('subjectId', isEqualTo: subjectId)
+        .getDocuments()
+        .then((snapshot) {
+      snapshot.documents.forEach((doc) async {
+        await doc.reference.delete();
+      });
+    });
+    _subjects.document(subjectId).get().then((doc) async {
+      await doc.reference.delete();
+    });
+    await alterCourseSubjects(courseId, kCounterDecrease);
+    stopLoading(kSubjects);
+  }
 
-  @action fetchCourse(String courseId) => courseFuture =
-      ObservableFuture(_courses.document(courseId).get().then( (snapshot) {
-        if(snapshot.data['userId'] != Globals.userId) {
-          throw Exception("Auth exception");
-        }
-        Course course = Course();
-        course.userId = snapshot.data['userId'];
-        course.name = snapshot.data['name'];
-        course.subjectsCount = snapshot.data['subjectsCount'];
-        return course;
-      }));
+  Future<void> alterCourseSubjects(courseId, op) async {
+    var course = await _courses.document(courseId).get();
+    print("subjectsCount ${course.data['subjectsCount']}");
+    _courses.document(courseId).setData(
+        {'subjectsCount':
+          op == kCounterIncrement ? course.data['subjectsCount'] + 1 :
+          course.data['subjectsCount'] - 1
+        },
+        merge: true);
+  }
 
-  void loadCourses() {
+  Future<void> loadCourses() async {
     print("load courses");
     addLoading(kCourses);
-    _courses.where('userId', isEqualTo: Globals.userId)
-        .orderBy('nameDb')
-        .getDocuments()
-        .then( (snapshot) {
-          print('snap length: ${snapshot.documents.length}');
-          courses.clear();
-          if (snapshot.documents.length > 0) {
-            for (var doc in snapshot.documents) {
-              var c = Course();
-              c.id = doc.documentID;
-              c.userId = doc.data['userId'];
-              c.icon = doc.data['icon'];
-              c.name = doc.data['name'];
-              c.nameDb = doc.data['nameDb'];
-              c.subjectsCount = doc.data['subjectsCount'];
-              courses.add(c);
-              print('${c.name} ${c.subjectsCount}');
-            }
-          }
-          stopLoading(kCourses);
-      });
-    /*if (coursesFuture == null) {
-      fetchCourses();
-    }*/
-  }
-
-  void loadCourse(String courseId) {
-    print("load course $courseId");
-    //if (courseFuture == null) {
-      fetchCourse(courseId);
-    //}
-  }
-
-  void loadSubjects(String courseId) {
-    print("load subjects");
-    addLoading(kSubjects);
-    subjects.clear();
-    _subjects.where('courseId', isEqualTo: courseId)
+    _courses
+        .where('userId', isEqualTo: Globals.userId)
         .orderBy('nameDb')
         .getDocuments()
         .then((snapshot) {
-          for (var doc in snapshot.documents) {
-            Subject subject = Subject();
-            subject.id = doc.documentID;
-            subject.courseId = doc.data['courseId'];
-            subject.name = doc.data['name'];
-            subject.nameDb = doc.data['nameDb'];
-            subjects.add(subject);
-          }
-          print("subjects ${subjects.length}");
-          stopLoading(kSubjects);
+      print('snap length: ${snapshot.documents.length}');
+      courses.clear();
+      if (snapshot.documents.length > 0) {
+        for (var doc in snapshot.documents) {
+          var c = Course();
+          c.id = doc.documentID;
+          c.userId = doc.data['userId'];
+          c.icon = doc.data['icon'];
+          c.name = doc.data['name'];
+          c.nameDb = doc.data['nameDb'];
+          c.subjectsCount = doc.data['subjectsCount'];
+          courses.add(c);
+          print('${c.name} ${c.subjectsCount}');
+        }
+      }
+      stopLoading(kCourses);
+    });
+  }
+
+  Future<void> loadCourse(String courseId) async {
+    addLoading(kCourse);
+    _courses.document(courseId).get().then((snapshot) {
+      course = Course();
+      course.name = snapshot.data['name'];
+      course.nameDb = snapshot.data['nameDb'];
+      course.icon = snapshot.data['icon'];
+      course.id = snapshot.data['id'];
+      course.userId = snapshot.data['userId'];
+      course.subjectsCount = snapshot.data['subjectsCount'];
+      print("course loaded");
+      stopLoading(kCourse);
+    });
+  }
+
+  Future<void> loadSubjects(String courseId) async {
+    addLoading(kSubjects);
+    subjects.clear();
+    _subjects
+        .where('courseId', isEqualTo: courseId)
+        .orderBy('nameDb')
+        .getDocuments()
+        .then((snapshot) {
+      for (var doc in snapshot.documents) {
+        Subject subject = Subject();
+        subject.id = doc.documentID;
+        subject.courseId = doc.data['courseId'];
+        subject.name = doc.data['name'];
+        subject.nameDb = doc.data['nameDb'];
+        subjects.add(subject);
+      }
+      stopLoading(kSubjects);
     });
   }
 }

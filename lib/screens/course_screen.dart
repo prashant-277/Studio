@@ -75,7 +75,9 @@ class _CourseScreenState extends State<CourseScreen>
                                 fontWeight: FontWeight.w600
                               ),
                             ),
-                            onTap: () => {},
+                            onTap: () {
+                              widget.store.deleteCourse(widget.course.id);
+                            },
                           ),
                         ],
                       ),
@@ -98,7 +100,54 @@ class _CourseScreenState extends State<CourseScreen>
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
-              Container(
+              SizedBox(height: 20,),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
+                child: Container(
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withAlpha(10),
+                          blurRadius: 20.0, // has the effect of softening the shadow
+                          spreadRadius: 10.0, // has the effect of extending the shadow
+                          offset: Offset(
+                            0.0, // horizontal, move right 10
+                            0.0, // vertical, move down 10
+                          ),
+                        )
+                      ]
+                  ),
+                  child: TextField(
+                    autocorrect: true,
+                    decoration: InputDecoration(
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.white, width: 0),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        border: OutlineInputBorder(
+                          borderSide: BorderSide(width: 0, color: Colors.white),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(width: 0, color: Colors.white),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        hintText: 'Search subject',
+                        fillColor: Colors.white,
+                        filled: true,
+                        contentPadding: EdgeInsets.all(8),
+                        prefixIcon: Icon(Icons.search)),
+                    onChanged: (text) {
+                      setState(() {
+                        //name = text;
+                      });
+                    },
+                  ),
+                ),
+              ),
+              /*Container(
                 margin: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
                 padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
                 decoration: BoxDecoration(
@@ -145,10 +194,10 @@ class _CourseScreenState extends State<CourseScreen>
                           ),
                         ),
                       ],
-                    )
+                    ),
                   ],
                 ),
-              ),
+              ),*/
               SizedBox(height: 20,),
               Expanded(
                 child: SubjectItemsView(widget.store, widget.course),
@@ -168,20 +217,10 @@ class CourseTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Observer(builder: (_) {
-    final future = store.courseFuture;
+    if(store.isCourseLoading)
+      return Text(course.name);
 
-    switch(future.status) {
-      case FutureStatus.fulfilled:
-        print("fullfilled");
-        return Text(future.result.name);
-        break;
-      case FutureStatus.pending:
-        print("pending");
-        return Text(this.course.name);
-      default:
-        print("default");
-        return Text(this.course.name);
-    }
+    return Text(store.course != null ? store.course.name : "");
   });
 }
 
