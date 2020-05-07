@@ -27,6 +27,18 @@ mixin _$CoursesStore on _CoursesStore, Store {
   bool get isSubjectsLoading => (_$isSubjectsLoadingComputed ??=
           Computed<bool>(() => super.isSubjectsLoading))
       .value;
+  Computed<bool> _$isNotesLoadingComputed;
+
+  @override
+  bool get isNotesLoading =>
+      (_$isNotesLoadingComputed ??= Computed<bool>(() => super.isNotesLoading))
+          .value;
+  Computed<bool> _$isQuestionsLoadingComputed;
+
+  @override
+  bool get isQuestionsLoading => (_$isQuestionsLoadingComputed ??=
+          Computed<bool>(() => super.isQuestionsLoading))
+      .value;
 
   final _$loadingAtom = Atom(name: '_CoursesStore.loading');
 
@@ -96,6 +108,40 @@ mixin _$CoursesStore on _CoursesStore, Store {
     }, _$subjectsAtom, name: '${_$subjectsAtom.name}_set');
   }
 
+  final _$notesAtom = Atom(name: '_CoursesStore.notes');
+
+  @override
+  ObservableList<Note> get notes {
+    _$notesAtom.context.enforceReadPolicy(_$notesAtom);
+    _$notesAtom.reportObserved();
+    return super.notes;
+  }
+
+  @override
+  set notes(ObservableList<Note> value) {
+    _$notesAtom.context.conditionallyRunInAction(() {
+      super.notes = value;
+      _$notesAtom.reportChanged();
+    }, _$notesAtom, name: '${_$notesAtom.name}_set');
+  }
+
+  final _$questionsAtom = Atom(name: '_CoursesStore.questions');
+
+  @override
+  ObservableList<Question> get questions {
+    _$questionsAtom.context.enforceReadPolicy(_$questionsAtom);
+    _$questionsAtom.reportObserved();
+    return super.questions;
+  }
+
+  @override
+  set questions(ObservableList<Question> value) {
+    _$questionsAtom.context.conditionallyRunInAction(() {
+      super.questions = value;
+      _$questionsAtom.reportChanged();
+    }, _$questionsAtom, name: '${_$questionsAtom.name}_set');
+  }
+
   final _$saveCourseAsyncAction = AsyncAction('saveCourse');
 
   @override
@@ -117,7 +163,7 @@ mixin _$CoursesStore on _CoursesStore, Store {
   @override
   String toString() {
     final string =
-        'loading: ${loading.toString()},course: ${course.toString()},courses: ${courses.toString()},subjects: ${subjects.toString()},isCourseLoading: ${isCourseLoading.toString()},isCoursesLoading: ${isCoursesLoading.toString()},isSubjectsLoading: ${isSubjectsLoading.toString()}';
+        'loading: ${loading.toString()},course: ${course.toString()},courses: ${courses.toString()},subjects: ${subjects.toString()},notes: ${notes.toString()},questions: ${questions.toString()},isCourseLoading: ${isCourseLoading.toString()},isCoursesLoading: ${isCoursesLoading.toString()},isSubjectsLoading: ${isSubjectsLoading.toString()},isNotesLoading: ${isNotesLoading.toString()},isQuestionsLoading: ${isQuestionsLoading.toString()}';
     return '{$string}';
   }
 }

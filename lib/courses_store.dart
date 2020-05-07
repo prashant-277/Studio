@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:mobx/mobx.dart';
 import 'package:studio/globals.dart';
 import 'package:studio/models/course.dart';
+import 'package:studio/models/note.dart';
+import 'package:studio/models/question.dart';
 import 'package:studio/models/subject.dart';
 
 part 'courses_store.g.dart';
@@ -13,6 +15,8 @@ const String kCourse = 'course';
 const String kCourses = 'courses';
 const String kSubject = 'subject';
 const String kSubjects = 'subjects';
+const String kNotes = 'notes';
+const String kQuestions = 'questions';
 const String kCounterIncrement = 'increment';
 const String kCounterDecrease = 'decrease';
 
@@ -37,6 +41,12 @@ abstract class _CoursesStore with Store {
   @observable
   ObservableList<Subject> subjects = ObservableList<Subject>();
 
+  @observable
+  ObservableList<Note> notes = ObservableList<Note>();
+
+  @observable
+  ObservableList<Question> questions = ObservableList<Question>();
+
   void addLoading(String id) {
     loading[id] = true;
   }
@@ -57,10 +67,16 @@ abstract class _CoursesStore with Store {
   bool get isSubjectsLoading =>
       loading[kSubjects] != null ? loading[kSubjects] : false;
 
+  @computed
+  bool get isNotesLoading => loading[kNotes] != null ? loading[kNotes] : false;
+
+  @computed
+  bool get isQuestionsLoading =>
+      loading[kQuestions] != null ? loading[kQuestions] : false;
+
   @action
   Future<void> saveCourse(
       {String id, String name, String icon, Function callback}) async {
-
     addLoading(kCourse);
     DocumentReference doc;
     var data = Map<String, Object>();
@@ -80,8 +96,28 @@ abstract class _CoursesStore with Store {
     if (id != null) await loadCourse(id);
 
     stopLoading(kCourse);
-    if(callback != null)
-      callback();
+    if (callback != null) callback();
+  }
+
+  @action
+  Future<void> saveNote(Note note) async {
+    addLoading(kNotes);
+    DocumentReference doc;
+    var data = Map<String, Object>();
+    data['text'] = note.text;
+    data['updated'] = DateTime.now();
+    data['subjectId'] = note.subjectId;
+    data['courseId'] = note.courseId;
+    data['usersId'] = Globals.userId;
+    if(note.id == null) {
+      data['created'] = DateTime.now();
+      doc = _notes.document();
+    } else {
+      doc = _notes.document(note.id);
+    }
+    await doc.setData(data, merge: true);
+    stopLoading(kNotes);
+    loadNotes(note.subjectId);
   }
 
   @action
@@ -179,12 +215,11 @@ abstract class _CoursesStore with Store {
   Future<void> alterCourseSubjects(courseId, op) async {
     var course = await _courses.document(courseId).get();
     print("subjectsCount ${course.data['subjectsCount']}");
-    _courses.document(courseId).setData(
-        {'subjectsCount':
-          op == kCounterIncrement ? course.data['subjectsCount'] + 1 :
-          course.data['subjectsCount'] - 1
-        },
-        merge: true);
+    _courses.document(courseId).setData({
+      'subjectsCount': op == kCounterIncrement
+          ? course.data['subjectsCount'] + 1
+          : course.data['subjectsCount'] - 1
+    }, merge: true);
   }
 
   Future<void> loadCourses() async {
@@ -231,12 +266,12 @@ abstract class _CoursesStore with Store {
 
   Future<void> loadSubjects(String courseId) async {
     addLoading(kSubjects);
-    subjects.clear();
     _subjects
         .where('courseId', isEqualTo: courseId)
         .orderBy('nameDb')
         .getDocuments()
         .then((snapshot) {
+      subjects.clear();
       for (var doc in snapshot.documents) {
         Subject subject = Subject();
         subject.id = doc.documentID;
@@ -246,6 +281,31 @@ abstract class _CoursesStore with Store {
         subjects.add(subject);
       }
       stopLoading(kSubjects);
+    });
+  }
+
+  Future<void> loadNotes(String subjectId) async {
+    addLoading(kNotes);
+    print("loadNotes $subjectId");
+    _notes
+        .where('subjectId', isEqualTo: subjectId)
+        //.orderBy('order')
+        //.orderBy('created')
+        .getDocuments()
+        .then((snapshot) {
+          print(snapshot.documents.length);
+      notes.clear();
+      for (var doc in snapshot.documents) {
+        Note note = Note();
+        note.subjectId = doc.data['subjectId'];
+        note.courseId = doc.data['courseId'];
+        note.userId = doc.data['userId'];
+        note.text = doc.data['text'];
+        note.created = doc.data['created'];
+        print("note: ${note.text}");
+        notes.add(note);
+      }
+      stopLoading(kNotes);
     });
   }
 }

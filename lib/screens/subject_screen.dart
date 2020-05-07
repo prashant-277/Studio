@@ -6,6 +6,11 @@ import 'package:studio/models/subject.dart';
 import 'package:studio/screens/edit_subject_screen.dart';
 
 import '../constants.dart';
+import 'note_edit_screen.dart';
+import 'note_screen.dart';
+
+const int kTabNotes = 0;
+const int kTabQuestions = 1;
 
 class SubjectScreen extends StatefulWidget {
   SubjectScreen(this.store, this.course, this.subject);
@@ -22,6 +27,7 @@ class SubjectScreen extends StatefulWidget {
 class _SubjectScreenState extends State<SubjectScreen>
     with SingleTickerProviderStateMixin {
   TabController _tabController;
+  int currentTab = 0;
 
   @override
   void initState() {
@@ -48,6 +54,11 @@ class _SubjectScreenState extends State<SubjectScreen>
             labelColor: kDarkBlue,
             indicatorColor: kPrimaryColor,
             isScrollable: false,
+            onTap: (index) {
+              setState(() {
+                currentTab = index;
+              });
+            },
             tabs: <Widget>[
               Tab(
                 //text: 'Notes',
@@ -139,10 +150,21 @@ class _SubjectScreenState extends State<SubjectScreen>
             )
           ],
         ),
+        floatingActionButton: FloatingActionButton(
+          backgroundColor: kPrimaryColor,
+          child: Icon(Icons.add),
+          onPressed: () {
+            if(currentTab == kTabNotes) {
+              Navigator.push(context, MaterialPageRoute(
+                  builder: (context) => NoteEdit(widget.store, widget.course, widget.subject, null)
+              ));
+            }
+          },
+        ),
         body: TabBarView(
           controller: _tabController,
           children: <Widget>[
-            NotesView(),
+            NotesView(widget.store, widget.course, widget.subject),
             QuestionsView(),
             Text('Mind map'),
           ],
@@ -150,19 +172,7 @@ class _SubjectScreenState extends State<SubjectScreen>
   }
 }
 
-class NotesView extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: RaisedButton(
-        child: Text('back'),
-        onPressed: () {
-          Navigator.pop(context);
-        },
-      ),
-    );
-  }
-}
+
 
 class QuestionsView extends StatelessWidget {
   @override
