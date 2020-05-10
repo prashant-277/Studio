@@ -76,7 +76,33 @@ class _CourseScreenState extends State<CourseScreen>
                               ),
                             ),
                             onTap: () {
-                              widget.store.deleteCourse(widget.course.id);
+                              Navigator.pop(context);
+                              showDialog(
+                                  context: context,
+                                  builder: (_) => AlertDialog(
+                                    title: Text('Confirm'),
+                                    content: Text(
+                                        'Do you really want to delete '
+                                            'course ${widget.course.name} and all '
+                                            'its subjects, notes and questions?'),
+                                    actions: <Widget>[
+                                      FlatButton(
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                        child: Text('No'),
+                                      ),
+                                      FlatButton(
+                                        child: Text('Yes'),
+                                        textColor: Colors.red,
+                                        onPressed: () async {
+                                          Navigator.pop(context);
+                                          await widget.store.deleteCourse(widget.course.id);
+                                          Navigator.pop(context);
+                                        },
+                                      )
+                                    ],
+                                  ));
                             },
                           ),
                         ],
@@ -237,7 +263,7 @@ class SubjectItemsView extends StatelessWidget {
     return  ModalProgressHUD(
       color: kLightGrey,
       child: resultWidget(context, store.subjects),
-      inAsyncCall: store.isSubjectsLoading,
+      inAsyncCall: store.isSubjectsLoading || store.isCourseLoading,
     );
   });
 

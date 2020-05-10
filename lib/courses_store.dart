@@ -184,7 +184,36 @@ abstract class _CoursesStore with Store {
   }
 
   Future<void> deleteCourse(courseId) async {
-    throw Exception("Not yet implemented");
+    addLoading(kCourse);
+    await _notes
+        .where('courseId', isEqualTo: courseId)
+        .getDocuments()
+        .then((snapshot) {
+      snapshot.documents.forEach((doc) async {
+        await doc.reference.delete();
+      });
+    });
+    await _questions
+        .where('courseId', isEqualTo: courseId)
+        .getDocuments()
+        .then((snapshot) {
+      snapshot.documents.forEach((doc) async {
+        await doc.reference.delete();
+      });
+    });
+    await _subjects
+        .where('courseId', isEqualTo: courseId)
+        .getDocuments()
+        .then((snapshot) {
+      snapshot.documents.forEach((doc) async {
+        await doc.reference.delete();
+      });
+    });
+    await _courses.document(courseId).get().then((doc) async {
+      await doc.reference.delete();
+    });
+    stopLoading(kCourse);
+    loadCourses();
   }
 
   Future<void> deleteSubject(subjectId, courseId) async {
@@ -290,7 +319,7 @@ abstract class _CoursesStore with Store {
     _notes
         .where('subjectId', isEqualTo: subjectId)
         //.orderBy('order')
-        //.orderBy('created')
+        .orderBy('created')
         .getDocuments()
         .then((snapshot) {
           print(snapshot.documents.length);
@@ -301,8 +330,6 @@ abstract class _CoursesStore with Store {
         note.courseId = doc.data['courseId'];
         note.userId = doc.data['userId'];
         note.text = doc.data['text'];
-        note.created = doc.data['created'];
-        print("note: ${note.text}");
         notes.add(note);
       }
       stopLoading(kNotes);

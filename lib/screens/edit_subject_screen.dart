@@ -103,14 +103,12 @@ class _EditSubjectScreenState extends State<EditSubjectScreen> {
               Image(
                 image: AssetImage('assets/images/new_doc.png'),
               ),
-              Expanded(
-                child: Container(),
-              ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(0, 20, 0, 10),
                 child: PrimaryButton(
                   'Save', () {
-                    widget.store.saveSubject(id: widget.data.id, name: name, courseId: widget.course.id);
+                    var id = widget.data == null ? null : widget.data.id;
+                    widget.store.saveSubject(id: id, name: name, courseId: widget.course.id);
                     Navigator.pop(context);
                   }
                 ),
