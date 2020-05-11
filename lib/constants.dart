@@ -7,6 +7,13 @@ const kDarkGrey = Color(0xCC000000);
 const kDarkBlue = Color(0xFF313964);
 const kPrimaryColor = Color(0xFFF5A623);
 
+const int kTabNotes = 0;
+const int kTabQuestions = 1;
+const int kTabMindmap = 2;
+const int kModeList = 0;
+const int kModeCarousel = 1;
+
+
 const kShadow = [ BoxShadow( blurRadius: 20, color: Color(0x22000000) ) ];
 
 const courseIcons = [

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:line_awesome_icons/line_awesome_icons.dart';
 import 'package:studio/courses_store.dart';
 import 'package:studio/models/course.dart';
 import 'package:studio/models/note.dart';
@@ -93,23 +94,23 @@ class _NoteEditState extends State<NoteEdit> {
                   margin: EdgeInsets.fromLTRB(0, 20, 0, 10),
                 ),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
 
                   children: <Widget>[
-                    Container(
-                      margin: EdgeInsets.fromLTRB(0, 0, 20, 0),
-                      child: FloatingActionButton(
-                        heroTag: 'addPhoto',
-                        child: Icon(Icons.camera_alt),
-                        backgroundColor: Colors.white,
-                        foregroundColor: Colors.blueGrey,
-                        elevation: 10,
-                        onPressed: () {
-
-                        },
-                      ),
+/*                    IconButton(
+                      child: Icon(LineAwesomeIcons.camera),
+                      color: Colors.red,
+                      focusColor: Colors.white,
+                      highlightColor: Colors.white,
+                      splashColor: Colors.white,
+                      hoverColor: Colors.green,
+                      disabledColor: Colors.blue,
+                      onPressed: () {
+                        print("camera");
+                      },
                     ),
+
                     Container(
                       margin: EdgeInsets.fromLTRB(0, 0, 20, 0),
                       child: FloatingActionButton(
@@ -135,39 +136,31 @@ class _NoteEditState extends State<NoteEdit> {
 
                         },
                       ),
-                    ),
-                  ],
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 60, 0, 10),
-                  child: SizedBox(
-                    width: double.infinity,
-                    child: Builder(
-                      builder: (context) =>
-                        PrimaryButton(
-                        'Save',
-                            () async {
-                          if(text.trim().length == 0) {
-                            Scaffold.of(context).showSnackBar(
+                    ),*/
+                    PrimaryButton(
+                      'Save',
+                          () async {
+                        if(text.trim().length == 0) {
+                          Scaffold.of(context).showSnackBar(
                               SnackBar(
                                 content: Text('Enter a short text'),
                               )
-                            );
-                          }
+                          );
+                        }
 
-                          Note note = widget.data;
-                          if(note == null)
-                            note = Note();
-                          note.courseId = widget.course.id;
-                          note.subjectId = widget.subject.id;
-                          note.text = text.trim();
-                          widget.store.saveNote(note);
-                          Navigator.pop(context);
-                        },
-                      ),
+                        Note note = widget.data;
+                        if(note == null)
+                          note = Note();
+                        note.courseId = widget.course.id;
+                        note.subjectId = widget.subject.id;
+                        note.text = text.trim();
+                        widget.store.saveNote(note);
+                        Navigator.pop(context);
+                      },
                     ),
-                  ),
-                )
+                  ],
+                ),
+
               ],
             ),
           ),

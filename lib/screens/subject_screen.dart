@@ -10,11 +10,6 @@ import '../constants.dart';
 import 'edit_note_screen.dart';
 import 'notes_screen.dart';
 
-const int kTabNotes = 0;
-const int kTabQuestions = 1;
-const int kTabMindmap = 2;
-const int kModeList = 0;
-const int kModeCarousel = 1;
 
 class SubjectScreen extends StatefulWidget {
   SubjectScreen(this.store, this.course, this.subject);
@@ -188,7 +183,7 @@ class _SubjectScreenState extends State<SubjectScreen>
       body: TabBarView(
         controller: _tabController,
         children: <Widget>[
-          NotesView(widget.store, widget.course, widget.subject),
+          NotesView(widget.store, widget.course, widget.subject, currentMode),
           QuestionsView(),
           Text('Mind map'),
         ],

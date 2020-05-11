@@ -241,6 +241,10 @@ abstract class _CoursesStore with Store {
     stopLoading(kSubjects);
   }
 
+  Future<void> deleteNote(String id) async {
+
+  }
+
   Future<void> alterCourseSubjects(courseId, op) async {
     var course = await _courses.document(courseId).get();
     print("subjectsCount ${course.data['subjectsCount']}");
