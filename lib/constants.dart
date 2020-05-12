@@ -13,6 +13,8 @@ const int kTabMindmap = 2;
 const int kModeList = 0;
 const int kModeCarousel = 1;
 
+const double kDrawerItemSize = 18;
+
 
 const kShadow = [ BoxShadow( blurRadius: 20, color: Color(0x22000000) ) ];
 

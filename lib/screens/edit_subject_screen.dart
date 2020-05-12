@@ -44,18 +44,9 @@ class _EditSubjectScreenState extends State<EditSubjectScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        iconTheme: IconThemeData(color: kDarkBlue),
         title: Text(widget.course.name),
         centerTitle: true,
-        leading: Container(
-            child: FlatButton(
-              child: Icon(
-                Icons.chevron_left,
-                color: kDarkBlue,
-              ),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            )),
       ),
       body: SafeArea(
         child: Padding(
@@ -100,9 +91,7 @@ class _EditSubjectScreenState extends State<EditSubjectScreen> {
                   });
                 },
               ),
-              Image(
-                image: AssetImage('assets/images/new_doc.png'),
-              ),
+
               Padding(
                 padding: const EdgeInsets.fromLTRB(0, 20, 0, 10),
                 child: PrimaryButton(

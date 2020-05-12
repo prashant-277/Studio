@@ -12,6 +12,7 @@ import 'package:studio/models/note.dart';
 import 'package:studio/models/subject.dart';
 
 import '../constants.dart';
+import 'edit_note_screen.dart';
 
 class NotesView extends StatelessWidget {
   final CoursesStore store;
@@ -89,7 +90,7 @@ class _NoteItemsViewState extends State<NoteItemsView> {
       ),
       color: Colors.red.withAlpha(opacity),
       onPressed: () {
-        widget.store.deleteNote(widget.store.notes.elementAt(index).id);
+        //widget.store.deleteNote(widget.store.notes.elementAt(index).id);
       },
     );
   }
@@ -226,11 +227,18 @@ class _NoteItemsViewState extends State<NoteItemsView> {
                             textColor: Colors.red,
                             onPressed: () {
                               Navigator.pop(context);
+                              widget.store.deleteNote(item.id, () {
+                                widget.store.loadNotes(widget.subject.id);
+                              });
                             },
                           ),
                           FlatButton(
                             onPressed: () {
                               Navigator.pop(context);
+                              Navigator.push(context, MaterialPageRoute(
+                                  builder: (context) =>
+                                      NoteEdit(widget.store, widget.course, widget.subject, item)
+                              ));
                             },
                             child: Text('Edit'),
                           ),

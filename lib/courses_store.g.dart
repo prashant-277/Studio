@@ -39,6 +39,12 @@ mixin _$CoursesStore on _CoursesStore, Store {
   bool get isQuestionsLoading => (_$isQuestionsLoadingComputed ??=
           Computed<bool>(() => super.isQuestionsLoading))
       .value;
+  Computed<bool> _$isBooksLoadingComputed;
+
+  @override
+  bool get isBooksLoading =>
+      (_$isBooksLoadingComputed ??= Computed<bool>(() => super.isBooksLoading))
+          .value;
 
   final _$loadingAtom = Atom(name: '_CoursesStore.loading');
 
@@ -142,6 +148,23 @@ mixin _$CoursesStore on _CoursesStore, Store {
     }, _$questionsAtom, name: '${_$questionsAtom.name}_set');
   }
 
+  final _$booksAtom = Atom(name: '_CoursesStore.books');
+
+  @override
+  ObservableList<Book> get books {
+    _$booksAtom.context.enforceReadPolicy(_$booksAtom);
+    _$booksAtom.reportObserved();
+    return super.books;
+  }
+
+  @override
+  set books(ObservableList<Book> value) {
+    _$booksAtom.context.conditionallyRunInAction(() {
+      super.books = value;
+      _$booksAtom.reportChanged();
+    }, _$booksAtom, name: '${_$booksAtom.name}_set');
+  }
+
   final _$saveCourseAsyncAction = AsyncAction('saveCourse');
 
   @override
@@ -149,6 +172,20 @@ mixin _$CoursesStore on _CoursesStore, Store {
       {String id, String name, String icon, Function callback}) {
     return _$saveCourseAsyncAction.run(() =>
         super.saveCourse(id: id, name: name, icon: icon, callback: callback));
+  }
+
+  final _$saveNoteAsyncAction = AsyncAction('saveNote');
+
+  @override
+  Future<void> saveNote(Note note) {
+    return _$saveNoteAsyncAction.run(() => super.saveNote(note));
+  }
+
+  final _$saveBookAsyncAction = AsyncAction('saveBook');
+
+  @override
+  Future<void> saveBook(Book book) {
+    return _$saveBookAsyncAction.run(() => super.saveBook(book));
   }
 
   final _$saveSubjectAsyncAction = AsyncAction('saveSubject');
@@ -160,10 +197,68 @@ mixin _$CoursesStore on _CoursesStore, Store {
         id: id, name: name, courseId: courseId, callback: callback));
   }
 
+  final _$deleteCourseAsyncAction = AsyncAction('deleteCourse');
+
+  @override
+  Future<void> deleteCourse(dynamic courseId) {
+    return _$deleteCourseAsyncAction.run(() => super.deleteCourse(courseId));
+  }
+
+  final _$deleteSubjectAsyncAction = AsyncAction('deleteSubject');
+
+  @override
+  Future<void> deleteSubject(dynamic subjectId, dynamic courseId) {
+    return _$deleteSubjectAsyncAction
+        .run(() => super.deleteSubject(subjectId, courseId));
+  }
+
+  final _$deleteNoteAsyncAction = AsyncAction('deleteNote');
+
+  @override
+  Future<void> deleteNote(String id, Function callback) {
+    return _$deleteNoteAsyncAction.run(() => super.deleteNote(id, callback));
+  }
+
+  final _$alterCourseSubjectsAsyncAction = AsyncAction('alterCourseSubjects');
+
+  @override
+  Future<void> alterCourseSubjects(dynamic courseId, dynamic op) {
+    return _$alterCourseSubjectsAsyncAction
+        .run(() => super.alterCourseSubjects(courseId, op));
+  }
+
+  final _$loadCoursesAsyncAction = AsyncAction('loadCourses');
+
+  @override
+  Future<void> loadCourses() {
+    return _$loadCoursesAsyncAction.run(() => super.loadCourses());
+  }
+
+  final _$loadCourseAsyncAction = AsyncAction('loadCourse');
+
+  @override
+  Future<void> loadCourse(String courseId) {
+    return _$loadCourseAsyncAction.run(() => super.loadCourse(courseId));
+  }
+
+  final _$loadSubjectsAsyncAction = AsyncAction('loadSubjects');
+
+  @override
+  Future<void> loadSubjects(String courseId) {
+    return _$loadSubjectsAsyncAction.run(() => super.loadSubjects(courseId));
+  }
+
+  final _$loadBooksAsyncAction = AsyncAction('loadBooks');
+
+  @override
+  Future<void> loadBooks(String courseId) {
+    return _$loadBooksAsyncAction.run(() => super.loadBooks(courseId));
+  }
+
   @override
   String toString() {
     final string =
-        'loading: ${loading.toString()},course: ${course.toString()},courses: ${courses.toString()},subjects: ${subjects.toString()},notes: ${notes.toString()},questions: ${questions.toString()},isCourseLoading: ${isCourseLoading.toString()},isCoursesLoading: ${isCoursesLoading.toString()},isSubjectsLoading: ${isSubjectsLoading.toString()},isNotesLoading: ${isNotesLoading.toString()},isQuestionsLoading: ${isQuestionsLoading.toString()}';
+        'loading: ${loading.toString()},course: ${course.toString()},courses: ${courses.toString()},subjects: ${subjects.toString()},notes: ${notes.toString()},questions: ${questions.toString()},books: ${books.toString()},isCourseLoading: ${isCourseLoading.toString()},isCoursesLoading: ${isCoursesLoading.toString()},isSubjectsLoading: ${isSubjectsLoading.toString()},isNotesLoading: ${isNotesLoading.toString()},isQuestionsLoading: ${isQuestionsLoading.toString()},isBooksLoading: ${isBooksLoading.toString()}';
     return '{$string}';
   }
 }

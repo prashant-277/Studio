@@ -33,6 +33,7 @@ dependencies:
   line_awesome_icons: ^1.0.4+2
   drag_list: ^1.0.8
   carousel_slider: ^2.1.0
+  flutter_speed_dial: ^1.2.5
 
 
 dev_dependencies:

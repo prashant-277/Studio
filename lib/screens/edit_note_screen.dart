@@ -22,6 +22,16 @@ class NoteEdit extends StatefulWidget {
 
 class _NoteEditState extends State<NoteEdit> {
   String text = '';
+  TextEditingController textCtrl = TextEditingController();
+
+  @override
+  void initState() {
+    if(widget.data != null) {
+      textCtrl.text = widget.data.text;
+      text = widget.data.text;
+    }
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +75,7 @@ class _NoteEditState extends State<NoteEdit> {
                     maxLines: 4,
                     autofocus: true,
                     autocorrect: true,
-                    //controller: textCtrl,
+                    controller: textCtrl,
                     decoration: InputDecoration(
                       focusedBorder: OutlineInputBorder(
                         borderSide: BorderSide(color: Colors.white, width: 0),
@@ -151,6 +161,8 @@ class _NoteEditState extends State<NoteEdit> {
                         Note note = widget.data;
                         if(note == null)
                           note = Note();
+                        else
+                          note.id = widget.data.id;
                         note.courseId = widget.course.id;
                         note.subjectId = widget.subject.id;
                         note.text = text.trim();

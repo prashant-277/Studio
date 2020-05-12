@@ -6,6 +6,8 @@ import 'package:studio/models/note.dart';
 import 'package:studio/models/question.dart';
 import 'package:studio/models/subject.dart';
 
+import 'models/book.dart';
+
 part 'courses_store.g.dart';
 
 // This is the class used by rest of your codebase
@@ -17,6 +19,7 @@ const String kSubject = 'subject';
 const String kSubjects = 'subjects';
 const String kNotes = 'notes';
 const String kQuestions = 'questions';
+const String kBooks = 'books';
 const String kCounterIncrement = 'increment';
 const String kCounterDecrease = 'decrease';
 
@@ -26,8 +29,8 @@ abstract class _CoursesStore with Store {
   final CollectionReference _subjects =
       Firestore.instance.collection('subjects');
   final CollectionReference _notes = Firestore.instance.collection('notes');
-  final CollectionReference _questions =
-      Firestore.instance.collection('questions');
+  final CollectionReference _questions = Firestore.instance.collection('questions');
+  final CollectionReference _books = Firestore.instance.collection('books');
 
   @observable
   ObservableMap<String, dynamic> loading = ObservableMap.of({});
@@ -46,6 +49,9 @@ abstract class _CoursesStore with Store {
 
   @observable
   ObservableList<Question> questions = ObservableList<Question>();
+
+  @observable
+  ObservableList<Book> books = ObservableList<Book>();
 
   void addLoading(String id) {
     loading[id] = true;
@@ -73,6 +79,10 @@ abstract class _CoursesStore with Store {
   @computed
   bool get isQuestionsLoading =>
       loading[kQuestions] != null ? loading[kQuestions] : false;
+
+  @computed
+  bool get isBooksLoading =>
+      loading[kBooks] != null ? loading[kBooks] : false;
 
   @action
   Future<void> saveCourse(
@@ -118,6 +128,27 @@ abstract class _CoursesStore with Store {
     await doc.setData(data, merge: true);
     stopLoading(kNotes);
     loadNotes(note.subjectId);
+  }
+
+  @action
+  Future<void> saveBook(Book book) async {
+    addLoading(kBooks);
+    DocumentReference doc;
+    var data = Map<String, Object>();
+    data['title'] = book.title;
+    data['titleDb'] = book.titleDb;
+    data['updated'] = DateTime.now();
+    data['courseId'] = book.courseId;
+    data['usersId'] = Globals.userId;
+    if(book.id == null) {
+      data['created'] = DateTime.now();
+      doc = _books.document();
+    } else {
+      doc = _books.document(book.id);
+    }
+    await doc.setData(data, merge: true);
+    stopLoading(kBooks);
+    loadBooks(book.courseId);
   }
 
   @action
@@ -183,6 +214,7 @@ abstract class _CoursesStore with Store {
     });*/
   }
 
+  @action
   Future<void> deleteCourse(courseId) async {
     addLoading(kCourse);
     await _notes
@@ -209,6 +241,14 @@ abstract class _CoursesStore with Store {
         await doc.reference.delete();
       });
     });
+    await _books
+        .where('courseId', isEqualTo: courseId)
+        .getDocuments()
+        .then((snapshot) {
+      snapshot.documents.forEach((doc) async {
+        await doc.reference.delete();
+      });
+    });
     await _courses.document(courseId).get().then((doc) async {
       await doc.reference.delete();
     });
@@ -216,6 +256,7 @@ abstract class _CoursesStore with Store {
     loadCourses();
   }
 
+  @action
   Future<void> deleteSubject(subjectId, courseId) async {
     addLoading(kSubjects);
     _notes
@@ -241,10 +282,17 @@ abstract class _CoursesStore with Store {
     stopLoading(kSubjects);
   }
 
-  Future<void> deleteNote(String id) async {
-
+  @action
+  Future<void> deleteNote(String id, Function callback) async {
+    addLoading(kNotes);
+    print("delete note $id");
+    await _notes.document(id).delete();
+    stopLoading(kNotes);
+    if(callback != null)
+      callback();
   }
 
+  @action
   Future<void> alterCourseSubjects(courseId, op) async {
     var course = await _courses.document(courseId).get();
     print("subjectsCount ${course.data['subjectsCount']}");
@@ -255,6 +303,7 @@ abstract class _CoursesStore with Store {
     }, merge: true);
   }
 
+  @action
   Future<void> loadCourses() async {
     print("load courses");
     addLoading(kCourses);
@@ -282,6 +331,7 @@ abstract class _CoursesStore with Store {
     });
   }
 
+  @action
   Future<void> loadCourse(String courseId) async {
     addLoading(kCourse);
     _courses.document(courseId).get().then((snapshot) {
@@ -297,6 +347,7 @@ abstract class _CoursesStore with Store {
     });
   }
 
+  @action
   Future<void> loadSubjects(String courseId) async {
     addLoading(kSubjects);
     _subjects
@@ -317,9 +368,31 @@ abstract class _CoursesStore with Store {
     });
   }
 
+  @action
+  Future<void> loadBooks(String courseId) async {
+    addLoading(kBooks);
+    books.clear();
+    _books
+        .where('courseId', isEqualTo: courseId)
+        .orderBy('titleDb')
+        .getDocuments()
+        .then((snapshot) {
+      for (var doc in snapshot.documents) {
+        Book book = Book();
+        book.id = doc.documentID;
+        book.titleDb = doc.data['titleDb'];
+        book.title = doc.data['title'];
+        book.courseId = doc.data['courseId'];
+        books.add(book);
+      }
+      stopLoading(kSubjects);
+    });
+  }
+
   Future<void> loadNotes(String subjectId) async {
     addLoading(kNotes);
     print("loadNotes $subjectId");
+    notes.clear();
     _notes
         .where('subjectId', isEqualTo: subjectId)
         //.orderBy('order')
@@ -327,9 +400,9 @@ abstract class _CoursesStore with Store {
         .getDocuments()
         .then((snapshot) {
           print(snapshot.documents.length);
-      notes.clear();
       for (var doc in snapshot.documents) {
         Note note = Note();
+        note.id = doc.documentID;
         note.subjectId = doc.data['subjectId'];
         note.courseId = doc.data['courseId'];
         note.userId = doc.data['userId'];
