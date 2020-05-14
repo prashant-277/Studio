@@ -5,66 +5,97 @@ import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:studio/courses_store.dart';
 import 'package:studio/models/book.dart';
 import 'package:studio/models/course.dart';
+import 'package:studio/widgets/drawer.dart';
 
 import '../constants.dart';
+import 'edit_book_screen.dart';
 
 class BooksScreen extends StatefulWidget {
-
+  static String id = 'courses_screen';
   final CoursesStore store;
   final Course course;
-
-  BooksScreen(this.store, this.course);
+  const BooksScreen(this.store, this.course);
 
   @override
   _BooksScreenState createState() => _BooksScreenState();
 }
 
-class _BooksScreenState extends State<BooksScreen> {
-  final String id = "books_screen";
+class _BooksScreenState extends State<BooksScreen>
+    with SingleTickerProviderStateMixin {
+
+  int _currentIndex = 0;
+
+  @override
+  void initState() {
+    widget.store.loadBooks(widget.course.id);
+    super.initState();
+  }
+
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
-      backgroundColor: kLightGrey,
-      appBar: AppBar(
-        iconTheme: IconThemeData(color: kDarkBlue),
-        centerTitle: true,
-        elevation: 0,
-        title: Padding(
-          padding: const EdgeInsets.all(18.0),
-          child: Text(
-            widget.course.name + " books",
+        backgroundColor: kLightGrey,
+        appBar: AppBar(
+          iconTheme: IconThemeData(color: kDarkBlue),
+          centerTitle: true,
+          elevation: 0,
+          title: Padding(
+            padding: const EdgeInsets.all(18.0),
+            child: Text(
+              'My courses',
+            ),
           ),
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        child: const Icon(
-          Icons.add,
-          color: Colors.white,
+        drawer: MainDrawer(widget.store),
+        floatingActionButton: FloatingActionButton(
+          child: const Icon(
+            Icons.add,
+            color: Colors.white,
+          ),
+          backgroundColor: kPrimaryColor,
+          onPressed: () {
+            Navigator.pushNamed(context, EditBookScreen.id);
+          },
         ),
-        backgroundColor: kPrimaryColor,
-        onPressed: () {
-          //Navigator.pushNamed(context, EditCourseScreen.id);
-        },
-      ),
-      body: SafeArea(
-          child: Column(
-            children: <Widget>[
-              SizedBox(
-                height: 20,
-              ),
-              Expanded(
-                child: BooksItemsView(widget.store),
-              )
-            ],
-          )),
+        body: BooksView(widget.store)
     );
   }
 }
 
-class BooksItemsView extends StatelessWidget {
+class BooksView extends StatefulWidget {
+
   final CoursesStore store;
-  const BooksItemsView(this.store);
+  BooksView(this.store);
+
+  @override
+  _BooksViewState createState() => _BooksViewState();
+}
+
+class _BooksViewState extends State<BooksView> {
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Column(
+        children: <Widget>[
+          SizedBox(
+            height: 20,
+          ),
+          Expanded(
+            child: BookItemsView(widget.store),
+          )
+        ],
+      ),
+    );
+  }
+}
+
+
+class BookItemsView extends StatelessWidget {
+  const BookItemsView(this.store);
+
+  final CoursesStore store;
 
   @override
   Widget build(BuildContext context) => Observer(builder: (_) {
@@ -84,18 +115,15 @@ class BooksItemsView extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(
-                'No books yet for this course',
+                'No courses yet, let\'s start with the first one!',
                 style: TextStyle(
                   fontSize: 18,
                 ),
               ),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(18.0),
-            child: Image(
-              image: AssetImage('assets/images/book.png'),
-            ),
+          Image(
+            image: AssetImage('assets/images/study.png'),
           ),
           Expanded(
             child: Container(),
@@ -131,6 +159,14 @@ class BooksItemsView extends StatelessWidget {
               margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 0),
               child: ListTile(
                 contentPadding: const EdgeInsets.symmetric(vertical: 4, horizontal: 10),
+                onTap: () {
+
+                },
+
+                trailing: const Icon(
+                  Icons.chevron_right,
+                  color: kDarkBlue,
+                ),
                 title: Container(
                   child: Text(
                     item.title,

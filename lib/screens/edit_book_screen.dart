@@ -3,40 +3,35 @@ import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:line_awesome_icons/line_awesome_icons.dart';
 import 'package:studio/models/course.dart';
-import 'package:studio/models/subject.dart';
+import 'package:studio/models/book.dart';
 import 'package:studio/widgets/buttons.dart';
 
 import '../constants.dart';
 import '../courses_store.dart';
 
-class EditSubjectScreen extends StatefulWidget {
-  static final id = 'edit_subject_screen';
-  CoursesStore store;
-  Course course;
-  Subject data;
+class EditBookScreen extends StatefulWidget {
+  static final id = 'edit_book_screen';
+  final CoursesStore store;
+  final Course course;
+  final Book data;
 
-  EditSubjectScreen(CoursesStore store, Course course, Subject data)
-  {
-    this.store = store;
-    this.course = course;
-    this.data = data;
-  }
+  EditBookScreen(this.store, this.course, this.data);
 
   @override
-  _EditSubjectScreenState createState() => _EditSubjectScreenState();
+  _EditBookScreenState createState() => _EditBookScreenState();
 }
 
-class _EditSubjectScreenState extends State<EditSubjectScreen> {
+class _EditBookScreenState extends State<EditBookScreen> {
   String name;
-  String title = 'Add subject';
+  String title = 'Add book';
   TextEditingController textCtrl = TextEditingController();
 
   @override
   void initState() {
     if(widget.data != null) {
-      textCtrl.text = widget.data.name;
-      name = widget.data.name;
-      title = 'Edit subject';
+      textCtrl.text = widget.data.title;
+      name = widget.data.title;
+      title = 'Edit book';
     }
     super.initState();
   }
@@ -58,9 +53,9 @@ class _EditSubjectScreenState extends State<EditSubjectScreen> {
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 16),
                 child: Text(
-                    title + ':',
+                  title + ':',
                   style: TextStyle(
-                    fontSize: 18
+                      fontSize: 18
                   ),
                 ),
               ),
@@ -81,7 +76,7 @@ class _EditSubjectScreenState extends State<EditSubjectScreen> {
                       borderSide: BorderSide(width: 0, color: Colors.white),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    hintText: 'Subject name',
+                    hintText: 'Book name',
                     fillColor: Colors.white,
                     filled: true,
                     contentPadding: EdgeInsets.all(8),
@@ -96,11 +91,15 @@ class _EditSubjectScreenState extends State<EditSubjectScreen> {
               Padding(
                 padding: const EdgeInsets.fromLTRB(0, 20, 0, 10),
                 child: PrimaryButton(
-                  'Save', () {
-                    var id = widget.data == null ? null : widget.data.id;
-                    widget.store.saveSubject(id: id, name: name, courseId: widget.course.id);
-                    Navigator.pop(context);
-                  }
+                    'Save', () {
+                  var id = widget.data == null ? null : widget.data.id;
+                  Book book = Book();
+                  book.id = id;
+                  book.title = name;
+                  book.courseId = widget.course.id;
+                  widget.store.saveBook(book);
+                  Navigator.pop(context);
+                }
                 ),
               ),
             ],

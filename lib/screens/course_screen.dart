@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:line_awesome_icons/line_awesome_icons.dart';
 import 'package:mobx/mobx.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
@@ -10,10 +11,16 @@ import 'package:studio/models/subject.dart';
 import 'package:studio/screens/books_screen.dart';
 import 'package:studio/screens/edit_subject_screen.dart';
 import 'package:studio/screens/subject_screen.dart';
+import 'package:studio/widgets/main_navigation_bar.dart';
 
 import '../constants.dart';
 import 'courses_screen.dart';
+import 'edit_book_screen.dart';
 import 'edit_course_screen.dart';
+
+const int kActionEdit = 1;
+const int kActionBooks = 2;
+const int kActionDelete = 3;
 
 class CourseScreen extends StatefulWidget {
   final CoursesStore store;
@@ -41,101 +48,128 @@ class _CourseScreenState extends State<CourseScreen>
       appBar: AppBar(
         centerTitle: true,
         elevation: 0,
-        /*leading: FlatButton(
-          child: Icon(
-              LineAwesomeIcons.bars,
-            color: kDarkBlue,
-          ),
-          onPressed: () {
-            print("menu");
-          },
-        ),*/
         iconTheme: IconThemeData(color: kDarkBlue),
         title: CourseTitle(widget.store, widget.course),
         backgroundColor: kLightGrey,
         actions: <Widget>[
-          FlatButton(
-            child: Icon(Icons.more_vert),
-            onPressed: () {
-              showModalBottomSheet(
-                  context: context,
-                  builder: (BuildContext bc) {
-                    return Container(
-                      child: new Wrap(
-                        children: <Widget>[
-                          new ListTile(
-                              leading: new Icon(Icons.edit),
-                              title: new Text('Edit course'),
-                              onTap: () {
-                                Navigator.pop(context);
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => EditCourseScreen(
-                                            widget.store, widget.course)));
-                              }),
-                          new ListTile(
-                            leading: new Icon(
-                              Icons.delete_forever,
-                              color: Colors.red,
-                            ),
-                            title: new Text(
-                              'Delete course',
-                              style: TextStyle(
-                                  color: Colors.red,
-                                  fontWeight: FontWeight.w600),
-                            ),
-                            onTap: () {
+          PopupMenuButton<int>(
+            onSelected: (int) {
+              switch(int) {
+                case kActionEdit:
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => EditCourseScreen(
+                              widget.store, widget.course)));
+                  break;
+                case kActionDelete:
+                  showDialog(
+                      context: context,
+                      builder: (_) => AlertDialog(
+                        title: Text('Confirm'),
+                        content: Text(
+                            'Do you really want to delete '
+                                'course ${widget.course.name} and all '
+                                'its subjects, notes and questions?'),
+                        actions: <Widget>[
+                          FlatButton(
+                            onPressed: () {
                               Navigator.pop(context);
-                              showDialog(
-                                  context: context,
-                                  builder: (_) => AlertDialog(
-                                        title: Text('Confirm'),
-                                        content: Text(
-                                            'Do you really want to delete '
-                                            'course ${widget.course.name} and all '
-                                            'its subjects, notes and questions?'),
-                                        actions: <Widget>[
-                                          FlatButton(
-                                            onPressed: () {
-                                              Navigator.pop(context);
-                                            },
-                                            child: Text('No'),
-                                          ),
-                                          FlatButton(
-                                            child: Text('Yes'),
-                                            textColor: Colors.red,
-                                            onPressed: () async {
-                                              Navigator.pop(context);
-                                              await widget.store.deleteCourse(
-                                                  widget.course.id);
-                                              Navigator.pop(context);
-                                            },
-                                          )
-                                        ],
-                                      ));
                             },
+                            child: Text('No'),
                           ),
+                          FlatButton(
+                            child: Text('Yes'),
+                            textColor: Colors.red,
+                            onPressed: () async {
+                              Navigator.pop(context);
+                              await widget.store.deleteCourse(
+                                  widget.course.id);
+                              Navigator.pop(context);
+                            },
+                          )
                         ],
-                      ),
-                    );
-                  });
+                      ));
+                  break;
+                case kActionBooks:
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => BooksScreen(widget.store, widget.course)));
+                  break;
+              }
             },
-          )
+            offset: Offset(0, 90),
+            elevation: 20,
+            itemBuilder: (context) => [
+              PopupMenuItem(
+                value: kActionBooks,
+                child: Text(
+                  "Books",
+                  style: TextStyle(
+                    color: kDarkGrey,
+                  ),
+
+                ),
+              ),
+              PopupMenuItem(
+                value: kActionEdit,
+                child: Text(
+                  "Edit course",
+                  style: TextStyle(
+                      color: kDarkGrey,
+                  ),
+
+                ),
+              ),
+              PopupMenuItem(
+                value: kActionDelete,
+                child: Text(
+                  "Delete course",
+                  style: TextStyle(
+                    color: Colors.red,
+                  ),
+
+                ),
+              ),
+            ],
+            child: Icon(Icons.more_vert),
+          ),
+
         ],
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add),
-        backgroundColor: kPrimaryColor,
-        onPressed: () {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) =>
-                      EditSubjectScreen(widget.store, widget.course, null)));
-        },
-      ),
+      floatingActionButton: SpeedDial(
+          backgroundColor: kPrimaryColor,
+          foregroundColor: Colors.white,
+          child: Icon(LineAwesomeIcons.plus),
+          children: [
+            SpeedDialChild(
+              child: Icon(Icons.class_),
+              backgroundColor: kPrimaryColor,
+              label: 'Add subject',
+              labelStyle: TextStyle(fontSize: 18.0),
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => EditSubjectScreen(
+                            widget.store, widget.course, null)));
+              },
+            ),
+            SpeedDialChild(
+              child: Icon(LineAwesomeIcons.book),
+              backgroundColor: kPrimaryColor,
+              label: 'Add book',
+              labelStyle: TextStyle(fontSize: 18.0),
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            EditBookScreen(widget.store, widget.course, null)));
+              },
+            ),
+          ]),
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -249,46 +283,6 @@ class _CourseScreenState extends State<CourseScreen>
             )
           ],
         ),
-      ),
-      bottomNavigationBar: BottomAppBar(
-        child: Row(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: <Widget>[
-            Expanded(
-              child: FlatButton(
-                child: Icon(
-                  LineAwesomeIcons.list,
-                  color: Colors.white,
-                ),
-                onPressed: () {
-                  setState(() {
-
-                  });
-                },
-              ),
-            ),
-            Expanded(
-              child: FlatButton(
-                child: Icon(
-                  LineAwesomeIcons.book,
-                  color: Colors.white,
-                ),
-                onPressed: () {
-                  print("carousel");
-                  setState(() {
-                    Navigator.push(context, MaterialPageRoute(
-                      builder: (context) => BooksScreen(widget.store, widget.course)
-                    ));
-                  });
-                },
-              ),
-            ),
-          ],
-        ),
-        shape: CircularNotchedRectangle(),
-        color: kDarkGrey,
-        elevation: 10,
       ),
     );
   }

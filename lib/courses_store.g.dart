@@ -12,160 +12,152 @@ mixin _$CoursesStore on _CoursesStore, Store {
   Computed<bool> _$isCourseLoadingComputed;
 
   @override
-  bool get isCourseLoading => (_$isCourseLoadingComputed ??=
-          Computed<bool>(() => super.isCourseLoading))
-      .value;
+  bool get isCourseLoading =>
+      (_$isCourseLoadingComputed ??= Computed<bool>(() => super.isCourseLoading,
+              name: '_CoursesStore.isCourseLoading'))
+          .value;
   Computed<bool> _$isCoursesLoadingComputed;
 
   @override
-  bool get isCoursesLoading => (_$isCoursesLoadingComputed ??=
-          Computed<bool>(() => super.isCoursesLoading))
+  bool get isCoursesLoading => (_$isCoursesLoadingComputed ??= Computed<bool>(
+          () => super.isCoursesLoading,
+          name: '_CoursesStore.isCoursesLoading'))
       .value;
   Computed<bool> _$isSubjectsLoadingComputed;
 
   @override
-  bool get isSubjectsLoading => (_$isSubjectsLoadingComputed ??=
-          Computed<bool>(() => super.isSubjectsLoading))
+  bool get isSubjectsLoading => (_$isSubjectsLoadingComputed ??= Computed<bool>(
+          () => super.isSubjectsLoading,
+          name: '_CoursesStore.isSubjectsLoading'))
       .value;
   Computed<bool> _$isNotesLoadingComputed;
 
   @override
   bool get isNotesLoading =>
-      (_$isNotesLoadingComputed ??= Computed<bool>(() => super.isNotesLoading))
+      (_$isNotesLoadingComputed ??= Computed<bool>(() => super.isNotesLoading,
+              name: '_CoursesStore.isNotesLoading'))
           .value;
   Computed<bool> _$isQuestionsLoadingComputed;
 
   @override
   bool get isQuestionsLoading => (_$isQuestionsLoadingComputed ??=
-          Computed<bool>(() => super.isQuestionsLoading))
+          Computed<bool>(() => super.isQuestionsLoading,
+              name: '_CoursesStore.isQuestionsLoading'))
       .value;
   Computed<bool> _$isBooksLoadingComputed;
 
   @override
   bool get isBooksLoading =>
-      (_$isBooksLoadingComputed ??= Computed<bool>(() => super.isBooksLoading))
+      (_$isBooksLoadingComputed ??= Computed<bool>(() => super.isBooksLoading,
+              name: '_CoursesStore.isBooksLoading'))
           .value;
 
   final _$loadingAtom = Atom(name: '_CoursesStore.loading');
 
   @override
   ObservableMap<String, dynamic> get loading {
-    _$loadingAtom.context.enforceReadPolicy(_$loadingAtom);
-    _$loadingAtom.reportObserved();
+    _$loadingAtom.reportRead();
     return super.loading;
   }
 
   @override
   set loading(ObservableMap<String, dynamic> value) {
-    _$loadingAtom.context.conditionallyRunInAction(() {
+    _$loadingAtom.reportWrite(value, super.loading, () {
       super.loading = value;
-      _$loadingAtom.reportChanged();
-    }, _$loadingAtom, name: '${_$loadingAtom.name}_set');
+    });
   }
 
   final _$courseAtom = Atom(name: '_CoursesStore.course');
 
   @override
   Course get course {
-    _$courseAtom.context.enforceReadPolicy(_$courseAtom);
-    _$courseAtom.reportObserved();
+    _$courseAtom.reportRead();
     return super.course;
   }
 
   @override
   set course(Course value) {
-    _$courseAtom.context.conditionallyRunInAction(() {
+    _$courseAtom.reportWrite(value, super.course, () {
       super.course = value;
-      _$courseAtom.reportChanged();
-    }, _$courseAtom, name: '${_$courseAtom.name}_set');
+    });
   }
 
   final _$coursesAtom = Atom(name: '_CoursesStore.courses');
 
   @override
   ObservableList<Course> get courses {
-    _$coursesAtom.context.enforceReadPolicy(_$coursesAtom);
-    _$coursesAtom.reportObserved();
+    _$coursesAtom.reportRead();
     return super.courses;
   }
 
   @override
   set courses(ObservableList<Course> value) {
-    _$coursesAtom.context.conditionallyRunInAction(() {
+    _$coursesAtom.reportWrite(value, super.courses, () {
       super.courses = value;
-      _$coursesAtom.reportChanged();
-    }, _$coursesAtom, name: '${_$coursesAtom.name}_set');
+    });
   }
 
   final _$subjectsAtom = Atom(name: '_CoursesStore.subjects');
 
   @override
   ObservableList<Subject> get subjects {
-    _$subjectsAtom.context.enforceReadPolicy(_$subjectsAtom);
-    _$subjectsAtom.reportObserved();
+    _$subjectsAtom.reportRead();
     return super.subjects;
   }
 
   @override
   set subjects(ObservableList<Subject> value) {
-    _$subjectsAtom.context.conditionallyRunInAction(() {
+    _$subjectsAtom.reportWrite(value, super.subjects, () {
       super.subjects = value;
-      _$subjectsAtom.reportChanged();
-    }, _$subjectsAtom, name: '${_$subjectsAtom.name}_set');
+    });
   }
 
   final _$notesAtom = Atom(name: '_CoursesStore.notes');
 
   @override
   ObservableList<Note> get notes {
-    _$notesAtom.context.enforceReadPolicy(_$notesAtom);
-    _$notesAtom.reportObserved();
+    _$notesAtom.reportRead();
     return super.notes;
   }
 
   @override
   set notes(ObservableList<Note> value) {
-    _$notesAtom.context.conditionallyRunInAction(() {
+    _$notesAtom.reportWrite(value, super.notes, () {
       super.notes = value;
-      _$notesAtom.reportChanged();
-    }, _$notesAtom, name: '${_$notesAtom.name}_set');
+    });
   }
 
   final _$questionsAtom = Atom(name: '_CoursesStore.questions');
 
   @override
   ObservableList<Question> get questions {
-    _$questionsAtom.context.enforceReadPolicy(_$questionsAtom);
-    _$questionsAtom.reportObserved();
+    _$questionsAtom.reportRead();
     return super.questions;
   }
 
   @override
   set questions(ObservableList<Question> value) {
-    _$questionsAtom.context.conditionallyRunInAction(() {
+    _$questionsAtom.reportWrite(value, super.questions, () {
       super.questions = value;
-      _$questionsAtom.reportChanged();
-    }, _$questionsAtom, name: '${_$questionsAtom.name}_set');
+    });
   }
 
   final _$booksAtom = Atom(name: '_CoursesStore.books');
 
   @override
   ObservableList<Book> get books {
-    _$booksAtom.context.enforceReadPolicy(_$booksAtom);
-    _$booksAtom.reportObserved();
+    _$booksAtom.reportRead();
     return super.books;
   }
 
   @override
   set books(ObservableList<Book> value) {
-    _$booksAtom.context.conditionallyRunInAction(() {
+    _$booksAtom.reportWrite(value, super.books, () {
       super.books = value;
-      _$booksAtom.reportChanged();
-    }, _$booksAtom, name: '${_$booksAtom.name}_set');
+    });
   }
 
-  final _$saveCourseAsyncAction = AsyncAction('saveCourse');
+  final _$saveCourseAsyncAction = AsyncAction('_CoursesStore.saveCourse');
 
   @override
   Future<void> saveCourse(
@@ -174,21 +166,21 @@ mixin _$CoursesStore on _CoursesStore, Store {
         super.saveCourse(id: id, name: name, icon: icon, callback: callback));
   }
 
-  final _$saveNoteAsyncAction = AsyncAction('saveNote');
+  final _$saveNoteAsyncAction = AsyncAction('_CoursesStore.saveNote');
 
   @override
   Future<void> saveNote(Note note) {
     return _$saveNoteAsyncAction.run(() => super.saveNote(note));
   }
 
-  final _$saveBookAsyncAction = AsyncAction('saveBook');
+  final _$saveBookAsyncAction = AsyncAction('_CoursesStore.saveBook');
 
   @override
   Future<void> saveBook(Book book) {
     return _$saveBookAsyncAction.run(() => super.saveBook(book));
   }
 
-  final _$saveSubjectAsyncAction = AsyncAction('saveSubject');
+  final _$saveSubjectAsyncAction = AsyncAction('_CoursesStore.saveSubject');
 
   @override
   Future<void> saveSubject(
@@ -197,14 +189,14 @@ mixin _$CoursesStore on _CoursesStore, Store {
         id: id, name: name, courseId: courseId, callback: callback));
   }
 
-  final _$deleteCourseAsyncAction = AsyncAction('deleteCourse');
+  final _$deleteCourseAsyncAction = AsyncAction('_CoursesStore.deleteCourse');
 
   @override
   Future<void> deleteCourse(dynamic courseId) {
     return _$deleteCourseAsyncAction.run(() => super.deleteCourse(courseId));
   }
 
-  final _$deleteSubjectAsyncAction = AsyncAction('deleteSubject');
+  final _$deleteSubjectAsyncAction = AsyncAction('_CoursesStore.deleteSubject');
 
   @override
   Future<void> deleteSubject(dynamic subjectId, dynamic courseId) {
@@ -212,14 +204,15 @@ mixin _$CoursesStore on _CoursesStore, Store {
         .run(() => super.deleteSubject(subjectId, courseId));
   }
 
-  final _$deleteNoteAsyncAction = AsyncAction('deleteNote');
+  final _$deleteNoteAsyncAction = AsyncAction('_CoursesStore.deleteNote');
 
   @override
   Future<void> deleteNote(String id, Function callback) {
     return _$deleteNoteAsyncAction.run(() => super.deleteNote(id, callback));
   }
 
-  final _$alterCourseSubjectsAsyncAction = AsyncAction('alterCourseSubjects');
+  final _$alterCourseSubjectsAsyncAction =
+      AsyncAction('_CoursesStore.alterCourseSubjects');
 
   @override
   Future<void> alterCourseSubjects(dynamic courseId, dynamic op) {
@@ -227,28 +220,28 @@ mixin _$CoursesStore on _CoursesStore, Store {
         .run(() => super.alterCourseSubjects(courseId, op));
   }
 
-  final _$loadCoursesAsyncAction = AsyncAction('loadCourses');
+  final _$loadCoursesAsyncAction = AsyncAction('_CoursesStore.loadCourses');
 
   @override
   Future<void> loadCourses() {
     return _$loadCoursesAsyncAction.run(() => super.loadCourses());
   }
 
-  final _$loadCourseAsyncAction = AsyncAction('loadCourse');
+  final _$loadCourseAsyncAction = AsyncAction('_CoursesStore.loadCourse');
 
   @override
   Future<void> loadCourse(String courseId) {
     return _$loadCourseAsyncAction.run(() => super.loadCourse(courseId));
   }
 
-  final _$loadSubjectsAsyncAction = AsyncAction('loadSubjects');
+  final _$loadSubjectsAsyncAction = AsyncAction('_CoursesStore.loadSubjects');
 
   @override
   Future<void> loadSubjects(String courseId) {
     return _$loadSubjectsAsyncAction.run(() => super.loadSubjects(courseId));
   }
 
-  final _$loadBooksAsyncAction = AsyncAction('loadBooks');
+  final _$loadBooksAsyncAction = AsyncAction('_CoursesStore.loadBooks');
 
   @override
   Future<void> loadBooks(String courseId) {
@@ -257,8 +250,20 @@ mixin _$CoursesStore on _CoursesStore, Store {
 
   @override
   String toString() {
-    final string =
-        'loading: ${loading.toString()},course: ${course.toString()},courses: ${courses.toString()},subjects: ${subjects.toString()},notes: ${notes.toString()},questions: ${questions.toString()},books: ${books.toString()},isCourseLoading: ${isCourseLoading.toString()},isCoursesLoading: ${isCoursesLoading.toString()},isSubjectsLoading: ${isSubjectsLoading.toString()},isNotesLoading: ${isNotesLoading.toString()},isQuestionsLoading: ${isQuestionsLoading.toString()},isBooksLoading: ${isBooksLoading.toString()}';
-    return '{$string}';
+    return '''
+loading: ${loading},
+course: ${course},
+courses: ${courses},
+subjects: ${subjects},
+notes: ${notes},
+questions: ${questions},
+books: ${books},
+isCourseLoading: ${isCourseLoading},
+isCoursesLoading: ${isCoursesLoading},
+isSubjectsLoading: ${isSubjectsLoading},
+isNotesLoading: ${isNotesLoading},
+isQuestionsLoading: ${isQuestionsLoading},
+isBooksLoading: ${isBooksLoading}
+    ''';
   }
 }

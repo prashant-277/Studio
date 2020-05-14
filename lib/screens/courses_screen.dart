@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:line_awesome_icons/line_awesome_icons.dart';
 import 'package:mobx/mobx.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:studio/courses_store.dart';
 import 'package:studio/main.dart';
 import 'package:studio/models/course.dart';
 import 'package:studio/screens/edit_course_screen.dart';
+import 'package:studio/widgets/drawer.dart';
+import 'package:studio/widgets/main_navigation_bar.dart';
 
 import '../constants.dart';
 import 'course_screen.dart';
@@ -23,16 +26,35 @@ class CoursesScreen extends StatefulWidget {
 
 class _CoursesScreenState extends State<CoursesScreen>
     with SingleTickerProviderStateMixin {
+
+  int _currentIndex = 0;
+
   @override
   void initState() {
     widget.store.loadCourses();
     super.initState();
   }
 
+
   @override
-  Widget build(BuildContext context) => Scaffold(
+  Widget build(BuildContext context) {
+    var _views = [
+      CoursesView(widget.store),
+      Container(
+        child: Text("Purchase"),
+      ),
+      Container(
+        child: Text("Tests"),
+      ),
+      Container(
+        child: Text("Stats"),
+      ),
+    ];
+
+    return Scaffold(
         backgroundColor: kLightGrey,
         appBar: AppBar(
+          iconTheme: IconThemeData(color: kDarkBlue),
           centerTitle: true,
           elevation: 0,
           title: Padding(
@@ -42,6 +64,7 @@ class _CoursesScreenState extends State<CoursesScreen>
             ),
           ),
         ),
+        drawer: MainDrawer(widget.store),
         floatingActionButton: FloatingActionButton(
           child: const Icon(
             Icons.add,
@@ -52,8 +75,25 @@ class _CoursesScreenState extends State<CoursesScreen>
             Navigator.pushNamed(context, EditCourseScreen.id);
           },
         ),
-        body: SafeArea(
-            child: Column(
+        body: CoursesView(widget.store)
+    );
+  }
+}
+
+class CoursesView extends StatefulWidget {
+
+  final CoursesStore store;
+  CoursesView(this.store);
+
+  @override
+  _CoursesViewState createState() => _CoursesViewState();
+}
+
+class _CoursesViewState extends State<CoursesView> {
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+        child: Column(
           children: <Widget>[
             SizedBox(
               height: 20,
@@ -62,9 +102,11 @@ class _CoursesScreenState extends State<CoursesScreen>
               child: CourseItemsView(widget.store),
             )
           ],
-        )),
-      );
+        ),
+    );
+  }
 }
+
 
 class CourseItemsView extends StatelessWidget {
   const CourseItemsView(this.store);

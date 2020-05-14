@@ -34,6 +34,7 @@ dependencies:
   drag_list: ^1.0.8
   carousel_slider: ^2.1.0
   flutter_speed_dial: ^1.2.5
+  flutter_launcher_icons: ^0.7.5
 
 
 dev_dependencies:
@@ -42,6 +43,10 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
+flutter_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/app/icon.png"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -58,6 +63,7 @@ flutter:
   assets:
     - assets/images/
     - assets/icons/
+    - assets/app/
 
   fonts:
     - family: Baloo Paaji 2

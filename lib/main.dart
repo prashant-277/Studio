@@ -70,12 +70,10 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget getScreen() {
     if (auth.status == kStatusLoggedOut) return LoginSignupScreen(auth);
 
-    if (auth.status == kStatusLoggedIn) return HomeScreen(auth);
+    if (auth.status == kStatusLoggedIn) return CoursesScreen(coursesStore);
 
-    return SafeArea(
-      child: Text(
-        'Status is ${auth.status}',
-      ),
+    return Scaffold(
+      body: Container(),
     );
   }
 

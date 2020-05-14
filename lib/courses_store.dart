@@ -385,7 +385,7 @@ abstract class _CoursesStore with Store {
         book.courseId = doc.data['courseId'];
         books.add(book);
       }
-      stopLoading(kSubjects);
+      stopLoading(kBooks);
     });
   }
 

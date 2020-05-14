@@ -13,24 +13,23 @@ mixin _$AuthStore on _AuthStore, Store {
 
   @override
   int get status {
-    _$statusAtom.context.enforceReadPolicy(_$statusAtom);
-    _$statusAtom.reportObserved();
+    _$statusAtom.reportRead();
     return super.status;
   }
 
   @override
   set status(int value) {
-    _$statusAtom.context.conditionallyRunInAction(() {
+    _$statusAtom.reportWrite(value, super.status, () {
       super.status = value;
-      _$statusAtom.reportChanged();
-    }, _$statusAtom, name: '${_$statusAtom.name}_set');
+    });
   }
 
   final _$_AuthStoreActionController = ActionController(name: '_AuthStore');
 
   @override
   void loggedIn(dynamic userId) {
-    final _$actionInfo = _$_AuthStoreActionController.startAction();
+    final _$actionInfo =
+        _$_AuthStoreActionController.startAction(name: '_AuthStore.loggedIn');
     try {
       return super.loggedIn(userId);
     } finally {
@@ -40,7 +39,8 @@ mixin _$AuthStore on _AuthStore, Store {
 
   @override
   void loggedOut() {
-    final _$actionInfo = _$_AuthStoreActionController.startAction();
+    final _$actionInfo =
+        _$_AuthStoreActionController.startAction(name: '_AuthStore.loggedOut');
     try {
       return super.loggedOut();
     } finally {
@@ -50,7 +50,8 @@ mixin _$AuthStore on _AuthStore, Store {
 
   @override
   String toString() {
-    final string = 'status: ${status.toString()}';
-    return '{$string}';
+    return '''
+status: ${status}
+    ''';
   }
 }
