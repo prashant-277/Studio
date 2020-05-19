@@ -3,33 +3,37 @@ import 'package:line_awesome_icons/line_awesome_icons.dart';
 import 'package:studio/courses_store.dart';
 import 'package:studio/models/book.dart';
 import 'package:studio/models/course.dart';
-import 'package:studio/models/note.dart';
+import 'package:studio/models/question.dart';
 import 'package:studio/models/subject.dart';
 import 'package:studio/widgets/buttons.dart';
 
 import '../constants.dart';
 
-class NoteEdit extends StatefulWidget {
+class QuestionEdit extends StatefulWidget {
   final CoursesStore store;
   final Course course;
   final Subject subject;
-  final Note data;
+  final Question data;
 
-  NoteEdit(this.store, this.course, this.subject, this.data);
+  QuestionEdit(this.store, this.course, this.subject, this.data);
 
   @override
-  _NoteEditState createState() => _NoteEditState();
+  _QuestionEditState createState() => _QuestionEditState();
 }
 
-class _NoteEditState extends State<NoteEdit> {
+class _QuestionEditState extends State<QuestionEdit> {
   String text = '';
+  String answer = '';
   TextEditingController textCtrl = TextEditingController();
+  TextEditingController answerCtrl = TextEditingController();
 
   @override
   void initState() {
     if(widget.data != null) {
       textCtrl.text = widget.data.text;
       text = widget.data.text;
+      answerCtrl.text = widget.data.answer;
+      answer = widget.data.answer;
     }
     super.initState();
   }
@@ -42,8 +46,8 @@ class _NoteEditState extends State<NoteEdit> {
       appBar: AppBar(
         iconTheme: IconThemeData(color: kDarkBlue),
         centerTitle: true,
-        title: Text('Edit note' //widget.subject.name,
-            ),
+        title: Text('Edit question' //widget.subject.name,
+        ),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -54,7 +58,7 @@ class _NoteEditState extends State<NoteEdit> {
               children: <Widget>[
                 Padding(
                   padding: EdgeInsets.all(10),
-                  child: Text('Enter your note:'),
+                  child: Text('Enter question:'),
                 ),
                 Container(
                   decoration: BoxDecoration(
@@ -99,6 +103,57 @@ class _NoteEditState extends State<NoteEdit> {
                     onChanged: (text) {
                       setState(() {
                         this.text = text;
+                      });
+                    },
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.all(10),
+                  child: Text('Enter the answer:'),
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withAlpha(10),
+                          blurRadius: 20.0,
+                          // has the effect of softening the shadow
+                          spreadRadius: 10.0,
+                          // has the effect of extending the shadow
+                          offset: Offset(
+                            0.0, // horizontal, move right 10
+                            0.0, // vertical, move down 10
+                          ),
+                        )
+                      ]),
+                  child: TextField(
+                    minLines: 2,
+                    maxLines: 4,
+                    autofocus: true,
+                    autocorrect: true,
+                    controller: answerCtrl,
+                    decoration: InputDecoration(
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white, width: 0),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(width: 0, color: Colors.white),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(width: 0, color: Colors.white),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      fillColor: Colors.white,
+                      filled: true,
+                      contentPadding: EdgeInsets.all(8),
+                    ),
+                    onChanged: (text) {
+                      setState(() {
+                        this.answer = text;
                       });
                     },
                   ),
@@ -161,15 +216,15 @@ class _NoteEditState extends State<NoteEdit> {
                           );
                         }
 
-                        Note note = widget.data;
-                        if(note == null)
-                          note = Note();
+                        Question question = widget.data;
+                        if(question == null)
+                          question = Question();
                         else
-                          note.id = widget.data.id;
-                        note.courseId = widget.course.id;
-                        note.subjectId = widget.subject.id;
-                        note.text = text.trim();
-                        widget.store.saveNote(note);
+                          question.id = widget.data.id;
+                        question.courseId = widget.course.id;
+                        question.subjectId = widget.subject.id;
+                        question.text = text.trim();
+                        widget.store.saveQuestion(question);
                         Navigator.pop(context);
                       },
                     ),

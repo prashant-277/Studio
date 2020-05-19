@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:line_awesome_icons/line_awesome_icons.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:studio/courses_store.dart';
 import 'package:studio/models/book.dart';
@@ -31,12 +32,11 @@ class _BooksScreenState extends State<BooksScreen>
     super.initState();
   }
 
-
   @override
   Widget build(BuildContext context) {
 
     return Scaffold(
-        backgroundColor: kLightGrey,
+        backgroundColor: Colors.white,
         appBar: AppBar(
           iconTheme: IconThemeData(color: kDarkBlue),
           centerTitle: true,
@@ -44,11 +44,26 @@ class _BooksScreenState extends State<BooksScreen>
           title: Padding(
             padding: const EdgeInsets.all(18.0),
             child: Text(
-              'My courses',
+              'My books',
+            ),
+          ),
+          bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(34.0),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(0, 0, 0, 8),
+              child: Center(
+                child:
+                Text(widget.course.name,
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                    color: kDarkBlue.withAlpha(200)
+                  ),
+                ),
+              ),
             ),
           ),
         ),
-        drawer: MainDrawer(widget.store),
         floatingActionButton: FloatingActionButton(
           child: const Icon(
             Icons.add,
@@ -56,46 +71,26 @@ class _BooksScreenState extends State<BooksScreen>
           ),
           backgroundColor: kPrimaryColor,
           onPressed: () {
-            Navigator.pushNamed(context, EditBookScreen.id);
+            Navigator.push(context, MaterialPageRoute(
+                builder: (context) => EditBookScreen(widget.store, widget.course, null)
+            ));
           },
         ),
-        body: BooksView(widget.store)
-    );
-  }
-}
-
-class BooksView extends StatefulWidget {
-
-  final CoursesStore store;
-  BooksView(this.store);
-
-  @override
-  _BooksViewState createState() => _BooksViewState();
-}
-
-class _BooksViewState extends State<BooksView> {
-  @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-      child: Column(
-        children: <Widget>[
-          SizedBox(
-            height: 20,
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
+            child: BookItemsView(widget.store, widget.course),
           ),
-          Expanded(
-            child: BookItemsView(widget.store),
-          )
-        ],
-      ),
+        )
     );
   }
 }
-
 
 class BookItemsView extends StatelessWidget {
-  const BookItemsView(this.store);
+  const BookItemsView(this.store, this.course);
 
   final CoursesStore store;
+  final Course course;
 
   @override
   Widget build(BuildContext context) => Observer(builder: (_) {
@@ -115,15 +110,18 @@ class BookItemsView extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(
-                'No courses yet, let\'s start with the first one!',
+                'No books yet, let\'s start with the first one!',
                 style: TextStyle(
                   fontSize: 18,
                 ),
               ),
             ),
           ),
-          Image(
-            image: AssetImage('assets/images/study.png'),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 30),
+            child: Image(
+              image: AssetImage('assets/images/book.png'),
+            ),
           ),
           Expanded(
             child: Container(),
@@ -159,13 +157,63 @@ class BookItemsView extends StatelessWidget {
               margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 0),
               child: ListTile(
                 contentPadding: const EdgeInsets.symmetric(vertical: 4, horizontal: 10),
-                onTap: () {
-
-                },
-
-                trailing: const Icon(
-                  Icons.chevron_right,
-                  color: kDarkBlue,
+                trailing: PopupMenuButton<int>(
+                  offset: Offset(0, 90),
+                  elevation: 20,
+                  onSelected: (int) {
+                    if(int == kActionEdit) {
+                      Navigator.push(context, MaterialPageRoute(
+                        builder: (context) => EditBookScreen(store, course, item)
+                      )
+                      );
+                    }
+                    if(int == kActionDelete) {
+                      showDialog(
+                          context: context,
+                          builder: (_) => AlertDialog(
+                            title: Text(item.title),
+                            content: Text('Do you really want to delete this book?'),
+                            actions: <Widget>[
+                              FlatButton(
+                                onPressed: () async {
+                                  Navigator.maybePop(context);
+                                  await store.deleteBook(item.id);
+                                  store.loadBooks(course.id);
+                                },
+                                child: Text('Delete'),
+                                textColor: Colors.red,
+                              ),
+                              FlatButton(
+                                child: Text('No'),
+                                onPressed: () async {
+                                  Navigator.maybePop(context);
+                                },
+                              )
+                            ],
+                          ));
+                    }
+                  },
+                  itemBuilder: (context) => [
+                    PopupMenuItem(
+                      value: kActionEdit,
+                      child: Text(
+                        "Edit book",
+                        style: TextStyle(
+                          color: kDarkGrey,
+                        ),
+                      ),
+                    ),
+                    PopupMenuItem(
+                      value: kActionDelete,
+                      child: Text(
+                        "Delete book",
+                        style: TextStyle(
+                          color: Colors.red,
+                        ),
+                      ),
+                    ),
+                  ],
+                  child: Icon(Icons.more_vert),
                 ),
                 title: Container(
                   child: Text(

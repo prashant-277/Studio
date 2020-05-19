@@ -183,10 +183,8 @@ mixin _$CoursesStore on _CoursesStore, Store {
   final _$saveSubjectAsyncAction = AsyncAction('_CoursesStore.saveSubject');
 
   @override
-  Future<void> saveSubject(
-      {String id, String name, String courseId, Function callback}) {
-    return _$saveSubjectAsyncAction.run(() => super.saveSubject(
-        id: id, name: name, courseId: courseId, callback: callback));
+  Future<void> saveSubject(Subject subject) {
+    return _$saveSubjectAsyncAction.run(() => super.saveSubject(subject));
   }
 
   final _$deleteCourseAsyncAction = AsyncAction('_CoursesStore.deleteCourse');
@@ -209,6 +207,13 @@ mixin _$CoursesStore on _CoursesStore, Store {
   @override
   Future<void> deleteNote(String id, Function callback) {
     return _$deleteNoteAsyncAction.run(() => super.deleteNote(id, callback));
+  }
+
+  final _$deleteBookAsyncAction = AsyncAction('_CoursesStore.deleteBook');
+
+  @override
+  Future<void> deleteBook(String id) {
+    return _$deleteBookAsyncAction.run(() => super.deleteBook(id));
   }
 
   final _$alterCourseSubjectsAsyncAction =

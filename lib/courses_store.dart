@@ -29,7 +29,8 @@ abstract class _CoursesStore with Store {
   final CollectionReference _subjects =
       Firestore.instance.collection('subjects');
   final CollectionReference _notes = Firestore.instance.collection('notes');
-  final CollectionReference _questions = Firestore.instance.collection('questions');
+  final CollectionReference _questions =
+      Firestore.instance.collection('questions');
   final CollectionReference _books = Firestore.instance.collection('books');
 
   @observable
@@ -81,8 +82,7 @@ abstract class _CoursesStore with Store {
       loading[kQuestions] != null ? loading[kQuestions] : false;
 
   @computed
-  bool get isBooksLoading =>
-      loading[kBooks] != null ? loading[kBooks] : false;
+  bool get isBooksLoading => loading[kBooks] != null ? loading[kBooks] : false;
 
   @action
   Future<void> saveCourse(
@@ -118,8 +118,9 @@ abstract class _CoursesStore with Store {
     data['updated'] = DateTime.now();
     data['subjectId'] = note.subjectId;
     data['courseId'] = note.courseId;
-    data['usersId'] = Globals.userId;
-    if(note.id == null) {
+    data['userId'] = Globals.userId;
+    data['bookmark'] = note.bookmark;
+    if (note.id == null) {
       data['created'] = DateTime.now();
       doc = _notes.document();
     } else {
@@ -131,51 +132,99 @@ abstract class _CoursesStore with Store {
   }
 
   @action
+  Future<void> bookmarkNote(String id, bool bookmark) async {
+    addLoading(kNotes);
+    DocumentReference doc = _notes.document(id);
+    var data = Map<String, dynamic>();
+    data['bookmark'] = bookmark;
+    await doc.setData(data, merge: true);
+    stopLoading(kNotes);
+  }
+
+  @action
+  Future<void> saveQuestion(Question note) async {
+    addLoading(kQuestions);
+    DocumentReference doc;
+    var data = Map<String, Object>();
+    data['text'] = note.text;
+    data['answer'] = note.answer;
+    data['updated'] = DateTime.now();
+    data['subjectId'] = note.subjectId;
+    data['courseId'] = note.courseId;
+    data['userId'] = Globals.userId;
+    if (note.id == null) {
+      data['created'] = DateTime.now();
+      doc = _questions.document();
+    } else {
+      doc = _questions.document(note.id);
+    }
+    await doc.setData(data, merge: true);
+    stopLoading(kQuestions);
+    loadQuestions(note.subjectId);
+  }
+
+  @action
   Future<void> saveBook(Book book) async {
     addLoading(kBooks);
     DocumentReference doc;
     var data = Map<String, Object>();
     data['title'] = book.title;
-    data['titleDb'] = book.titleDb;
+    data['titleDb'] = book.title.toLowerCase();
     data['updated'] = DateTime.now();
     data['courseId'] = book.courseId;
-    data['usersId'] = Globals.userId;
-    if(book.id == null) {
+    data['userId'] = Globals.userId;
+    if (book.id == null) {
       data['created'] = DateTime.now();
       doc = _books.document();
     } else {
       doc = _books.document(book.id);
     }
     await doc.setData(data, merge: true);
+
+    if (book.id != null) {
+      _subjects
+          .where('bookId', isEqualTo: book.id)
+          .getDocuments()
+          .then((value) {
+        value.documents.forEach((element) async {
+          var data = Map<String, Object>();
+          data['bookTitle'] = book.title;
+          await element.reference.setData(data, merge: true);
+        });
+        loadSubjects(book.courseId);
+      });
+    }
+
     stopLoading(kBooks);
     loadBooks(book.courseId);
   }
 
   @action
-  Future<void> saveSubject(
-      {String id, String name, String courseId, Function callback}) async {
+  Future<void> saveSubject(Subject subject) async {
     DocumentReference doc;
     var data = Map<String, Object>();
-    data['courseId'] = courseId;
-    data['name'] = name;
-    data['nameDb'] = name.toLowerCase();
+    data['courseId'] = subject.courseId;
+    data['name'] = subject.name;
+    data['nameDb'] = subject.name.toLowerCase();
+    data['bookTitle'] = subject.bookTitle;
+    data['bookId'] = subject.bookId;
     data['updated'] = DateTime.now();
-    if (id == null) {
+    if (subject.id == null) {
       doc = _subjects.document();
       data['userId'] = Globals.userId;
       data['created'] = DateTime.now();
     } else {
-      doc = _subjects.document(id);
+      doc = _subjects.document(subject.id);
     }
     doc.setData(data, merge: true);
 
-    if (id == null) {
-      await alterCourseSubjects(courseId, kCounterIncrement);
-      await loadSubjects(id);
+    if (subject.id == null) {
+      await alterCourseSubjects(subject.courseId, kCounterIncrement);
+      await loadSubjects(subject.id);
     }
 
+    await loadSubjects(subject.courseId);
     await loadCourses();
-    if (callback != null) callback();
 
     /*
     Firestore.instance.runTransaction( (Transaction tx) async {
@@ -288,8 +337,30 @@ abstract class _CoursesStore with Store {
     print("delete note $id");
     await _notes.document(id).delete();
     stopLoading(kNotes);
-    if(callback != null)
-      callback();
+    if (callback != null) callback();
+  }
+
+  @action
+  Future<void> deleteQuestion(String id, Function callback) async {
+    addLoading(kQuestions);
+    print("delete question $id");
+    await _questions.document(id).delete();
+    stopLoading(kQuestions);
+    if (callback != null) callback();
+  }
+
+  @action
+  Future<void> deleteBook(String id) async {
+    addLoading(kBooks);
+    await _notes.where('bookId', isEqualTo: id).getDocuments().then((value) {
+      value.documents.forEach((element) async {
+        var data = Map();
+        data['bookId'] = null;
+        await element.reference.setData(data, merge: true);
+      });
+    });
+    await _books.document(id).delete();
+    stopLoading(kBooks);
   }
 
   @action
@@ -352,6 +423,7 @@ abstract class _CoursesStore with Store {
     addLoading(kSubjects);
     _subjects
         .where('courseId', isEqualTo: courseId)
+        .orderBy('bookTitle')
         .orderBy('nameDb')
         .getDocuments()
         .then((snapshot) {
@@ -362,6 +434,8 @@ abstract class _CoursesStore with Store {
         subject.courseId = doc.data['courseId'];
         subject.name = doc.data['name'];
         subject.nameDb = doc.data['nameDb'];
+        subject.bookTitle = doc.data['bookTitle'];
+        subject.bookId = doc.data['bookId'];
         subjects.add(subject);
       }
       stopLoading(kSubjects);
@@ -372,8 +446,9 @@ abstract class _CoursesStore with Store {
   Future<void> loadBooks(String courseId) async {
     addLoading(kBooks);
     books.clear();
-    _books
-        .where('courseId', isEqualTo: courseId)
+    print("loadBooks req");
+    return _books
+        //.where('courseId', isEqualTo: courseId)
         .orderBy('titleDb')
         .getDocuments()
         .then((snapshot) {
@@ -385,6 +460,7 @@ abstract class _CoursesStore with Store {
         book.courseId = doc.data['courseId'];
         books.add(book);
       }
+      print("${books.length} books in db");
       stopLoading(kBooks);
     });
   }
@@ -399,7 +475,7 @@ abstract class _CoursesStore with Store {
         .orderBy('created')
         .getDocuments()
         .then((snapshot) {
-          print(snapshot.documents.length);
+      print(snapshot.documents.length);
       for (var doc in snapshot.documents) {
         Note note = Note();
         note.id = doc.documentID;
@@ -407,9 +483,34 @@ abstract class _CoursesStore with Store {
         note.courseId = doc.data['courseId'];
         note.userId = doc.data['userId'];
         note.text = doc.data['text'];
+        note.bookmark = doc.data['bookmark'] ?? false;
         notes.add(note);
       }
       stopLoading(kNotes);
+    });
+  }
+
+  Future<void> loadQuestions(String subjectId) async {
+    addLoading(kQuestions);
+    print("loadQuestions $subjectId");
+    questions.clear();
+    _questions
+        .where('subjectId', isEqualTo: subjectId)
+    //.orderBy('order')
+        .orderBy('created')
+        .getDocuments()
+        .then((snapshot) {
+      for (var doc in snapshot.documents) {
+        Question question = Question();
+        question.id = doc.documentID;
+        question.subjectId = doc.data['subjectId'];
+        question.courseId = doc.data['courseId'];
+        question.userId = doc.data['userId'];
+        question.text = doc.data['text'];
+        question.answer = doc.data['answer'];
+        questions.add(question);
+      }
+      stopLoading(kQuestions);
     });
   }
 }

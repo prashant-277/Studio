@@ -2,51 +2,50 @@ import 'dart:math';
 
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:drag_list/drag_list.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:line_awesome_icons/line_awesome_icons.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:studio/courses_store.dart';
 import 'package:studio/models/course.dart';
-import 'package:studio/models/note.dart';
+import 'package:studio/models/question.dart';
 import 'package:studio/models/subject.dart';
 
 import '../constants.dart';
-import 'edit_note_screen.dart';
+import 'edit_question_screen.dart';
 
-class NotesView extends StatelessWidget {
+class QuestionsView extends StatelessWidget {
   final CoursesStore store;
   final Course course;
   final Subject subject;
   final int mode;
 
-  NotesView(this.store, this.course, this.subject, this.mode);
+  QuestionsView(this.store, this.course, this.subject, this.mode);
 
   @override
   Widget build(BuildContext context) {
-    return NoteList(this.store, this.course, this.subject, this.mode);
+    return QuestionList(this.store, this.course, this.subject, this.mode);
   }
 }
 
-class NoteList extends StatefulWidget {
+class QuestionList extends StatefulWidget {
   final CoursesStore store;
   final Course course;
   final Subject subject;
   final int mode;
 
-  NoteList(this.store, this.course, this.subject, this.mode);
+  QuestionList(this.store, this.course, this.subject, this.mode);
 
   @override
-  _NoteListState createState() => _NoteListState();
+  _QuestionListState createState() => _QuestionListState();
 }
 
-class _NoteListState extends State<NoteList> {
+class _QuestionListState extends State<QuestionList> {
   int editState = -1;
 
   @override
   void initState() {
-    widget.store.loadNotes(widget.subject.id);
+    widget.store.loadQuestions(widget.subject.id);
     super.initState();
   }
 
@@ -54,7 +53,8 @@ class _NoteListState extends State<NoteList> {
     int opacity = 0;
     if (editState == index) opacity = 255;
 
-    if (editState != index) return null;
+    if(editState != index)
+      return null;
 
     return IconButton(
       icon: Icon(
@@ -62,29 +62,29 @@ class _NoteListState extends State<NoteList> {
       ),
       color: Colors.red.withAlpha(opacity),
       onPressed: () {
-        //widget.store.deleteNote(widget.store.notes.elementAt(index).id);
+        //widget.store.deleteQuestion(widget.store.questions.elementAt(index).id);
       },
     );
   }
 
   @override
   Widget build(BuildContext context) => Observer(builder: (_) {
-        return ModalProgressHUD(
-          color: kLightGrey,
-          child: resultWidget(context, widget.store.notes),
-          inAsyncCall: widget.store.isNotesLoading,
-        );
-      });
+    return ModalProgressHUD(
+      color: kLightGrey,
+      child: resultWidget(context, widget.store.questions),
+      inAsyncCall: widget.store.isQuestionsLoading,
+    );
+  });
 
-  resultWidget(BuildContext context, List<Note> items) {
-    if (!widget.store.isNotesLoading && items.length == 0) {
+  resultWidget(BuildContext context, List<Question> items) {
+    if (!widget.store.isQuestionsLoading && items.length == 0) {
       return Column(
         children: <Widget>[
           Expanded(
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: Text(
-                'No notes yet',
+                'No questions yet',
                 style: TextStyle(
                   fontSize: 18,
                 ),
@@ -95,7 +95,7 @@ class _NoteListState extends State<NoteList> {
       );
     }
 
-    var dragList = DragList<Note>(
+    var dragList = DragList<Question>(
       items: items,
       itemExtent: 80,
       handleBuilder: (context) {
@@ -117,7 +117,7 @@ class _NoteListState extends State<NoteList> {
                     color: Colors.black.withAlpha(10),
                     blurRadius: 20.0, // has the effect of softening the shadow
                     spreadRadius:
-                        10.0, // has the effect of extending the shadow
+                    10.0, // has the effect of extending the shadow
                     offset: Offset(
                       0.0, // horizontal, move right 10
                       0.0, // vertical, move down 10
@@ -135,7 +135,7 @@ class _NoteListState extends State<NoteList> {
                     ),
                     Text(
                       item.value.text
-                              .substring(0, min(item.value.text.length, 30)) +
+                          .substring(0, min(item.value.text.length, 30)) +
                           (item.value.text.length > 30 ? '...' : ''),
                       style: TextStyle(
                           fontWeight: FontWeight.normal, fontSize: 18),
@@ -164,9 +164,9 @@ class _NoteListState extends State<NoteList> {
                     BoxShadow(
                       color: Colors.black.withAlpha(10),
                       blurRadius:
-                          20.0, // has the effect of softening the shadow
+                      20.0, // has the effect of softening the shadow
                       spreadRadius:
-                          10.0, // has the effect of extending the shadow
+                      10.0, // has the effect of extending the shadow
                       offset: Offset(
                         0.0, // horizontal, move right 10
                         0.0, // vertical, move down 10
@@ -185,48 +185,44 @@ class _NoteListState extends State<NoteList> {
                   });*/
 
                   var text = item.text;
-                  if (item.text.length > 100)
+                  if(item.text.length > 100)
                     text = item.text.substring(0, 100) + '...';
 
                   showDialog(
                       context: context,
                       builder: (_) => AlertDialog(
-                            //title: Text('Confirm'),
-                            content: Text(text),
-                            actions: <Widget>[
-                              FlatButton(
-                                child: Text('Delete'),
-                                textColor: Colors.red,
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                  widget.store.deleteNote(item.id, () {
-                                    widget.store.loadNotes(widget.subject.id);
-                                  });
-                                },
-                              ),
-                              FlatButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => NoteEdit(
-                                              widget.store,
-                                              widget.course,
-                                              widget.subject,
-                                              item)));
-                                },
-                                child: Text('Edit'),
-                              ),
-                            ],
-                          ));
+                        //title: Text('Confirm'),
+                        content: Text(text),
+                        actions: <Widget>[
+                          FlatButton(
+                            child: Text('Delete'),
+                            textColor: Colors.red,
+                            onPressed: () {
+                              Navigator.pop(context);
+                              widget.store.deleteQuestion(item.id, () {
+                                widget.store.loadQuestions(widget.subject.id);
+                              });
+                            },
+                          ),
+                          FlatButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                              Navigator.push(context, MaterialPageRoute(
+                                  builder: (context) =>
+                                      QuestionEdit(widget.store, widget.course, widget.subject, item)
+                              ));
+                            },
+                            child: Text('Edit'),
+                          ),
+                        ],
+                      ));
                 },
                 //contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 4),
                 title: Container(
                   child: Text(
                     item.text,
                     style:
-                        TextStyle(fontWeight: FontWeight.normal, fontSize: 18),
+                    TextStyle(fontWeight: FontWeight.normal, fontSize: 18),
                   ),
                 ),
                 trailing: getTrailingIcon(index),
@@ -237,39 +233,26 @@ class _NoteListState extends State<NoteList> {
 
     var carousel = CarouselSlider(
       options:
-          CarouselOptions(height: MediaQuery.of(context).size.height - 240),
+      CarouselOptions(height: MediaQuery.of(context).size.height - 240),
       items: items.map((i) {
         return Builder(
           builder: (BuildContext context) {
-            return Padding(
-              padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
-              child: Stack(
-                children: <Widget>[
-                  Container(
-                    padding: EdgeInsets.all(40),
-                    width: MediaQuery.of(context).size.width,
-                    margin: EdgeInsets.symmetric(horizontal: 15.0),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
+            return Container(
+                padding: EdgeInsets.all(40),
+                width: MediaQuery.of(context).size.width,
+                margin: EdgeInsets.symmetric(horizontal: 15.0),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text(
+                      i.text,
+                      style: TextStyle(fontSize: 20.0),
                     ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Text(
-                          i.text,
-                          style: TextStyle(fontSize: 20.0),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Positioned(
-                    bottom: 6,
-                    right: 26,
-                    child: bookmarkButton(i)
-                  ),
-                ],
-              ),
-            );
+                  ],
+                ));
           },
         );
       }).toList(),
@@ -278,22 +261,5 @@ class _NoteListState extends State<NoteList> {
     if (widget.mode == kModeCarousel) return carousel;
 
     return list;
-  }
-
-  Widget bookmarkButton(Note item) {
-    Color color = item.bookmark ? kPrimaryColor : Colors.grey;
-    return IconButton(
-      icon: Icon(
-        LineAwesomeIcons.bookmark,
-        size: 30,
-        color: color,
-      ),
-      onPressed: () {
-        setState(() {
-          item.bookmark = !item.bookmark;
-          widget.store.bookmarkNote(item.id, item.bookmark);
-        });
-      },
-    );
   }
 }

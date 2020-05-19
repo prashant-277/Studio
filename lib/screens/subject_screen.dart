@@ -4,7 +4,9 @@ import 'package:line_awesome_icons/line_awesome_icons.dart';
 import 'package:studio/courses_store.dart';
 import 'package:studio/models/course.dart';
 import 'package:studio/models/subject.dart';
+import 'package:studio/screens/edit_question_screen.dart';
 import 'package:studio/screens/edit_subject_screen.dart';
+import 'package:studio/screens/questions_screen.dart';
 
 import '../constants.dart';
 import 'edit_note_screen.dart';
@@ -136,12 +138,6 @@ class _SubjectScreenState extends State<SubjectScreen>
                                             'its notes and questions?'),
                                         actions: <Widget>[
                                           FlatButton(
-                                            onPressed: () {
-                                              Navigator.pop(context);
-                                            },
-                                            child: Text('No'),
-                                          ),
-                                          FlatButton(
                                             child: Text('Yes'),
                                             textColor: Colors.red,
                                             onPressed: () async {
@@ -153,7 +149,13 @@ class _SubjectScreenState extends State<SubjectScreen>
                                               widget.store.loadSubjects(
                                                   widget.course.id);
                                             },
-                                          )
+                                          ),
+                                          FlatButton(
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            },
+                                            child: Text('No'),
+                                          ),
                                         ],
                                       ));
                             },
@@ -178,13 +180,20 @@ class _SubjectScreenState extends State<SubjectScreen>
                     builder: (context) => NoteEdit(
                         widget.store, widget.course, widget.subject, null)));
           }
+          if(currentTab == kTabQuestions) {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => QuestionEdit(
+                        widget.store, widget.course, widget.subject, null)));
+          }
         },
       ),
       body: TabBarView(
         controller: _tabController,
         children: <Widget>[
           NotesView(widget.store, widget.course, widget.subject, currentMode),
-          QuestionsView(),
+          QuestionsView(widget.store, widget.course, widget.subject, currentMode),
           Text('Mind map'),
         ],
       ),
@@ -228,12 +237,5 @@ class _SubjectScreenState extends State<SubjectScreen>
         elevation: 10,
       ),
     );
-  }
-}
-
-class QuestionsView extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container();
   }
 }

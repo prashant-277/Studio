@@ -10,6 +10,8 @@ import 'package:studio/models/course.dart';
 import 'package:studio/screens/edit_course_screen.dart';
 import 'package:studio/widgets/drawer.dart';
 import 'package:studio/widgets/main_navigation_bar.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 import '../constants.dart';
 import 'course_screen.dart';

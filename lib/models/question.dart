@@ -1,5 +1,5 @@
-import 'package:studio/models/subject_item.dart';
+import 'note.dart';
 
-class Question extends SubjectItem {
+class Question extends Note {
   String answer;
 }

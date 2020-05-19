@@ -13,6 +13,11 @@ const int kTabMindmap = 2;
 const int kModeList = 0;
 const int kModeCarousel = 1;
 
+const int kActionEdit = 1;
+const int kActionBooks = 2;
+const int kActionDelete = 3;
+
+
 const double kDrawerItemSize = 18;
 
 

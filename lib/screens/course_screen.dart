@@ -18,10 +18,6 @@ import 'courses_screen.dart';
 import 'edit_book_screen.dart';
 import 'edit_course_screen.dart';
 
-const int kActionEdit = 1;
-const int kActionBooks = 2;
-const int kActionDelete = 3;
-
 class CourseScreen extends StatefulWidget {
   final CoursesStore store;
   final Course course;
@@ -350,6 +346,23 @@ class SubjectItemsView extends StatelessWidget {
           return Padding(
             padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 10),
             child: Container(
+              decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withAlpha(10),
+                      blurRadius: 20.0, // has the effect of softening the shadow
+                      spreadRadius: 10.0, // has the effect of extending the shadow
+                      offset: Offset(
+                        0.0, // horizontal, move right 10
+                        0.0, // vertical, move down 10
+                      ),
+                    )
+                  ]
+              ),
+              padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 10),
+              margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 0),
               child: ListTile(
                 onTap: () {
                   Navigator.push(
@@ -370,9 +383,28 @@ class SubjectItemsView extends StatelessWidget {
                     ),
                   ),
                 ),
+                subtitle: subjectSubtitle(item),
               ),
             ),
           );
         });
+  }
+
+  Widget subjectSubtitle(Subject item) {
+
+    if(item.bookTitle == null || item.bookTitle == '')
+      return null;
+
+    return Wrap(
+      spacing: 4,
+      alignment: WrapAlignment.start,
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.fromLTRB(0, 2, 0, 0),
+          child: Icon(LineAwesomeIcons.book, size: 16, color: Colors.grey,),
+        ),
+        Text(item.bookTitle)
+      ],
+    );
   }
 }

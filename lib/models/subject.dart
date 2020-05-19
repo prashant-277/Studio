@@ -11,5 +11,7 @@ class Subject {
   String nameDb;
   DateTime created;
   List<Note> notes;
+  String bookId;
+  String bookTitle;
   List<Question> questions;
 }

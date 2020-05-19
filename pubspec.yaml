@@ -35,6 +35,8 @@ dependencies:
   carousel_slider: ^2.1.0
   flutter_speed_dial: ^1.2.5
   flutter_launcher_icons: ^0.7.5
+  easy_localization: 2.3.2
+  easy_localization_loader: 0.0.2
 
 
 dev_dependencies:
@@ -64,6 +66,7 @@ flutter:
     - assets/images/
     - assets/icons/
     - assets/app/
+    - assets/translations/
 
   fonts:
     - family: Baloo Paaji 2
