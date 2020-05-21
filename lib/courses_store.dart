@@ -40,6 +40,9 @@ abstract class _CoursesStore with Store {
   Course course;
 
   @observable
+  Subject subject;
+
+  @observable
   ObservableList<Course> courses = ObservableList<Course>();
 
   @observable
@@ -110,6 +113,11 @@ abstract class _CoursesStore with Store {
   }
 
   @action
+  void setSubject(Subject item) {
+    subject = item;
+  }
+
+  @action
   Future<void> saveNote(Note note) async {
     addLoading(kNotes);
     DocumentReference doc;
@@ -133,34 +141,42 @@ abstract class _CoursesStore with Store {
 
   @action
   Future<void> bookmarkNote(String id, bool bookmark) async {
-    addLoading(kNotes);
+    //addLoading(kNotes);
     DocumentReference doc = _notes.document(id);
     var data = Map<String, dynamic>();
     data['bookmark'] = bookmark;
     await doc.setData(data, merge: true);
-    stopLoading(kNotes);
+    //stopLoading(kNotes);
   }
 
   @action
-  Future<void> saveQuestion(Question note) async {
+  Future<void> bookmarkQuestion(String id, bool bookmark) async {
+    DocumentReference doc = _questions.document(id);
+    var data = Map<String, dynamic>();
+    data['bookmark'] = bookmark;
+    await doc.setData(data, merge: true);
+  }
+
+  @action
+  Future<void> saveQuestion(Question question) async {
     addLoading(kQuestions);
     DocumentReference doc;
     var data = Map<String, Object>();
-    data['text'] = note.text;
-    data['answer'] = note.answer;
+    data['text'] = question.text;
+    data['answer'] = question.answer;
     data['updated'] = DateTime.now();
-    data['subjectId'] = note.subjectId;
-    data['courseId'] = note.courseId;
+    data['subjectId'] = question.subjectId;
+    data['courseId'] = question.courseId;
     data['userId'] = Globals.userId;
-    if (note.id == null) {
+    if (question.id == null) {
       data['created'] = DateTime.now();
       doc = _questions.document();
     } else {
-      doc = _questions.document(note.id);
+      doc = _questions.document(question.id);
     }
     await doc.setData(data, merge: true);
     stopLoading(kQuestions);
-    loadQuestions(note.subjectId);
+    loadQuestions(question.subjectId);
   }
 
   @action
@@ -465,6 +481,28 @@ abstract class _CoursesStore with Store {
     });
   }
 
+  List<Note> notesBackup = List();
+  @action
+  void filterNotes (bool bookmarked) {
+    if(bookmarked) {
+      notesBackup.clear();
+      notes.forEach((element) {
+        notesBackup.add(element);
+      });
+
+      var filtered = notes.where((element) => element.bookmark == true)
+          .toList();
+      print("filtered ${filtered.length}");
+      notes.clear();
+      notes.addAll(filtered);
+    } else {
+      notes.clear();
+      notes.addAll(notesBackup);
+    }
+    print("notes ${notes.length}");
+  }
+
+  @action
   Future<void> loadNotes(String subjectId) async {
     addLoading(kNotes);
     print("loadNotes $subjectId");
@@ -490,6 +528,28 @@ abstract class _CoursesStore with Store {
     });
   }
 
+
+  List<Question> questionsBackup = List();
+  @action
+  void filterQuestions (bool bookmarked) {
+    if(bookmarked) {
+      questionsBackup.clear();
+      questions.forEach((element) {
+        questionsBackup.add(element);
+      });
+
+      var filtered = questions.where((element) => element.bookmark == true)
+          .toList();
+      print("filtered ${filtered.length}");
+      questions.clear();
+      questions.addAll(filtered);
+    } else {
+      questions.clear();
+      questions.addAll(questionsBackup);
+    }
+  }
+
+  @action
   Future<void> loadQuestions(String subjectId) async {
     addLoading(kQuestions);
     print("loadQuestions $subjectId");
@@ -508,6 +568,7 @@ abstract class _CoursesStore with Store {
         question.userId = doc.data['userId'];
         question.text = doc.data['text'];
         question.answer = doc.data['answer'];
+        question.bookmark = doc.data['bookmark'] ?? false;
         questions.add(question);
       }
       stopLoading(kQuestions);

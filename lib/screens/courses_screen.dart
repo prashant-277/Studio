@@ -178,7 +178,7 @@ class CourseItemsView extends StatelessWidget {
               child: ListTile(
                 contentPadding: const EdgeInsets.symmetric(vertical: 4, horizontal: 10),
                 onTap: () {
-                  Navigator.push(
+                  Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
                           builder: (context) => CourseScreen(store, item)));

@@ -149,63 +149,65 @@ class _EditSubjectScreenState extends State<EditSubjectScreen> {
             centerTitle: true,
           ),
           body: SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.all(22.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  Padding(
-                    padding:
-                        const EdgeInsets.symmetric(vertical: 0, horizontal: 16),
-                    child: Text(
-                      title + ':',
-                      style: TextStyle(fontSize: 18),
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(22.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    Padding(
+                      padding:
+                          const EdgeInsets.symmetric(vertical: 0, horizontal: 16),
+                      child: Text(
+                        title + ':',
+                        style: TextStyle(fontSize: 18),
+                      ),
                     ),
-                  ),
-                  TextField(
-                    autocorrect: true,
-                    controller: textCtrl,
-                    decoration: InputDecoration(
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.white, width: 0),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        border: OutlineInputBorder(
-                          borderSide: BorderSide(width: 0, color: Colors.white),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(width: 0, color: Colors.white),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        hintText: 'Subject name',
-                        fillColor: Colors.white,
-                        filled: true,
-                        contentPadding: EdgeInsets.all(8),
-                        prefixIcon: Icon(Icons.chevron_right)),
-                    onChanged: (text) {
-                      setState(() {
-                        name = text;
-                      });
-                    },
-                  ),
-                  Wrap(spacing: 4, children: bookRow()),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 20, 0, 10),
-                    child: PrimaryButton('Save', () {
-                      var id = widget.data == null ? null : widget.data.id;
-                      Subject subject = Subject();
-                      subject.id = id;
-                      subject.name = name;
-                      subject.courseId = widget.course.id;
-                      subject.bookTitle = bookTitle;
-                      subject.bookId = bookId;
-                      widget.store.saveSubject(subject);
-                      Navigator.pop(context);
-                    }),
-                  ),
-                ],
+                    TextField(
+                      autocorrect: true,
+                      controller: textCtrl,
+                      decoration: InputDecoration(
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.white, width: 0),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          border: OutlineInputBorder(
+                            borderSide: BorderSide(width: 0, color: Colors.white),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(width: 0, color: Colors.white),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          hintText: 'Subject name',
+                          fillColor: Colors.white,
+                          filled: true,
+                          contentPadding: EdgeInsets.all(8),
+                          prefixIcon: Icon(Icons.chevron_right)),
+                      onChanged: (text) {
+                        setState(() {
+                          name = text;
+                        });
+                      },
+                    ),
+                    Wrap(spacing: 4, children: bookRow()),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 20, 0, 10),
+                      child: PrimaryButton('Save', () {
+                        var id = widget.data == null ? null : widget.data.id;
+                        Subject subject = Subject();
+                        subject.id = id;
+                        subject.name = name;
+                        subject.courseId = widget.course.id;
+                        subject.bookTitle = bookTitle;
+                        subject.bookId = bookId;
+                        widget.store.saveSubject(subject);
+                        Navigator.pop(context);
+                      }),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

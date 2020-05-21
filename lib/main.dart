@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:mobx/mobx.dart';
+import 'package:studio/globals.dart';
 import 'package:studio/screens/edit_subject_screen.dart';
 import 'package:studio/screens/subject_screen.dart';
 import 'package:studio/screens/courses_screen.dart';
@@ -15,7 +16,10 @@ import 'screens/login_signup_screen.dart';
 final auth = AuthStore();
 final coursesStore = CoursesStore();
 
-void main() => runApp(StudioApp());
+void main() {
+  Globals.auth = auth;
+  runApp(StudioApp());
+}
 
 class StudioApp extends StatelessWidget {
   @override

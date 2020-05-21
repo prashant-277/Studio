@@ -18,7 +18,7 @@ const int kActionBooks = 2;
 const int kActionDelete = 3;
 
 
-const double kDrawerItemSize = 18;
+const double kDrawerItemSize = 16;
 
 
 const kShadow = [ BoxShadow( blurRadius: 20, color: Color(0x22000000) ) ];

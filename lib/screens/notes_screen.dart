@@ -15,25 +15,13 @@ import 'package:studio/models/subject.dart';
 import '../constants.dart';
 import 'edit_note_screen.dart';
 
-class NotesView extends StatelessWidget {
-  final CoursesStore store;
-  final Course course;
-  final Subject subject;
-  final int mode;
-
-  NotesView(this.store, this.course, this.subject, this.mode);
-
-  @override
-  Widget build(BuildContext context) {
-    return NoteList(this.store, this.course, this.subject, this.mode);
-  }
-}
 
 class NoteList extends StatefulWidget {
   final CoursesStore store;
   final Course course;
   final Subject subject;
   final int mode;
+
 
   NoteList(this.store, this.course, this.subject, this.mode);
 
@@ -43,6 +31,9 @@ class NoteList extends StatefulWidget {
 
 class _NoteListState extends State<NoteList> {
   int editState = -1;
+  bool bookmarked = false;
+  CarouselController carouselController = CarouselController();
+
 
   @override
   void initState() {
@@ -80,11 +71,16 @@ class _NoteListState extends State<NoteList> {
     if (!widget.store.isNotesLoading && items.length == 0) {
       return Column(
         children: <Widget>[
+          Row(
+            children: <Widget>[
+              Expanded(child: bookmarkToggle()),
+            ],
+          ),
           Expanded(
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: Text(
-                'No notes yet',
+                bookmarked ? 'No bookmarked notes yet' : 'No notes yet',
                 style: TextStyle(
                   fontSize: 18,
                 ),
@@ -151,9 +147,14 @@ class _NoteListState extends State<NoteList> {
 
     var list = ListView.builder(
         physics: const AlwaysScrollableScrollPhysics(),
-        itemCount: items.length,
+        itemCount: items.length + 1,
         itemBuilder: (_, index) {
-          final item = items[index];
+          if (index == 0) {
+            return bookmarkToggle();
+          }
+
+          final item = items[index - 1];
+
           return Padding(
             padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 20),
             child: Container(
@@ -235,10 +236,105 @@ class _NoteListState extends State<NoteList> {
           );
         });
 
-    var carousel = CarouselSlider(
-      options:
-          CarouselOptions(height: MediaQuery.of(context).size.height - 240),
-      items: items.map((i) {
+    var carousel = getCarousel(items);
+
+    if (widget.mode == kModeCarousel) return carousel;
+    return list;
+  }
+
+  Widget getCarousel(List<Note> items) {
+    var subjIndex = widget.store.subjects.indexOf(widget.subject);
+    var count = items.length + 2;
+    bool isLast = subjIndex == widget.store.notes.length;
+    if (isLast) count--;
+
+    return CarouselSlider.builder(
+      options: CarouselOptions(
+          height: MediaQuery.of(context).size.height - 240,
+          enableInfiniteScroll: false),
+      itemCount: count,
+      carouselController: carouselController,
+      itemBuilder: (ctx, i) {
+        if (i == 0) {
+          return coverSlider([
+            Text(
+              widget.store.subjects[subjIndex].name,
+              style: TextStyle(fontSize: 28, color: Colors.white),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(
+              height: 30,
+            ),
+            Text(
+              widget.subject.bookTitle,
+              style: TextStyle(fontSize: 18, color: Colors.white),
+              textAlign: TextAlign.center,
+            )
+          ]);
+        }
+
+        if (!isLast && i == count - 1) {
+          return coverSlider([
+            Text(
+              widget.store.subjects[subjIndex + 1].name,
+              style: TextStyle(fontSize: 28, color: Colors.white),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(
+              height: 30,
+            ),
+            Text(
+              widget.subject.bookTitle,
+              style: TextStyle(fontSize: 18, color: Colors.white),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(
+              height: 30,
+            ),
+            IconButton(
+              icon: Icon(LineAwesomeIcons.chevron_right,
+              color: Colors.white,),
+              onPressed: () {
+                print("load ${widget.store.subjects[subjIndex + 1].name}");
+                widget.store.setSubject(widget.store.subjects[subjIndex + 1]);
+                carouselController.jumpToPage(0);
+                //widget.store.loadNotes(widget.store.subjects[subjIndex + 1].id);
+              },
+            )
+          ]);
+        }
+
+        return Padding(
+          padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
+          child: Stack(
+            children: <Widget>[
+              Container(
+                padding: EdgeInsets.all(40),
+                width: MediaQuery.of(context).size.width,
+                margin: EdgeInsets.symmetric(horizontal: 15.0),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text(
+                      items[i - 1].text,
+                      style: TextStyle(fontSize: 20.0),
+                    ),
+                  ],
+                ),
+              ),
+              Positioned(
+                  bottom: 6, right: 26, child: bookmarkButton(items[i - 1])),
+            ],
+          ),
+        );
+      },
+    );
+
+    /*
+    items.map((i) {
         return Builder(
           builder: (BuildContext context) {
             return Padding(
@@ -263,9 +359,9 @@ class _NoteListState extends State<NoteList> {
                     ),
                   ),
                   Positioned(
-                    bottom: 6,
-                    right: 26,
-                    child: bookmarkButton(i)
+                      bottom: 6,
+                      right: 26,
+                      child: bookmarkButton(i)
                   ),
                 ],
               ),
@@ -273,11 +369,50 @@ class _NoteListState extends State<NoteList> {
           },
         );
       }).toList(),
+     */
+  }
+
+  Widget coverSlider(List<Widget> children) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
+      child: Container(
+        padding: EdgeInsets.all(40),
+        width: MediaQuery.of(context).size.width,
+        margin: EdgeInsets.symmetric(horizontal: 15.0),
+        decoration: BoxDecoration(
+          color: kPrimaryColor,
+        ),
+        child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: children),
+      ),
     );
+  }
 
-    if (widget.mode == kModeCarousel) return carousel;
-
-    return list;
+  Widget bookmarkToggle() {
+    return Container(
+      color: Colors.white,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 4, 16, 4),
+        child: Wrap(
+          crossAxisAlignment: WrapCrossAlignment.center,
+          children: <Widget>[
+            Switch(
+              activeColor: kPrimaryColor,
+              value: bookmarked,
+              onChanged: (state) {
+                widget.store.filterNotes(state);
+                setState(() {
+                  bookmarked = state;
+                });
+              },
+            ),
+            Text('Bookmarked')
+          ],
+        ),
+      ),
+    );
   }
 
   Widget bookmarkButton(Note item) {

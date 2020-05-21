@@ -224,6 +224,7 @@ class _QuestionEditState extends State<QuestionEdit> {
                         question.courseId = widget.course.id;
                         question.subjectId = widget.subject.id;
                         question.text = text.trim();
+                        question.answer = answer.trim();
                         widget.store.saveQuestion(question);
                         Navigator.pop(context);
                       },

@@ -82,6 +82,21 @@ mixin _$CoursesStore on _CoursesStore, Store {
     });
   }
 
+  final _$subjectAtom = Atom(name: '_CoursesStore.subject');
+
+  @override
+  Subject get subject {
+    _$subjectAtom.reportRead();
+    return super.subject;
+  }
+
+  @override
+  set subject(Subject value) {
+    _$subjectAtom.reportWrite(value, super.subject, () {
+      super.subject = value;
+    });
+  }
+
   final _$coursesAtom = Atom(name: '_CoursesStore.courses');
 
   @override
@@ -173,6 +188,30 @@ mixin _$CoursesStore on _CoursesStore, Store {
     return _$saveNoteAsyncAction.run(() => super.saveNote(note));
   }
 
+  final _$bookmarkNoteAsyncAction = AsyncAction('_CoursesStore.bookmarkNote');
+
+  @override
+  Future<void> bookmarkNote(String id, bool bookmark) {
+    return _$bookmarkNoteAsyncAction
+        .run(() => super.bookmarkNote(id, bookmark));
+  }
+
+  final _$bookmarkQuestionAsyncAction =
+      AsyncAction('_CoursesStore.bookmarkQuestion');
+
+  @override
+  Future<void> bookmarkQuestion(String id, bool bookmark) {
+    return _$bookmarkQuestionAsyncAction
+        .run(() => super.bookmarkQuestion(id, bookmark));
+  }
+
+  final _$saveQuestionAsyncAction = AsyncAction('_CoursesStore.saveQuestion');
+
+  @override
+  Future<void> saveQuestion(Question question) {
+    return _$saveQuestionAsyncAction.run(() => super.saveQuestion(question));
+  }
+
   final _$saveBookAsyncAction = AsyncAction('_CoursesStore.saveBook');
 
   @override
@@ -207,6 +246,15 @@ mixin _$CoursesStore on _CoursesStore, Store {
   @override
   Future<void> deleteNote(String id, Function callback) {
     return _$deleteNoteAsyncAction.run(() => super.deleteNote(id, callback));
+  }
+
+  final _$deleteQuestionAsyncAction =
+      AsyncAction('_CoursesStore.deleteQuestion');
+
+  @override
+  Future<void> deleteQuestion(String id, Function callback) {
+    return _$deleteQuestionAsyncAction
+        .run(() => super.deleteQuestion(id, callback));
   }
 
   final _$deleteBookAsyncAction = AsyncAction('_CoursesStore.deleteBook');
@@ -253,11 +301,62 @@ mixin _$CoursesStore on _CoursesStore, Store {
     return _$loadBooksAsyncAction.run(() => super.loadBooks(courseId));
   }
 
+  final _$loadNotesAsyncAction = AsyncAction('_CoursesStore.loadNotes');
+
+  @override
+  Future<void> loadNotes(String subjectId) {
+    return _$loadNotesAsyncAction.run(() => super.loadNotes(subjectId));
+  }
+
+  final _$loadQuestionsAsyncAction = AsyncAction('_CoursesStore.loadQuestions');
+
+  @override
+  Future<void> loadQuestions(String subjectId) {
+    return _$loadQuestionsAsyncAction.run(() => super.loadQuestions(subjectId));
+  }
+
+  final _$_CoursesStoreActionController =
+      ActionController(name: '_CoursesStore');
+
+  @override
+  void setSubject(Subject item) {
+    final _$actionInfo = _$_CoursesStoreActionController.startAction(
+        name: '_CoursesStore.setSubject');
+    try {
+      return super.setSubject(item);
+    } finally {
+      _$_CoursesStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void filterNotes(bool bookmarked) {
+    final _$actionInfo = _$_CoursesStoreActionController.startAction(
+        name: '_CoursesStore.filterNotes');
+    try {
+      return super.filterNotes(bookmarked);
+    } finally {
+      _$_CoursesStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void filterQuestions(bool bookmarked) {
+    final _$actionInfo = _$_CoursesStoreActionController.startAction(
+        name: '_CoursesStore.filterQuestions');
+    try {
+      return super.filterQuestions(bookmarked);
+    } finally {
+      _$_CoursesStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
   @override
   String toString() {
     return '''
 loading: ${loading},
 course: ${course},
+subject: ${subject},
 courses: ${courses},
 subjects: ${subjects},
 notes: ${notes},

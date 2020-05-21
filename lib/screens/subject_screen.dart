@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:line_awesome_icons/line_awesome_icons.dart';
 import 'package:studio/courses_store.dart';
 import 'package:studio/models/course.dart';
@@ -14,10 +15,9 @@ import 'notes_screen.dart';
 
 
 class SubjectScreen extends StatefulWidget {
-  SubjectScreen(this.store, this.course, this.subject);
+  SubjectScreen(this.store, this.course);
 
   final Course course;
-  final Subject subject;
   final CoursesStore store;
   static final id = 'subject_screen';
 
@@ -44,7 +44,7 @@ class _SubjectScreenState extends State<SubjectScreen>
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) => Observer(builder: (_) {
     return Scaffold(
       appBar: AppBar(
         iconTheme: IconThemeData(color: kDarkBlue),
@@ -90,7 +90,7 @@ class _SubjectScreenState extends State<SubjectScreen>
           ],
         ),
         title: Text(
-          widget.subject.name,
+          widget.store.subject.name,
         ),
         actions: <Widget>[
           FlatButton(
@@ -113,7 +113,7 @@ class _SubjectScreenState extends State<SubjectScreen>
                                         builder: (context) => EditSubjectScreen(
                                             widget.store,
                                             widget.course,
-                                            widget.subject)));
+                                            widget.store.subject)));
                               }),
                           new ListTile(
                             leading: new Icon(
@@ -134,7 +134,7 @@ class _SubjectScreenState extends State<SubjectScreen>
                                         title: Text('Confirm'),
                                         content: Text(
                                             'Do you really want to delete '
-                                            'subject ${widget.subject.name} and all '
+                                            'subject ${widget.store.subject.name} and all '
                                             'its notes and questions?'),
                                         actions: <Widget>[
                                           FlatButton(
@@ -143,7 +143,7 @@ class _SubjectScreenState extends State<SubjectScreen>
                                             onPressed: () async {
                                               Navigator.pop(context);
                                               await widget.store.deleteSubject(
-                                                  widget.subject.id,
+                                                  widget.store.subject.id,
                                                   widget.course.id);
                                               Navigator.pop(context);
                                               widget.store.loadSubjects(
@@ -178,22 +178,22 @@ class _SubjectScreenState extends State<SubjectScreen>
                 context,
                 MaterialPageRoute(
                     builder: (context) => NoteEdit(
-                        widget.store, widget.course, widget.subject, null)));
+                        widget.store, widget.course, widget.store.subject, null)));
           }
           if(currentTab == kTabQuestions) {
             Navigator.push(
                 context,
                 MaterialPageRoute(
                     builder: (context) => QuestionEdit(
-                        widget.store, widget.course, widget.subject, null)));
+                        widget.store, widget.course, widget.store.subject, null)));
           }
         },
       ),
       body: TabBarView(
         controller: _tabController,
         children: <Widget>[
-          NotesView(widget.store, widget.course, widget.subject, currentMode),
-          QuestionsView(widget.store, widget.course, widget.subject, currentMode),
+          NoteList(widget.store, widget.course, widget.store.subject, currentMode),
+          QuestionsView(widget.store, widget.course, widget.store.subject, currentMode),
           Text('Mind map'),
         ],
       ),
@@ -237,5 +237,5 @@ class _SubjectScreenState extends State<SubjectScreen>
         elevation: 10,
       ),
     );
-  }
+  });
 }

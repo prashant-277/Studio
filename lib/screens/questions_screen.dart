@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:drag_list/drag_list.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:line_awesome_icons/line_awesome_icons.dart';
@@ -42,6 +43,7 @@ class QuestionList extends StatefulWidget {
 
 class _QuestionListState extends State<QuestionList> {
   int editState = -1;
+  bool bookmarked = false;
 
   @override
   void initState() {
@@ -53,8 +55,7 @@ class _QuestionListState extends State<QuestionList> {
     int opacity = 0;
     if (editState == index) opacity = 255;
 
-    if(editState != index)
-      return null;
+    if (editState != index) return null;
 
     return IconButton(
       icon: Icon(
@@ -80,11 +81,16 @@ class _QuestionListState extends State<QuestionList> {
     if (!widget.store.isQuestionsLoading && items.length == 0) {
       return Column(
         children: <Widget>[
+          Row(
+            children: <Widget>[
+              Expanded(child: bookmarkToggle()),
+            ],
+          ),
           Expanded(
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: Text(
-                'No questions yet',
+                bookmarked ? 'No bookmarked questions yet' : 'No questions yet',
                 style: TextStyle(
                   fontSize: 18,
                 ),
@@ -151,9 +157,15 @@ class _QuestionListState extends State<QuestionList> {
 
     var list = ListView.builder(
         physics: const AlwaysScrollableScrollPhysics(),
-        itemCount: items.length,
+        itemCount: items.length + 1,
         itemBuilder: (_, index) {
-          final item = items[index];
+          if(index == 0) {
+            return bookmarkToggle();
+          }
+
+          final item = items[index - 1];
+
+
           return Padding(
             padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 20),
             child: Container(
@@ -185,7 +197,7 @@ class _QuestionListState extends State<QuestionList> {
                   });*/
 
                   var text = item.text;
-                  if(item.text.length > 100)
+                  if (item.text.length > 100)
                     text = item.text.substring(0, 100) + '...';
 
                   showDialog(
@@ -207,10 +219,14 @@ class _QuestionListState extends State<QuestionList> {
                           FlatButton(
                             onPressed: () {
                               Navigator.pop(context);
-                              Navigator.push(context, MaterialPageRoute(
-                                  builder: (context) =>
-                                      QuestionEdit(widget.store, widget.course, widget.subject, item)
-                              ));
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => QuestionEdit(
+                                          widget.store,
+                                          widget.course,
+                                          widget.subject,
+                                          item)));
                             },
                             child: Text('Edit'),
                           ),
@@ -237,22 +253,43 @@ class _QuestionListState extends State<QuestionList> {
       items: items.map((i) {
         return Builder(
           builder: (BuildContext context) {
-            return Container(
-                padding: EdgeInsets.all(40),
-                width: MediaQuery.of(context).size.width,
-                margin: EdgeInsets.symmetric(horizontal: 15.0),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Text(
-                      i.text,
-                      style: TextStyle(fontSize: 20.0),
+            return Padding(
+              padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
+              child: Stack(
+                children: <Widget>[
+                  Container(
+                    padding: EdgeInsets.all(40),
+                    width: MediaQuery.of(context).size.width,
+                    margin: EdgeInsets.symmetric(horizontal: 15.0),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
                     ),
-                  ],
-                ));
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Text(
+                          i.text,
+                          style: TextStyle(fontSize: 20.0,
+                          fontWeight: FontWeight.w600),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(0, 40, 0, 0),
+                          child: Text(
+                            i.answer,
+                            style: TextStyle(fontSize: 20.0),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Positioned(
+                      bottom: 6,
+                      right: 26,
+                      child: bookmarkButton(i)
+                  ),
+                ],
+              ),
+            );
           },
         );
       }).toList(),
@@ -260,6 +297,49 @@ class _QuestionListState extends State<QuestionList> {
 
     if (widget.mode == kModeCarousel) return carousel;
 
+
     return list;
+  }
+
+  Widget bookmarkToggle() {
+    return Container(
+      color: Colors.white,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 4, 16, 4),
+        child: Wrap(
+          crossAxisAlignment: WrapCrossAlignment.center,
+          children: <Widget>[
+            Switch(
+              activeColor: kPrimaryColor,
+              value: bookmarked,
+              onChanged: (state) {
+                widget.store.filterQuestions(state);
+                setState(() {
+                  bookmarked = state;
+                });
+              },
+            ),
+            Text('Bookmarked')
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget bookmarkButton(Question item) {
+    Color color = item.bookmark ? kPrimaryColor : Colors.grey;
+    return IconButton(
+      icon: Icon(
+        LineAwesomeIcons.bookmark,
+        size: 30,
+        color: color,
+      ),
+      onPressed: () {
+        setState(() {
+          item.bookmark = !item.bookmark;
+          widget.store.bookmarkQuestion(item.id, item.bookmark);
+        });
+      },
+    );
   }
 }

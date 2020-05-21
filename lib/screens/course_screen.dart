@@ -11,6 +11,7 @@ import 'package:studio/models/subject.dart';
 import 'package:studio/screens/books_screen.dart';
 import 'package:studio/screens/edit_subject_screen.dart';
 import 'package:studio/screens/subject_screen.dart';
+import 'package:studio/widgets/drawer.dart';
 import 'package:studio/widgets/main_navigation_bar.dart';
 
 import '../constants.dart';
@@ -41,6 +42,7 @@ class _CourseScreenState extends State<CourseScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: MainDrawer(widget.store),
       appBar: AppBar(
         centerTitle: true,
         elevation: 0,
@@ -95,7 +97,7 @@ class _CourseScreenState extends State<CourseScreen>
                   break;
               }
             },
-            offset: Offset(0, 90),
+            offset: Offset(0, 40),
             elevation: 20,
             itemBuilder: (context) => [
               PopupMenuItem(
@@ -131,7 +133,6 @@ class _CourseScreenState extends State<CourseScreen>
             ],
             child: Icon(Icons.more_vert),
           ),
-
         ],
       ),
       floatingActionButton: SpeedDial(
@@ -173,53 +174,7 @@ class _CourseScreenState extends State<CourseScreen>
             SizedBox(
               height: 20,
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
-              child: Container(
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.all(Radius.circular(10)),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withAlpha(10),
-                        blurRadius:
-                            20.0, // has the effect of softening the shadow
-                        spreadRadius:
-                            10.0, // has the effect of extending the shadow
-                        offset: Offset(
-                          0.0, // horizontal, move right 10
-                          0.0, // vertical, move down 10
-                        ),
-                      )
-                    ]),
-                child: TextField(
-                  autocorrect: true,
-                  decoration: InputDecoration(
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white, width: 0),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      border: OutlineInputBorder(
-                        borderSide: BorderSide(width: 0, color: Colors.white),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(width: 0, color: Colors.white),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      hintText: 'Search subject',
-                      fillColor: Colors.white,
-                      filled: true,
-                      contentPadding: EdgeInsets.all(8),
-                      prefixIcon: Icon(Icons.search)),
-                  onChanged: (text) {
-                    setState(() {
-                      //name = text;
-                    });
-                  },
-                ),
-              ),
-            ),
+
             /*Container(
                 margin: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
                 padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
@@ -278,6 +233,56 @@ class _CourseScreenState extends State<CourseScreen>
               child: SubjectItemsView(widget.store, widget.course),
             )
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget searchTextField() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
+      child: Container(
+        decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.all(Radius.circular(10)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withAlpha(10),
+                blurRadius:
+                20.0, // has the effect of softening the shadow
+                spreadRadius:
+                10.0, // has the effect of extending the shadow
+                offset: Offset(
+                  0.0, // horizontal, move right 10
+                  0.0, // vertical, move down 10
+                ),
+              )
+            ]),
+        child: TextField(
+          autocorrect: true,
+          decoration: InputDecoration(
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.white, width: 0),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              border: OutlineInputBorder(
+                borderSide: BorderSide(width: 0, color: Colors.white),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(width: 0, color: Colors.white),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              hintText: 'Search subject',
+              fillColor: Colors.white,
+              filled: true,
+              contentPadding: EdgeInsets.all(8),
+              prefixIcon: Icon(Icons.search)),
+          onChanged: (text) {
+            setState(() {
+              //name = text;
+            });
+          },
         ),
       ),
     );
@@ -365,11 +370,12 @@ class SubjectItemsView extends StatelessWidget {
               margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 0),
               child: ListTile(
                 onTap: () {
+                  store.setSubject(item);
                   Navigator.push(
                       context,
                       MaterialPageRoute(
                           builder: (context) =>
-                              SubjectScreen(store, course, item)));
+                              SubjectScreen(store, course)));
                 },
                 trailing: const Icon(
                   Icons.chevron_right,
