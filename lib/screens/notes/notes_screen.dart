@@ -10,7 +10,9 @@ import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:studio/courses_store.dart';
 import 'package:studio/models/course.dart';
 import 'package:studio/models/note.dart';
+import 'package:studio/models/question.dart';
 import 'package:studio/models/subject.dart';
+import 'package:studio/screens/edit_question_screen.dart';
 
 import '../../constants.dart';
 import '../edit_note_screen.dart';
@@ -329,14 +331,44 @@ class _NoteListState extends State<NoteList> {
                   children: <Widget>[
                     Text(
                       items[i - 1].text,
-                      style: TextStyle(fontSize: 20.0,),
+                      style: TextStyle(
+                        fontSize: 20.0,
+                      ),
                       textAlign: TextAlign.center,
                     ),
                   ],
                 ),
               ),
               Positioned(
-                  bottom: 6, right: 26, child: bookmarkButton(items[i - 1])),
+                bottom: 6,
+                right: 26,
+                child: Wrap(
+                  children: <Widget>[
+                    IconButton(
+                      icon: Icon(
+                        LineAwesomeIcons.question,
+                        size: 30,
+                        color: Colors.grey,
+                      ),
+                      onPressed: () {
+                        if(items[i - 1].questionId == null) {
+                          Question q = Question();
+                          q.text = items[i - 1].text;
+                          Navigator.push(context, MaterialPageRoute(
+                            builder: (context) =>
+
+                            QuestionEdit(
+                                widget.store, widget.course, widget.subject,
+                                q)
+
+                          ));
+                        }
+                      },
+                    ),
+                    bookmarkButton(items[i - 1])
+                  ],
+                ),
+              ),
             ],
           ),
         );
