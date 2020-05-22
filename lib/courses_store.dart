@@ -486,6 +486,7 @@ abstract class _CoursesStore with Store {
   void filterNotes (bool bookmarked) {
     if(bookmarked) {
       notesBackup.clear();
+      notes.clear();
       notes.forEach((element) {
         notesBackup.add(element);
       });
@@ -534,6 +535,7 @@ abstract class _CoursesStore with Store {
   void filterQuestions (bool bookmarked) {
     if(bookmarked) {
       questionsBackup.clear();
+      questions.clear();
       questions.forEach((element) {
         questionsBackup.add(element);
       });

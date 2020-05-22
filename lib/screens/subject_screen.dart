@@ -11,7 +11,7 @@ import 'package:studio/screens/questions_screen.dart';
 
 import '../constants.dart';
 import 'edit_note_screen.dart';
-import 'notes_screen.dart';
+import 'notes/notes_screen.dart';
 
 
 class SubjectScreen extends StatefulWidget {
@@ -30,6 +30,7 @@ class _SubjectScreenState extends State<SubjectScreen>
   TabController _tabController;
   int currentTab = kTabNotes;
   int currentMode = kModeList;
+  int currentIndex = 0;
 
   @override
   void initState() {
@@ -192,8 +193,14 @@ class _SubjectScreenState extends State<SubjectScreen>
       body: TabBarView(
         controller: _tabController,
         children: <Widget>[
-          NoteList(widget.store, widget.course, widget.store.subject, currentMode),
-          QuestionsView(widget.store, widget.course, widget.store.subject, currentMode),
+          NoteList(widget.store, widget.course, widget.store.subject, currentMode, (mode, i) {
+            setState(() {
+              print("change mode $mode");
+              currentMode = mode;
+              currentIndex = i;
+            });
+          }, currentIndex),
+          QuestionList(widget.store, widget.course, widget.store.subject, currentMode),
           Text('Mind map'),
         ],
       ),

@@ -12,18 +12,19 @@ import 'package:studio/models/course.dart';
 import 'package:studio/models/note.dart';
 import 'package:studio/models/subject.dart';
 
-import '../constants.dart';
-import 'edit_note_screen.dart';
-
+import '../../constants.dart';
+import '../edit_note_screen.dart';
 
 class NoteList extends StatefulWidget {
   final CoursesStore store;
   final Course course;
   final Subject subject;
   final int mode;
+  final Function changeMode;
+  final int index;
 
-
-  NoteList(this.store, this.course, this.subject, this.mode);
+  NoteList(this.store, this.course, this.subject, this.mode, this.changeMode,
+      this.index);
 
   @override
   _NoteListState createState() => _NoteListState();
@@ -34,9 +35,9 @@ class _NoteListState extends State<NoteList> {
   bool bookmarked = false;
   CarouselController carouselController = CarouselController();
 
-
   @override
   void initState() {
+    print("init state notes");
     widget.store.loadNotes(widget.subject.id);
     super.initState();
   }
@@ -60,6 +61,7 @@ class _NoteListState extends State<NoteList> {
 
   @override
   Widget build(BuildContext context) => Observer(builder: (_) {
+        print("build notes view");
         return ModalProgressHUD(
           color: kLightGrey,
           child: resultWidget(context, widget.store.notes),
@@ -178,6 +180,8 @@ class _NoteListState extends State<NoteList> {
                 onTap: () {
                   setState(() {
                     editState = -1;
+                    //currentIndex = index;
+                    widget.changeMode(kModeCarousel, index);
                   });
                 },
                 onLongPress: () {
@@ -250,8 +254,10 @@ class _NoteListState extends State<NoteList> {
 
     return CarouselSlider.builder(
       options: CarouselOptions(
-          height: MediaQuery.of(context).size.height - 240,
-          enableInfiniteScroll: false),
+        height: MediaQuery.of(context).size.height - 240,
+        enableInfiniteScroll: false,
+        initialPage: widget.index,
+      ),
       itemCount: count,
       carouselController: carouselController,
       itemBuilder: (ctx, i) {
@@ -292,11 +298,14 @@ class _NoteListState extends State<NoteList> {
               height: 30,
             ),
             IconButton(
-              icon: Icon(LineAwesomeIcons.chevron_right,
-              color: Colors.white,),
+              icon: Icon(
+                LineAwesomeIcons.chevron_right,
+                color: Colors.white,
+              ),
               onPressed: () {
                 print("load ${widget.store.subjects[subjIndex + 1].name}");
                 widget.store.setSubject(widget.store.subjects[subjIndex + 1]);
+                widget.store.loadNotes(widget.store.subjects[subjIndex + 1].id);
                 carouselController.jumpToPage(0);
                 //widget.store.loadNotes(widget.store.subjects[subjIndex + 1].id);
               },
@@ -320,7 +329,8 @@ class _NoteListState extends State<NoteList> {
                   children: <Widget>[
                     Text(
                       items[i - 1].text,
-                      style: TextStyle(fontSize: 20.0),
+                      style: TextStyle(fontSize: 20.0,),
+                      textAlign: TextAlign.center,
                     ),
                   ],
                 ),
@@ -332,44 +342,6 @@ class _NoteListState extends State<NoteList> {
         );
       },
     );
-
-    /*
-    items.map((i) {
-        return Builder(
-          builder: (BuildContext context) {
-            return Padding(
-              padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
-              child: Stack(
-                children: <Widget>[
-                  Container(
-                    padding: EdgeInsets.all(40),
-                    width: MediaQuery.of(context).size.width,
-                    margin: EdgeInsets.symmetric(horizontal: 15.0),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Text(
-                          i.text,
-                          style: TextStyle(fontSize: 20.0),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Positioned(
-                      bottom: 6,
-                      right: 26,
-                      child: bookmarkButton(i)
-                  ),
-                ],
-              ),
-            );
-          },
-        );
-      }).toList(),
-     */
   }
 
   Widget coverSlider(List<Widget> children) {

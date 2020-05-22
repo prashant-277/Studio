@@ -15,25 +15,13 @@ import 'package:studio/models/subject.dart';
 import '../constants.dart';
 import 'edit_question_screen.dart';
 
-class QuestionsView extends StatelessWidget {
-  final CoursesStore store;
-  final Course course;
-  final Subject subject;
-  final int mode;
-
-  QuestionsView(this.store, this.course, this.subject, this.mode);
-
-  @override
-  Widget build(BuildContext context) {
-    return QuestionList(this.store, this.course, this.subject, this.mode);
-  }
-}
 
 class QuestionList extends StatefulWidget {
   final CoursesStore store;
   final Course course;
   final Subject subject;
   final int mode;
+
 
   QuestionList(this.store, this.course, this.subject, this.mode);
 
@@ -44,6 +32,8 @@ class QuestionList extends StatefulWidget {
 class _QuestionListState extends State<QuestionList> {
   int editState = -1;
   bool bookmarked = false;
+  CarouselController carouselController = CarouselController();
+
 
   @override
   void initState() {
@@ -159,12 +149,11 @@ class _QuestionListState extends State<QuestionList> {
         physics: const AlwaysScrollableScrollPhysics(),
         itemCount: items.length + 1,
         itemBuilder: (_, index) {
-          if(index == 0) {
+          if (index == 0) {
             return bookmarkToggle();
           }
 
           final item = items[index - 1];
-
 
           return Padding(
             padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 20),
@@ -247,58 +236,137 @@ class _QuestionListState extends State<QuestionList> {
           );
         });
 
-    var carousel = CarouselSlider(
-      options:
-      CarouselOptions(height: MediaQuery.of(context).size.height - 240),
-      items: items.map((i) {
-        return Builder(
-          builder: (BuildContext context) {
-            return Padding(
-              padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
-              child: Stack(
-                children: <Widget>[
-                  Container(
-                    padding: EdgeInsets.all(40),
-                    width: MediaQuery.of(context).size.width,
-                    margin: EdgeInsets.symmetric(horizontal: 15.0),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Text(
-                          i.text,
-                          style: TextStyle(fontSize: 20.0,
-                          fontWeight: FontWeight.w600),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(0, 40, 0, 0),
-                          child: Text(
-                            i.answer,
-                            style: TextStyle(fontSize: 20.0),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Positioned(
-                      bottom: 6,
-                      right: 26,
-                      child: bookmarkButton(i)
-                  ),
-                ],
-              ),
-            );
-          },
-        );
-      }).toList(),
-    );
+    var carousel = getCarousel(items);
 
     if (widget.mode == kModeCarousel) return carousel;
-
-
     return list;
+  }
+
+  Widget getCarousel(List<Question> items) {
+    var subjIndex = widget.store.subjects.indexOf(widget.subject);
+    var count = items.length + 2;
+    bool isLast = subjIndex == widget.store.questions.length;
+    if (isLast) count--;
+
+    return CarouselSlider.builder(
+      options: CarouselOptions(
+          height: MediaQuery.of(context).size.height - 240,
+          enableInfiniteScroll: false),
+      itemCount: count,
+      carouselController: carouselController,
+      itemBuilder: (ctx, i) {
+        if (i == 0) {
+          return coverSlider([
+            Text(
+              widget.store.subjects[subjIndex].name,
+              style: TextStyle(fontSize: 28, color: Colors.white),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(
+              height: 30,
+            ),
+            Text(
+              widget.subject.bookTitle,
+              style: TextStyle(fontSize: 18, color: Colors.white),
+              textAlign: TextAlign.center,
+            )
+          ]);
+        }
+
+        if (!isLast && i == count - 1) {
+          return coverSlider([
+            Text(
+              widget.store.subjects[subjIndex + 1].name,
+              style: TextStyle(fontSize: 28, color: Colors.white),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(
+              height: 30,
+            ),
+            Text(
+              widget.subject.bookTitle,
+              style: TextStyle(fontSize: 18, color: Colors.white),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(
+              height: 30,
+            ),
+            IconButton(
+              icon: Icon(LineAwesomeIcons.chevron_right,
+                color: Colors.white,),
+              onPressed: () {
+                print("load ${widget.store.subjects[subjIndex + 1].name}");
+                widget.store.setSubject(widget.store.subjects[subjIndex + 1]);
+                widget.store.loadQuestions(widget.store.subjects[subjIndex + 1].id);
+                carouselController.jumpToPage(0);
+                //widget.store.loadQuestions(widget.store.subjects[subjIndex + 1].id);
+              },
+            )
+          ]);
+        }
+
+        return Padding(
+          padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
+          child: Stack(
+            children: <Widget>[
+              Container(
+                padding: EdgeInsets.all(40),
+                width: MediaQuery.of(context).size.width,
+                margin: EdgeInsets.symmetric(horizontal: 15.0),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text(
+                      items[i - 1].text,
+                      style: TextStyle(
+                        fontSize: 30.0,
+                        fontWeight: FontWeight.w600,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(0, 30, 0, 0),
+                      child: Text(
+                        items[i - 1].answer,
+                        style: TextStyle(
+                          fontSize: 20.0,
+                          fontWeight: FontWeight.normal,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    )
+                  ],
+                ),
+              ),
+              Positioned(
+                  bottom: 6, right: 26, child: bookmarkButton(items[i - 1])),
+            ],
+          ),
+        );
+      },
+    );
+
+  }
+
+  Widget coverSlider(List<Widget> children) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
+      child: Container(
+        padding: EdgeInsets.all(40),
+        width: MediaQuery.of(context).size.width,
+        margin: EdgeInsets.symmetric(horizontal: 15.0),
+        decoration: BoxDecoration(
+          color: kPrimaryColor,
+        ),
+        child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: children),
+      ),
+    );
   }
 
   Widget bookmarkToggle() {
