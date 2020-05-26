@@ -7,7 +7,7 @@ import 'package:studio/models/note.dart';
 import 'package:studio/models/subject.dart';
 import 'package:studio/widgets/buttons.dart';
 
-import '../constants.dart';
+import '../../constants.dart';
 
 class NoteEdit extends StatefulWidget {
   final CoursesStore store;

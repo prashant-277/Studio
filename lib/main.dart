@@ -3,11 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:mobx/mobx.dart';
 import 'package:studio/globals.dart';
-import 'package:studio/screens/edit_subject_screen.dart';
-import 'package:studio/screens/subject_screen.dart';
-import 'package:studio/screens/courses_screen.dart';
+import 'package:studio/screens/subjects/edit_subject_screen.dart';
+import 'package:studio/screens/courses/courses_screen.dart';
 import 'package:studio/screens/home_screen.dart';
-import 'package:studio/screens/edit_course_screen.dart';
+import 'package:studio/screens/courses/edit_course_screen.dart';
 import 'auth_store.dart';
 import 'constants.dart';
 import 'courses_store.dart';
@@ -88,8 +87,8 @@ class _SplashScreenState extends State<SplashScreen> {
     return Container(
       child: Observer(
           builder: (_) => Observer(builder: (_) {
-                return getScreen();
-              })),
+            return getScreen();
+          })),
     );
   }
 }

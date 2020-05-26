@@ -1,9 +1,11 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:drag_list/drag_list.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:line_awesome_icons/line_awesome_icons.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
@@ -13,9 +15,9 @@ import 'package:studio/models/note.dart';
 import 'package:studio/models/question.dart';
 import 'package:studio/models/subject.dart';
 import 'package:studio/screens/edit_question_screen.dart';
-
+import 'dart:math';
 import '../../constants.dart';
-import '../edit_note_screen.dart';
+import 'edit_note_screen.dart';
 
 class NoteList extends StatefulWidget {
   final CoursesStore store;
@@ -32,7 +34,7 @@ class NoteList extends StatefulWidget {
   _NoteListState createState() => _NoteListState();
 }
 
-class _NoteListState extends State<NoteList> {
+class _NoteListState extends State<NoteList> with TickerProviderStateMixin {
   int editState = -1;
   bool bookmarked = false;
   CarouselController carouselController = CarouselController();
@@ -73,88 +75,41 @@ class _NoteListState extends State<NoteList> {
 
   resultWidget(BuildContext context, List<Note> items) {
     if (!widget.store.isNotesLoading && items.length == 0) {
-      return Column(
-        children: <Widget>[
-          Row(
-            children: <Widget>[
-              Expanded(child: bookmarkToggle()),
-            ],
-          ),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Text(
-                bookmarked ? 'No bookmarked notes yet' : 'No notes yet',
-                style: TextStyle(
-                  fontSize: 18,
-                ),
-              ),
-            ),
-          ),
-        ],
-      );
+      return EmptyNotesScreen(bookmarked, (state) {
+        widget.store.filterNotes(state);
+        setState(() {
+          bookmarked = state;
+        });
+      });
     }
-
-    var dragList = DragList<Note>(
-      items: items,
-      itemExtent: 80,
-      handleBuilder: (context) {
-        return Container(
-          height: 72.0,
-          child: Icon(LineAwesomeIcons.bars),
-        );
-      },
-      itemBuilder: (context, item, handle) {
-        return Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 24),
-          child: Container(
-            //padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 0),
-            decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.all(Radius.circular(10)),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withAlpha(10),
-                    blurRadius: 20.0, // has the effect of softening the shadow
-                    spreadRadius:
-                        10.0, // has the effect of extending the shadow
-                    offset: Offset(
-                      0.0, // horizontal, move right 10
-                      0.0, // vertical, move down 10
-                    ),
-                  )
-                ]),
-            child: ListTile(
-              onTap: () {},
-              title: Container(
-                child: Row(
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
-                      child: handle,
-                    ),
-                    Text(
-                      item.value.text
-                              .substring(0, min(item.value.text.length, 30)) +
-                          (item.value.text.length > 30 ? '...' : ''),
-                      style: TextStyle(
-                          fontWeight: FontWeight.normal, fontSize: 18),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        );
-      },
-    );
 
     var list = ListView.builder(
         physics: const AlwaysScrollableScrollPhysics(),
         itemCount: items.length + 1,
         itemBuilder: (_, index) {
           if (index == 0) {
-            return bookmarkToggle();
+            return Container(
+              color: Colors.white,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(16, 4, 16, 4),
+                child: Wrap(
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: <Widget>[
+                    Switch(
+                      activeColor: kPrimaryColor,
+                      value: bookmarked,
+                      onChanged: (state) {
+                        widget.store.filterNotes(state);
+                        setState(() {
+                          bookmarked = state;
+                        });
+                      },
+                    ),
+                    Text('Bookmarked')
+                  ],
+                ),
+              ),
+            );
           }
 
           final item = items[index - 1];
@@ -248,6 +203,9 @@ class _NoteListState extends State<NoteList> {
     return list;
   }
 
+  Timer timer1;
+  Timer timer2;
+
   Widget getCarousel(List<Note> items) {
     var subjIndex = widget.store.subjects.indexOf(widget.subject);
     var count = items.length + 2;
@@ -256,10 +214,10 @@ class _NoteListState extends State<NoteList> {
 
     return CarouselSlider.builder(
       options: CarouselOptions(
-        height: MediaQuery.of(context).size.height - 240,
-        enableInfiniteScroll: false,
-        initialPage: widget.index,
-      ),
+          height: MediaQuery.of(context).size.height - 240,
+          enableInfiniteScroll: false,
+          initialPage: widget.index,
+          ),
       itemCount: count,
       carouselController: carouselController,
       itemBuilder: (ctx, i) {
@@ -345,23 +303,41 @@ class _NoteListState extends State<NoteList> {
                 child: Wrap(
                   children: <Widget>[
                     IconButton(
-                      icon: Icon(
-                        LineAwesomeIcons.question,
-                        size: 30,
-                        color: Colors.grey,
+                      icon: Stack(
+                        overflow: Overflow.visible,
+                        children: <Widget>[
+                          Positioned(
+                            bottom: 2,
+                            left: 2,
+                            child: Icon(
+                              LineAwesomeIcons.question,
+                              size: 26,
+                              color: Colors.grey,
+                            ),
+                          ),
+                          Positioned(
+                            top: -4,
+                            right: -4,
+                            child: Icon(
+                              LineAwesomeIcons.plus,
+                              size: 20,
+                              color: Colors.grey,
+                            ),
+                          )
+                        ],
                       ),
                       onPressed: () {
-                        if(items[i - 1].questionId == null) {
+                        if (items[i - 1].questionId == null) {
                           Question q = Question();
                           q.text = items[i - 1].text;
-                          Navigator.push(context, MaterialPageRoute(
-                            builder: (context) =>
-
-                            QuestionEdit(
-                                widget.store, widget.course, widget.subject,
-                                q)
-
-                          ));
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => QuestionEdit(
+                                      widget.store,
+                                      widget.course,
+                                      widget.subject,
+                                      q)));
                         }
                       },
                     ),
@@ -394,31 +370,6 @@ class _NoteListState extends State<NoteList> {
     );
   }
 
-  Widget bookmarkToggle() {
-    return Container(
-      color: Colors.white,
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 4, 16, 4),
-        child: Wrap(
-          crossAxisAlignment: WrapCrossAlignment.center,
-          children: <Widget>[
-            Switch(
-              activeColor: kPrimaryColor,
-              value: bookmarked,
-              onChanged: (state) {
-                widget.store.filterNotes(state);
-                setState(() {
-                  bookmarked = state;
-                });
-              },
-            ),
-            Text('Bookmarked')
-          ],
-        ),
-      ),
-    );
-  }
-
   Widget bookmarkButton(Note item) {
     Color color = item.bookmark ? kPrimaryColor : Colors.grey;
     return IconButton(
@@ -433,6 +384,56 @@ class _NoteListState extends State<NoteList> {
           widget.store.bookmarkNote(item.id, item.bookmark);
         });
       },
+    );
+  }
+}
+
+class EmptyNotesScreen extends StatelessWidget {
+  final bool bookmarked;
+  final Function onFilter;
+  EmptyNotesScreen(this.bookmarked, this.onFilter);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: <Widget>[
+        Row(
+          children: <Widget>[
+            Expanded(
+              child: Container(
+                color: Colors.white,
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 4, 16, 4),
+                  child: Wrap(
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    children: <Widget>[
+                      Switch(
+                        activeColor: kPrimaryColor,
+                        value: bookmarked,
+                        onChanged: (state) {
+                          onFilter(state);
+                        },
+                      ),
+                      Text('Bookmarked')
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Text(
+              bookmarked ? 'No bookmarked notes yet' : 'No notes yet',
+              style: TextStyle(
+                fontSize: 18,
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

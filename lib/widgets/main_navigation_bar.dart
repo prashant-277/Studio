@@ -66,7 +66,7 @@ class MainNavigationBar extends StatelessWidget {
           Expanded(
             child: FlatButton(
               child: Icon(
-                LineAwesomeIcons.line_chart,
+                LineAwesomeIcons.chart_line,
                 color: Colors.white.withAlpha(alpha[HighlightedTab.Stats]),
               ),
               onPressed: () {

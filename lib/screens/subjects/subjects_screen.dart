@@ -9,40 +9,41 @@ import 'package:studio/courses_store.dart';
 import 'package:studio/models/course.dart';
 import 'package:studio/models/subject.dart';
 import 'package:studio/screens/books_screen.dart';
-import 'package:studio/screens/edit_subject_screen.dart';
-import 'package:studio/screens/subject_screen.dart';
+import 'package:studio/screens/subjects/edit_subject_screen.dart';
+import 'package:studio/screens/subjects/subject_screen.dart';
+import 'package:studio/widgets/course_title.dart';
 import 'package:studio/widgets/drawer.dart';
 import 'package:studio/widgets/main_navigation_bar.dart';
 
-import '../constants.dart';
-import 'courses_screen.dart';
-import 'edit_book_screen.dart';
-import 'edit_course_screen.dart';
+import '../../constants.dart';
+import '../courses/courses_screen.dart';
+import '../edit_book_screen.dart';
+import '../courses/edit_course_screen.dart';
 
-class CourseScreen extends StatefulWidget {
+class SubjectsScreen extends StatefulWidget {
   final CoursesStore store;
   final Course course;
-  static final id = 'course_screen';
+  static final id = 'subjects_screen';
 
-  const CourseScreen(this.store, this.course);
+  const SubjectsScreen(this.store, this.course);
 
   @override
-  _CourseScreenState createState() => _CourseScreenState();
+  _SubjectsScreenState createState() => _SubjectsScreenState();
 }
 
-class _CourseScreenState extends State<CourseScreen>
+class _SubjectsScreenState extends State<SubjectsScreen>
     with SingleTickerProviderStateMixin {
   @override
   void initState() {
     widget.store.loadSubjects(widget.course.id);
-    widget.store.loadCourse(widget.course.id);
+    //widget.store.loadCourse(widget.course.id);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: MainDrawer(widget.store),
+      //drawer: MainDrawer(widget.store),
       appBar: AppBar(
         centerTitle: true,
         elevation: 0,
@@ -171,64 +172,6 @@ class _CourseScreenState extends State<CourseScreen>
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            SizedBox(
-              height: 20,
-            ),
-
-            /*Container(
-                margin: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
-                padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.all(Radius.circular(10)),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withAlpha(10),
-                        blurRadius: 20.0, // has the effect of softening the shadow
-                        spreadRadius: 10.0, // has the effect of extending the shadow
-                        offset: Offset(
-                          0.0, // horizontal, move right 10
-                          0.0, // vertical, move down 10
-                        ),
-                      )
-                    ]
-                ),
-                child: Row(
-                  children: <Widget>[
-                    Image(
-                      image: AssetImage('assets/icons/${widget.course.icon}'),
-                      width: 50,
-                    ),
-                    SizedBox(
-                      width: 20,
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          widget.course.name,
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.w600,
-                            color: kDarkBlue
-                          ),
-                        ),
-                        Text(
-                          '${widget.course.subjectsCount} subjects',
-                          style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.normal,
-                              color: kDarkBlue
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),*/
-            SizedBox(
-              height: 20,
-            ),
             Expanded(
               child: SubjectItemsView(widget.store, widget.course),
             )
@@ -279,27 +222,12 @@ class _CourseScreenState extends State<CourseScreen>
               contentPadding: EdgeInsets.all(8),
               prefixIcon: Icon(Icons.search)),
           onChanged: (text) {
-            setState(() {
-              //name = text;
-            });
+
           },
         ),
       ),
     );
   }
-}
-
-class CourseTitle extends StatelessWidget {
-  final CoursesStore store;
-  final Course course;
-  const CourseTitle(this.store, this.course);
-
-  @override
-  Widget build(BuildContext context) => Observer(builder: (_) {
-        if (store.isCourseLoading) return Text(course.name);
-
-        return Text(store.course != null ? store.course.name : "");
-      });
 }
 
 class SubjectItemsView extends StatelessWidget {

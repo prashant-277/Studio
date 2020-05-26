@@ -423,9 +423,11 @@ packages:
   line_awesome_icons:
     dependency: "direct main"
     description:
-      name: line_awesome_icons
-      url: "https://pub.dartlang.org"
-    source: hosted
+      path: "."
+      ref: master
+      resolved-ref: ff2a242f767b228fff28591b90db27896089977e
+      url: "git://github.com/mateotomasgomez/line_awesome_icons_flutter.git"
+    source: git
     version: "1.0.4+2"
   logging:
     dependency: transitive

@@ -7,15 +7,16 @@ import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:studio/courses_store.dart';
 import 'package:studio/main.dart';
 import 'package:studio/models/course.dart';
-import 'package:studio/screens/edit_course_screen.dart';
+import 'package:studio/screens/courses/edit_course_screen.dart';
 import 'package:studio/widgets/drawer.dart';
 import 'package:studio/widgets/main_navigation_bar.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:studio/widgets/shadow_container.dart';
 
-import '../constants.dart';
+import '../../constants.dart';
 import 'course_screen.dart';
-import 'subject_screen.dart';
+import '../subjects/subjects_screen.dart';
 
 class CoursesScreen extends StatefulWidget {
   static String id = 'courses_screen';
@@ -28,7 +29,6 @@ class CoursesScreen extends StatefulWidget {
 
 class _CoursesScreenState extends State<CoursesScreen>
     with SingleTickerProviderStateMixin {
-
   int _currentIndex = 0;
 
   @override
@@ -36,7 +36,6 @@ class _CoursesScreenState extends State<CoursesScreen>
     widget.store.loadCourses();
     super.initState();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -77,13 +76,11 @@ class _CoursesScreenState extends State<CoursesScreen>
             Navigator.pushNamed(context, EditCourseScreen.id);
           },
         ),
-        body: CoursesView(widget.store)
-    );
+        body: CoursesView(widget.store));
   }
 }
 
 class CoursesView extends StatefulWidget {
-
   final CoursesStore store;
   CoursesView(this.store);
 
@@ -95,20 +92,19 @@ class _CoursesViewState extends State<CoursesView> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-        child: Column(
-          children: <Widget>[
-            SizedBox(
-              height: 20,
-            ),
-            Expanded(
-              child: CourseItemsView(widget.store),
-            )
-          ],
-        ),
+      child: Column(
+        children: <Widget>[
+          SizedBox(
+            height: 20,
+          ),
+          Expanded(
+            child: CourseItemsView(widget.store),
+          )
+        ],
+      ),
     );
   }
 }
-
 
 class CourseItemsView extends StatelessWidget {
   const CourseItemsView(this.store);
@@ -117,15 +113,14 @@ class CourseItemsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Observer(builder: (_) {
-    return ModalProgressHUD(
-      color: kLightGrey,
-      child: resultWidget(context, store.courses),
-      inAsyncCall: store.isCoursesLoading,
-    );
-  });
+        return ModalProgressHUD(
+          color: kLightGrey,
+          child: resultWidget(context, store.courses),
+          inAsyncCall: store.isCoursesLoading,
+        );
+      });
 
   resultWidget(BuildContext context, List<Course> items) {
-
     if (!store.isCoursesLoading && items.length == 0) {
       return Column(
         children: <Widget>[
@@ -156,54 +151,38 @@ class CourseItemsView extends StatelessWidget {
         itemBuilder: (_, index) {
           final item = items[index];
           return Container(
-            padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
-            child: Container(
-              decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.all(Radius.circular(10)),
-                  boxShadow: [
-                    BoxShadow(
-                    color: Colors.black.withAlpha(10),
-                    blurRadius: 20.0, // has the effect of softening the shadow
-                    spreadRadius: 10.0, // has the effect of extending the shadow
-                    offset: Offset(
-                      0.0, // horizontal, move right 10
-                      0.0, // vertical, move down 10
-                    ),
-                  )
-                  ]
-              ),
-              padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 10),
-              margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 0),
-              child: ListTile(
-                contentPadding: const EdgeInsets.symmetric(vertical: 4, horizontal: 10),
-                onTap: () {
-                  Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => CourseScreen(store, item)));
-                },
-                leading: Container(
-                  child: Image(
-                    image: AssetImage("assets/icons/${item.icon}"),
-                  ),
-                ),
-                trailing: const Icon(
-                  Icons.chevron_right,
-                  color: kDarkBlue,
-                ),
-                title: Container(
-                  child: Text(
-                    item.name,
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
+              padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
+              child: ShadowContainer(
+                child: ListTile(
+                  contentPadding:
+                      const EdgeInsets.symmetric(vertical: 4, horizontal: 10),
+                  onTap: () {
+                    store.setCourse(item);
+                    Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => CourseScreen(store, item)));
+                  },
+                  leading: Container(
+                    child: Image(
+                      image: AssetImage("assets/icons/${item.icon}"),
                     ),
                   ),
+                  trailing: const Icon(
+                    Icons.chevron_right,
+                    color: kDarkBlue,
+                  ),
+                  title: Container(
+                    child: Text(
+                      item.name,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                  subtitle: Text('${item.subjectsCount} subjects'),
                 ),
-                subtitle: Text('${item.subjectsCount} subjects'),
-              ),
-            ),
-          );
+              ));
         });
   }
 }

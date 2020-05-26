@@ -6,12 +6,14 @@ import 'package:studio/courses_store.dart';
 import 'package:studio/models/course.dart';
 import 'package:studio/models/subject.dart';
 import 'package:studio/screens/edit_question_screen.dart';
-import 'package:studio/screens/edit_subject_screen.dart';
+import 'package:studio/screens/notes/edit_note_screen.dart';
+import 'package:studio/screens/notes/notes_screen.dart';
+import 'package:studio/screens/subjects/edit_subject_screen.dart';
 import 'package:studio/screens/questions_screen.dart';
 
-import '../constants.dart';
-import 'edit_note_screen.dart';
-import 'notes/notes_screen.dart';
+import '../../constants.dart';
+
+
 
 
 class SubjectScreen extends StatefulWidget {
@@ -82,7 +84,7 @@ class _SubjectScreenState extends State<SubjectScreen>
             Tab(
               //text: 'Mind map',
               icon: Icon(
-                LineAwesomeIcons.sitemap,
+                LineAwesomeIcons.project_diagram,
                 color: currentTab == kTabMindmap
                     ? kPrimaryColor
                     : Colors.blueGrey[800],

@@ -8,8 +8,8 @@ import 'package:studio/models/course.dart';
 import 'package:studio/models/subject.dart';
 import 'package:studio/widgets/buttons.dart';
 
-import '../constants.dart';
-import '../courses_store.dart';
+import '../../constants.dart';
+import '../../courses_store.dart';
 
 class EditSubjectScreen extends StatefulWidget {
   static final id = 'edit_subject_screen';

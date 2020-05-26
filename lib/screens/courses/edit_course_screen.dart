@@ -2,10 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:studio/courses_store.dart';
 import 'package:studio/models/course.dart';
-import 'package:studio/screens/courses_screen.dart';
+import 'package:studio/screens/courses/courses_screen.dart';
 import 'package:studio/widgets/buttons.dart';
 
-import '../constants.dart';
+import '../../constants.dart';
 
 // ignore: must_be_immutable
 class EditCourseScreen extends StatefulWidget {

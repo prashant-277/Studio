@@ -5,7 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:studio/widgets/buttons.dart';
 
 import '../auth_store.dart';
-import 'courses_screen.dart';
+import 'courses/courses_screen.dart';
 import 'login_signup_screen.dart';
 
 class HomeScreen extends StatelessWidget {

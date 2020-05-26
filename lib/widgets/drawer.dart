@@ -5,7 +5,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:line_awesome_icons/line_awesome_icons.dart';
 import 'package:studio/courses_store.dart';
 import 'package:studio/models/course.dart';
-import 'package:studio/screens/courses_screen.dart';
+import 'package:studio/screens/courses/courses_screen.dart';
 
 import '../auth_store.dart';
 import '../constants.dart';
@@ -73,12 +73,27 @@ class _MainDrawerState extends State<MainDrawer> {
                       ),
                       ListTile(
                         leading: Icon(
-                            LineAwesomeIcons.graduation_cap
+                            LineAwesomeIcons.user_graduate
                         ),
                         dense: true,
                         contentPadding: EdgeInsets.fromLTRB(20, 0, 0, 0),
                         title: Text(
-                          "About StudyHero",
+                          "How to study",
+                          style: TextStyle(
+                              fontSize: kDrawerItemSize, fontWeight: FontWeight.w600),
+                        ),
+                        onTap: () {
+                          Navigator.pushReplacementNamed(context, CoursesScreen.id);
+                        },
+                      ),
+                      ListTile(
+                        leading: Icon(
+                            LineAwesomeIcons.mobile
+                        ),
+                        dense: true,
+                        contentPadding: EdgeInsets.fromLTRB(20, 0, 0, 0),
+                        title: Text(
+                          "Tutorial & Tips",
                           style: TextStyle(
                               fontSize: kDrawerItemSize, fontWeight: FontWeight.w600),
                         ),
@@ -134,7 +149,7 @@ class _MainDrawerState extends State<MainDrawer> {
                       ListTile(
                         dense: true,
                         leading: Icon(
-                            LineAwesomeIcons.pencil
+                            LineAwesomeIcons.pencil_alt
                         ),
                         contentPadding: EdgeInsets.fromLTRB(20, 0, 0, 0),
                         title: Text(

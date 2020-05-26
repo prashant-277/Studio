@@ -118,6 +118,11 @@ abstract class _CoursesStore with Store {
   }
 
   @action
+  void setCourse(Course item) {
+    course = item;
+  }
+
+  @action
   Future<void> saveNote(Note note) async {
     addLoading(kNotes);
     DocumentReference doc;
@@ -430,6 +435,7 @@ abstract class _CoursesStore with Store {
       course.userId = snapshot.data['userId'];
       course.subjectsCount = snapshot.data['subjectsCount'];
       print("course loaded");
+      setCourse(course);
       stopLoading(kCourse);
     });
   }
@@ -462,9 +468,8 @@ abstract class _CoursesStore with Store {
   Future<void> loadBooks(String courseId) async {
     addLoading(kBooks);
     books.clear();
-    print("loadBooks req");
     return _books
-        //.where('courseId', isEqualTo: courseId)
+        .where('courseId', isEqualTo: courseId)
         .orderBy('titleDb')
         .getDocuments()
         .then((snapshot) {
@@ -476,7 +481,6 @@ abstract class _CoursesStore with Store {
         book.courseId = doc.data['courseId'];
         books.add(book);
       }
-      print("${books.length} books in db");
       stopLoading(kBooks);
     });
   }
