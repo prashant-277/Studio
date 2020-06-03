@@ -37,7 +37,7 @@ class _QuestionListState extends State<QuestionList> {
 
   @override
   void initState() {
-    widget.store.loadQuestions(widget.subject.id);
+    widget.store.loadQuestions(subjectId: widget.store.subject.id);
     super.initState();
   }
 
@@ -201,7 +201,7 @@ class _QuestionListState extends State<QuestionList> {
                             onPressed: () {
                               Navigator.pop(context);
                               widget.store.deleteQuestion(item.id, () {
-                                widget.store.loadQuestions(widget.subject.id);
+                                widget.store.loadQuestions(subjectId: widget.subject.id);
                               });
                             },
                           ),
@@ -297,7 +297,7 @@ class _QuestionListState extends State<QuestionList> {
               onPressed: () {
                 print("load ${widget.store.subjects[subjIndex + 1].name}");
                 widget.store.setSubject(widget.store.subjects[subjIndex + 1]);
-                widget.store.loadQuestions(widget.store.subjects[subjIndex + 1].id);
+                widget.store.loadQuestions(subjectId: widget.store.subjects[subjIndex + 1].id);
                 carouselController.jumpToPage(0);
                 //widget.store.loadQuestions(widget.store.subjects[subjIndex + 1].id);
               },

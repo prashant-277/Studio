@@ -173,10 +173,7 @@ class _NoteListState extends State<NoteList> with TickerProviderStateMixin {
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) => NoteEdit(
-                                              widget.store,
-                                              widget.course,
-                                              widget.subject,
-                                              item)));
+                                              widget.store, item)));
                                 },
                                 child: Text('Edit'),
                               ),

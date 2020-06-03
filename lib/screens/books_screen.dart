@@ -14,8 +14,7 @@ import 'edit_book_screen.dart';
 class BooksScreen extends StatefulWidget {
   static String id = 'courses_screen';
   final CoursesStore store;
-  final Course course;
-  const BooksScreen(this.store, this.course);
+  const BooksScreen(this.store);
 
   @override
   _BooksScreenState createState() => _BooksScreenState();
@@ -28,7 +27,7 @@ class _BooksScreenState extends State<BooksScreen>
 
   @override
   void initState() {
-    widget.store.loadBooks(widget.course.id);
+    widget.store.loadBooks(widget.store.course.id);
     super.initState();
   }
 
@@ -45,6 +44,9 @@ class _BooksScreenState extends State<BooksScreen>
             padding: const EdgeInsets.all(18.0),
             child: Text(
               'My books',
+              style: TextStyle(
+                color: kDarkBlue
+              ),
             ),
           ),
           bottom: PreferredSize(
@@ -53,7 +55,7 @@ class _BooksScreenState extends State<BooksScreen>
               padding: const EdgeInsets.fromLTRB(0, 0, 0, 8),
               child: Center(
                 child:
-                Text(widget.course.name,
+                Text(widget.store.course.name,
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
@@ -72,14 +74,14 @@ class _BooksScreenState extends State<BooksScreen>
           backgroundColor: kPrimaryColor,
           onPressed: () {
             Navigator.push(context, MaterialPageRoute(
-                builder: (context) => EditBookScreen(widget.store, widget.course, null)
+                builder: (context) => EditBookScreen(widget.store, widget.store.course, null)
             ));
           },
         ),
         body: SafeArea(
           child: Padding(
             padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
-            child: BookItemsView(widget.store, widget.course),
+            child: BookItemsView(widget.store, widget.store.course),
           ),
         )
     );

@@ -11,11 +11,9 @@ import '../../constants.dart';
 
 class NoteEdit extends StatefulWidget {
   final CoursesStore store;
-  final Course course;
-  final Subject subject;
   final Note data;
 
-  NoteEdit(this.store, this.course, this.subject, this.data);
+  NoteEdit(this.store, this.data);
 
   @override
   _NoteEditState createState() => _NoteEditState();
@@ -23,6 +21,7 @@ class NoteEdit extends StatefulWidget {
 
 class _NoteEditState extends State<NoteEdit> {
   String text = '';
+  int level = 1;
   TextEditingController textCtrl = TextEditingController();
 
   @override
@@ -103,8 +102,62 @@ class _NoteEditState extends State<NoteEdit> {
                     },
                   ),
                 ),
-                Container(
-                  margin: EdgeInsets.fromLTRB(0, 20, 0, 10),
+                SizedBox(
+                  height: 20,
+                ),
+                Wrap(
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  spacing: 10,
+                  children: <Widget>[
+                    Text('Level:',
+                      style: TextStyle(
+                        fontSize: 18
+                      ),
+                    ),
+                    ChoiceChip(
+                      label: Text('1',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w100
+                      ),),
+                      selected: level == 1,
+                      onSelected: (s) {
+                        if(s) {
+                          setState(() {
+                            level = 1;
+                          });
+                        }
+                      },
+                    ),
+                    ChoiceChip(
+                      label: Text('2',style: TextStyle(
+                          fontWeight: FontWeight.w600
+                      ),),
+                      selected: level == 2,
+                      onSelected: (s) {
+                        if(s) {
+                          setState(() {
+                            level = 2;
+                          });
+                        }
+                      },
+                    ),
+                    ChoiceChip(
+                      label: Text('3',style: TextStyle(
+                          fontWeight: FontWeight.w900
+                      ),),
+                      selected: level == 3,
+                      onSelected: (s) {
+                        if(s) {
+                          setState(() {
+                            level = 3;
+                          });
+                        }
+                      },
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: 20,
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -166,9 +219,10 @@ class _NoteEditState extends State<NoteEdit> {
                           note = Note();
                         else
                           note.id = widget.data.id;
-                        note.courseId = widget.course.id;
-                        note.subjectId = widget.subject.id;
+                        note.courseId = widget.store.course.id;
+                        note.subjectId = widget.store.subject.id;
                         note.text = text.trim();
+                        note.level = level;
                         widget.store.saveNote(note);
                         Navigator.pop(context);
                       },

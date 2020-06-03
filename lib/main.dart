@@ -32,7 +32,7 @@ class StudioApp extends StatelessWidget {
           color: kLightGrey,
           textTheme: TextTheme(
             title: TextStyle(
-              color: kDarkBlue,
+              color: Colors.white,
               fontFamily: 'Baloo Paaji 2',
               fontWeight: FontWeight.bold,
               fontSize: 20,
@@ -81,14 +81,8 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) => Observer(builder: (_) {
     _checkLogged();
-
-    return Container(
-      child: Observer(
-          builder: (_) => Observer(builder: (_) {
-            return getScreen();
-          })),
-    );
-  }
+    return getScreen();
+  });
 }

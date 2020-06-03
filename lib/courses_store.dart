@@ -106,7 +106,8 @@ abstract class _CoursesStore with Store {
       doc = _courses.document(id);
     }
     await doc.setData(data, merge: true);
-    if (id != null) await loadCourse(id);
+    //if (id != null) await loadCourse(id);
+    this.course = Course.withData(data);
 
     stopLoading(kCourse);
     if (callback != null) callback();
@@ -181,7 +182,7 @@ abstract class _CoursesStore with Store {
     }
     await doc.setData(data, merge: true);
     stopLoading(kQuestions);
-    loadQuestions(question.subjectId);
+    loadQuestions(subjectId: question.subjectId);
   }
 
   @action
@@ -527,6 +528,7 @@ abstract class _CoursesStore with Store {
         note.userId = doc.data['userId'];
         note.text = doc.data['text'];
         note.bookmark = doc.data['bookmark'] ?? false;
+        note.level = doc.data['level'] ?? 1;
         notes.add(note);
       }
       stopLoading(kNotes);
@@ -556,12 +558,14 @@ abstract class _CoursesStore with Store {
   }
 
   @action
-  Future<void> loadQuestions(String subjectId) async {
+  Future<void> loadQuestions({ String subjectId, String courseId }) async {
     addLoading(kQuestions);
     print("loadQuestions $subjectId");
     questions.clear();
+
     _questions
         .where('subjectId', isEqualTo: subjectId)
+        .where('courseId', isEqualTo: courseId)
     //.orderBy('order')
         .orderBy('created')
         .getDocuments()
@@ -575,6 +579,7 @@ abstract class _CoursesStore with Store {
         question.text = doc.data['text'];
         question.answer = doc.data['answer'];
         question.bookmark = doc.data['bookmark'] ?? false;
+        question.level = doc.data['bookmark'] ?? 1;
         questions.add(question);
       }
       stopLoading(kQuestions);

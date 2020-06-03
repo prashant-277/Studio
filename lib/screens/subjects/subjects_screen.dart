@@ -9,6 +9,7 @@ import 'package:studio/courses_store.dart';
 import 'package:studio/models/course.dart';
 import 'package:studio/models/subject.dart';
 import 'package:studio/screens/books_screen.dart';
+import 'package:studio/screens/home_screen.dart';
 import 'package:studio/screens/subjects/edit_subject_screen.dart';
 import 'package:studio/screens/subjects/subject_screen.dart';
 import 'package:studio/widgets/course_title.dart';
@@ -22,10 +23,9 @@ import '../courses/edit_course_screen.dart';
 
 class SubjectsScreen extends StatefulWidget {
   final CoursesStore store;
-  final Course course;
   static final id = 'subjects_screen';
 
-  const SubjectsScreen(this.store, this.course);
+  const SubjectsScreen(this.store);
 
   @override
   _SubjectsScreenState createState() => _SubjectsScreenState();
@@ -35,8 +35,8 @@ class _SubjectsScreenState extends State<SubjectsScreen>
     with SingleTickerProviderStateMixin {
   @override
   void initState() {
-    widget.store.loadSubjects(widget.course.id);
-    //widget.store.loadCourse(widget.course.id);
+    widget.store.loadSubjects(widget.store.course.id);
+    //widget.store.loadCourse(widget.store.course.id);
     super.initState();
   }
 
@@ -48,7 +48,7 @@ class _SubjectsScreenState extends State<SubjectsScreen>
         centerTitle: true,
         elevation: 0,
         iconTheme: IconThemeData(color: kDarkBlue),
-        title: CourseTitle(widget.store, widget.course),
+        title: CourseTitle(widget.store, widget.store.course, kContrastDarkColor),
         backgroundColor: kLightGrey,
         actions: <Widget>[
           PopupMenuButton<int>(
@@ -59,7 +59,7 @@ class _SubjectsScreenState extends State<SubjectsScreen>
                       context,
                       MaterialPageRoute(
                           builder: (context) => EditCourseScreen(
-                              widget.store, widget.course)));
+                              widget.store, widget.store.course)));
                   break;
                 case kActionDelete:
                   showDialog(
@@ -68,7 +68,7 @@ class _SubjectsScreenState extends State<SubjectsScreen>
                         title: Text('Confirm'),
                         content: Text(
                             'Do you really want to delete '
-                                'course ${widget.course.name} and all '
+                                'course ${widget.store.course.name} and all '
                                 'its subjects, notes and questions?'),
                         actions: <Widget>[
                           FlatButton(
@@ -83,8 +83,8 @@ class _SubjectsScreenState extends State<SubjectsScreen>
                             onPressed: () async {
                               Navigator.pop(context);
                               await widget.store.deleteCourse(
-                                  widget.course.id);
-                              Navigator.pop(context);
+                                  widget.store.course.id);
+                              Navigator.pushReplacementNamed(context, HomeScreen.id);
                             },
                           )
                         ],
@@ -94,7 +94,7 @@ class _SubjectsScreenState extends State<SubjectsScreen>
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => BooksScreen(widget.store, widget.course)));
+                          builder: (context) => BooksScreen(widget.store)));
                   break;
               }
             },
@@ -151,7 +151,7 @@ class _SubjectsScreenState extends State<SubjectsScreen>
                     context,
                     MaterialPageRoute(
                         builder: (context) => EditSubjectScreen(
-                            widget.store, widget.course, null)));
+                            widget.store, widget.store.course, null)));
               },
             ),
             SpeedDialChild(
@@ -164,7 +164,7 @@ class _SubjectsScreenState extends State<SubjectsScreen>
                     context,
                     MaterialPageRoute(
                         builder: (context) =>
-                            EditBookScreen(widget.store, widget.course, null)));
+                            EditBookScreen(widget.store, widget.store.course, null)));
               },
             ),
           ]),
@@ -173,7 +173,7 @@ class _SubjectsScreenState extends State<SubjectsScreen>
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             Expanded(
-              child: SubjectItemsView(widget.store, widget.course),
+              child: SubjectItemsView(widget.store, widget.store.course),
             )
           ],
         ),

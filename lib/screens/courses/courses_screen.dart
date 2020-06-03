@@ -53,15 +53,17 @@ class _CoursesScreenState extends State<CoursesScreen>
     ];
 
     return Scaffold(
-        backgroundColor: kLightGrey,
+        backgroundColor: kBackground,
         appBar: AppBar(
-          iconTheme: IconThemeData(color: kDarkBlue),
+          iconTheme: IconThemeData(color: kContrastDarkColor),
           centerTitle: true,
           elevation: 0,
+          backgroundColor: kBackground,
           title: Padding(
             padding: const EdgeInsets.all(18.0),
             child: Text(
               'My courses',
+              style: TextStyle(color: kContrastDarkColor),
             ),
           ),
         ),
@@ -161,11 +163,14 @@ class CourseItemsView extends StatelessWidget {
                     Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => CourseScreen(store, item)));
+                            builder: (context) => CourseScreen(store)));
                   },
                   leading: Container(
-                    child: Image(
-                      image: AssetImage("assets/icons/${item.icon}"),
+                    child: Hero(
+                      tag: 'course-icon-${item.icon}',
+                      child: Image(
+                        image: AssetImage("assets/icons/${item.icon}"),
+                      ),
                     ),
                   ),
                   trailing: const Icon(

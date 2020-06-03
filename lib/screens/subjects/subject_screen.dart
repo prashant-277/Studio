@@ -13,9 +13,6 @@ import 'package:studio/screens/questions_screen.dart';
 
 import '../../constants.dart';
 
-
-
-
 class SubjectScreen extends StatefulWidget {
   SubjectScreen(this.store, this.course);
 
@@ -94,6 +91,9 @@ class _SubjectScreenState extends State<SubjectScreen>
         ),
         title: Text(
           widget.store.subject.name,
+          style: TextStyle(
+            color: kDarkBlue
+          ),
         ),
         actions: <Widget>[
           FlatButton(
@@ -134,33 +134,33 @@ class _SubjectScreenState extends State<SubjectScreen>
                               showDialog(
                                   context: context,
                                   builder: (_) => AlertDialog(
-                                        title: Text('Confirm'),
-                                        content: Text(
-                                            'Do you really want to delete '
+                                    title: Text('Confirm'),
+                                    content: Text(
+                                        'Do you really want to delete '
                                             'subject ${widget.store.subject.name} and all '
                                             'its notes and questions?'),
-                                        actions: <Widget>[
-                                          FlatButton(
-                                            child: Text('Yes'),
-                                            textColor: Colors.red,
-                                            onPressed: () async {
-                                              Navigator.pop(context);
-                                              await widget.store.deleteSubject(
-                                                  widget.store.subject.id,
-                                                  widget.course.id);
-                                              Navigator.pop(context);
-                                              widget.store.loadSubjects(
-                                                  widget.course.id);
-                                            },
-                                          ),
-                                          FlatButton(
-                                            onPressed: () {
-                                              Navigator.pop(context);
-                                            },
-                                            child: Text('No'),
-                                          ),
-                                        ],
-                                      ));
+                                    actions: <Widget>[
+                                      FlatButton(
+                                        child: Text('Yes'),
+                                        textColor: Colors.red,
+                                        onPressed: () async {
+                                          Navigator.pop(context);
+                                          await widget.store.deleteSubject(
+                                              widget.store.subject.id,
+                                              widget.course.id);
+                                          Navigator.pop(context);
+                                          widget.store.loadSubjects(
+                                              widget.course.id);
+                                        },
+                                      ),
+                                      FlatButton(
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                        child: Text('No'),
+                                      ),
+                                    ],
+                                  ));
                             },
                           ),
                         ],
@@ -181,7 +181,7 @@ class _SubjectScreenState extends State<SubjectScreen>
                 context,
                 MaterialPageRoute(
                     builder: (context) => NoteEdit(
-                        widget.store, widget.course, widget.store.subject, null)));
+                        widget.store, null)));
           }
           if(currentTab == kTabQuestions) {
             Navigator.push(

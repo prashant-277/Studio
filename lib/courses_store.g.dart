@@ -311,8 +311,9 @@ mixin _$CoursesStore on _CoursesStore, Store {
   final _$loadQuestionsAsyncAction = AsyncAction('_CoursesStore.loadQuestions');
 
   @override
-  Future<void> loadQuestions(String subjectId) {
-    return _$loadQuestionsAsyncAction.run(() => super.loadQuestions(subjectId));
+  Future<void> loadQuestions({String subjectId, String courseId}) {
+    return _$loadQuestionsAsyncAction.run(
+        () => super.loadQuestions(subjectId: subjectId, courseId: courseId));
   }
 
   final _$_CoursesStoreActionController =
@@ -324,6 +325,17 @@ mixin _$CoursesStore on _CoursesStore, Store {
         name: '_CoursesStore.setSubject');
     try {
       return super.setSubject(item);
+    } finally {
+      _$_CoursesStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void setCourse(Course item) {
+    final _$actionInfo = _$_CoursesStoreActionController.startAction(
+        name: '_CoursesStore.setCourse');
+    try {
+      return super.setCourse(item);
     } finally {
       _$_CoursesStoreActionController.endAction(_$actionInfo);
     }

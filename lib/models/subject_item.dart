@@ -6,4 +6,5 @@ class SubjectItem {
   String userId;
   DateTime created;
   int order;
+  int level;
 }

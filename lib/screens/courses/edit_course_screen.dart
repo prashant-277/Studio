@@ -13,11 +13,7 @@ class EditCourseScreen extends StatefulWidget {
   CoursesStore store;
   Course data;
 
-  EditCourseScreen(CoursesStore store, Course data)
-  {
-    this.store = store;
-    this.data = data;
-  }
+  EditCourseScreen(this.store, this.data);
 
   @override
   _EditCourseScreenState createState() => _EditCourseScreenState();
