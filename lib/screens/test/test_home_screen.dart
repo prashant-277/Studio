@@ -21,6 +21,7 @@ class TestHomeScreen extends StatefulWidget {
 }
 
 class _TestHomeScreenState extends State<TestHomeScreen> {
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
   List<Subject> subjects;
   List<int> levels;
   int questions = 0;
@@ -39,6 +40,7 @@ class _TestHomeScreenState extends State<TestHomeScreen> {
         var withQuestions =
             widget.store.subjects.where((element) => _hasQuestions(element));
         return Scaffold(
+          key: _scaffoldKey,
           drawer: MainDrawer(widget.store),
           appBar: AppBar(
               centerTitle: true,
@@ -148,6 +150,7 @@ class _TestHomeScreenState extends State<TestHomeScreen> {
                                 fontWeight: FontWeight.w600,
                                 color: kDarkBlue),
                           ),
+                          Text('Choose the level of the questions for this test'),
                           Padding(
                               padding: const EdgeInsets.symmetric(vertical: 10),
                               child: Wrap(
@@ -167,11 +170,34 @@ class _TestHomeScreenState extends State<TestHomeScreen> {
               ),
             ),
           )),
+          bottomNavigationBar: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            child: RaisedButton(
+              color: questions < 3 ? Colors.blueGrey.shade100 : kPrimaryColor,
+              child: Text('START',
+                style: TextStyle(
+                  fontSize: 20,
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600
+                ),
+              ),
+
+              onPressed: () {
+                if(questions < 3) {
+                  _scaffoldKey.currentState.showSnackBar(
+                      SnackBar(
+                        content: Text('You need at least 3 questions to start a test'),
+                      )
+                  );
+                }
+              },
+            ),
+          ),
         );
       });
 
   Widget _questionsSlider() {
-    if (subjects.length == 0) {
+    if (questions < 3) {
       return ShadowContainer(
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
           child: Padding(
@@ -188,7 +214,7 @@ class _TestHomeScreenState extends State<TestHomeScreen> {
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 12),
-                    child: Text('You need to select at least one subject'),
+                    child: Text('You need to select at least 3 questions'),
                   )
                 ]),
           ));
@@ -209,9 +235,9 @@ class _TestHomeScreenState extends State<TestHomeScreen> {
                     color: kDarkBlue),
               ),
               Slider(
-                min: 0,
+                min: 3,
                 max: _selectedQuestions().toDouble(),
-                divisions: _selectedQuestions(),
+                divisions: _selectedQuestions() - 3,
                 label: questions.toString(),
                 value: questions.toDouble(),
                 activeColor: Colors.blueGrey,
@@ -248,19 +274,33 @@ class _TestHomeScreenState extends State<TestHomeScreen> {
     return c;
   }
 
+  _refreshQuestionsCount() {
+    int count = 0;
+    subjects.forEach((item) {
+      count += widget.store.questions
+          .where((question) => question.subjectId == item.id &&
+                  levels.contains(question.level))
+          .length;
+    });
+
+    setState(() {
+      questions = count;
+    });
+  }
+
   countQuestionsBySubjects() {
     questions = _selectedQuestions();
   }
 
-  Widget _selectedCountText() {
+  Widget  _selectedCountText() {
     var subjectIds = subjects.map((e) => e.id);
     int questionsCount = widget.store.questions
         .where((question) => subjectIds.contains(question.subjectId))
         .length;
 
     return Text(questionsCount > 0
-        ? "$questionsCount questions selected"
-        : "No questions selected");
+        ? "$questionsCount questions in ${subjects.length} subjects"
+        : "No subjects selected");
   }
 
   Widget _levelChip(int level) {
@@ -270,7 +310,7 @@ class _TestHomeScreenState extends State<TestHomeScreen> {
         radius: 20,
         child: Icon(LineAwesomeIcons.minus),
       ),
-      label: Text(level.toString()),
+      label: Text("Level $level"),
       backgroundColor: Colors.blueGrey.shade100,
       selectedColor: Colors.blue.shade100,
       selected: levels.contains(level),
@@ -282,6 +322,7 @@ class _TestHomeScreenState extends State<TestHomeScreen> {
             levels.remove(level);
           }
         });
+        _refreshQuestionsCount();
       },
     );
   }

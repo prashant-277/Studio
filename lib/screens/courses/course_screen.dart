@@ -127,7 +127,7 @@ class CourseScreenItem extends StatelessWidget {
         child: GestureDetector(
           onTap: onTap,
           child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 0, vertical: 6),
+            padding: EdgeInsets.symmetric(horizontal: 0, vertical: 0),
             child: Row(
               children: <Widget>[
                 graphic(),
@@ -140,7 +140,7 @@ class CourseScreenItem extends StatelessWidget {
                       Text(
                         title,
                         style: TextStyle(
-                            fontSize: 24, color: kDarkBlue, fontWeight: FontWeight.w600),
+                            fontSize: 20, color: kDarkBlue, fontWeight: FontWeight.w600),
                         overflow: TextOverflow.ellipsis,
                         maxLines: 3,
                       ),
