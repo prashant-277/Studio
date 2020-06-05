@@ -23,10 +23,11 @@ class TestHomeScreen extends StatefulWidget {
 class _TestHomeScreenState extends State<TestHomeScreen> {
   List<Subject> subjects;
   List<int> levels;
+  int questions = 0;
 
   @override
   void initState() {
-    levels = [1,2,3];
+    levels = [1, 2, 3];
     subjects = [];
     widget.store.loadSubjects(widget.store.course.id);
     widget.store.loadQuestions(courseId: widget.store.course.id);
@@ -96,8 +97,10 @@ class _TestHomeScreenState extends State<TestHomeScreen> {
                                     setState(() {
                                       if (s) {
                                         subjects.add(element);
+                                        countQuestionsBySubjects();
                                       } else {
                                         subjects.remove(element);
+                                        countQuestionsBySubjects();
                                       }
                                     });
                                   },
@@ -159,38 +162,70 @@ class _TestHomeScreenState extends State<TestHomeScreen> {
                       ),
                     ),
                   ),
-                  ShadowContainer(
-                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-                    child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 0, vertical: 0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: <Widget>[
-                            Text(
-                              'Number of questions',
-                              style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w600,
-                                  color: kDarkBlue),
-                            ),
-                            Slider(
-                              min: 0,
-                              max: subjects.length.toDouble(),
-                              label: 'DASD',
-                              value: 0,
-                              activeColor: Colors.blueGrey,
-                              onChanged: (v) {},
-                            ),
-                          ],
-                        )),
-                  ),
+                  _questionsSlider()
                 ],
               ),
             ),
           )),
         );
       });
+
+  Widget _questionsSlider() {
+    if (subjects.length == 0) {
+      return ShadowContainer(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+            child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  Text(
+                    'Number of questions',
+                    style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600,
+                        color: kDarkBlue),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    child: Text('You need to select at least one subject'),
+                  )
+                ]),
+          ));
+    }
+
+    return ShadowContainer(
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+      child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              Text(
+                'Number of questions',
+                style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
+                    color: kDarkBlue),
+              ),
+              Slider(
+                min: 0,
+                max: _selectedQuestions().toDouble(),
+                divisions: _selectedQuestions(),
+                label: questions.toString(),
+                value: questions.toDouble(),
+                activeColor: Colors.blueGrey,
+                onChanged: (v) {
+                  setState(() {
+                    questions = v.toInt();
+                  });
+                },
+              ),
+              Text("$questions questions")
+            ],
+          )),
+    );
+  }
 
   bool _hasQuestions(Subject item) {
     return widget.store.questions
@@ -203,6 +238,18 @@ class _TestHomeScreenState extends State<TestHomeScreen> {
     return widget.store.questions
         .where((question) => question.subjectId == item.id)
         .length;
+  }
+
+  int _selectedQuestions() {
+    int c = 0;
+    subjects.forEach((element) {
+      c += _questionCount(element);
+    });
+    return c;
+  }
+
+  countQuestionsBySubjects() {
+    questions = _selectedQuestions();
   }
 
   Widget _selectedCountText() {
