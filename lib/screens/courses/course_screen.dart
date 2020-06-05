@@ -76,7 +76,7 @@ class _CourseScreenState extends State<CourseScreen> {
               //icon: LineAwesomeIcons.list_ol,
               image: 'assets/images/exam.png',
               onTap: () {
-                Navigator.push(
+                Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
                         builder: (context) =>
@@ -120,34 +120,37 @@ class CourseScreenItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ShadowContainer(
-      padding: EdgeInsets.symmetric(vertical: 22, horizontal: 0),
-      child: GestureDetector(
-        onTap: onTap,
-        child: Container(
-          padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
-          child: Row(
-            children: <Widget>[
-              graphic(),
-              SizedBox.fromSize(size: Size.square(20),),
-              Expanded(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      title,
-                      style: TextStyle(
-                          fontSize: 24, color: kDarkBlue, fontWeight: FontWeight.w600),
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 3,
-                    ),
-                    tileSubTitle()
-                  ],
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+      child: ShadowContainer(
+        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 24),
+        child: GestureDetector(
+          onTap: onTap,
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 0, vertical: 6),
+            child: Row(
+              children: <Widget>[
+                graphic(),
+                SizedBox.fromSize(size: Size.square(20),),
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        title,
+                        style: TextStyle(
+                            fontSize: 24, color: kDarkBlue, fontWeight: FontWeight.w600),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 3,
+                      ),
+                      tileSubTitle()
+                    ],
+                  ),
                 ),
-              ),
 
-            ],
+              ],
+            ),
           ),
         ),
       ),

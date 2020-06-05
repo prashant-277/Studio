@@ -14,7 +14,7 @@ import 'package:studio/models/course.dart';
 import 'package:studio/models/note.dart';
 import 'package:studio/models/question.dart';
 import 'package:studio/models/subject.dart';
-import 'package:studio/screens/edit_question_screen.dart';
+import 'package:studio/screens/questions/edit_question_screen.dart';
 import 'dart:math';
 import '../../constants.dart';
 import 'edit_note_screen.dart';
@@ -168,6 +168,7 @@ class _NoteListState extends State<NoteList> with TickerProviderStateMixin {
                               ),
                               FlatButton(
                                 onPressed: () {
+                                  print("note level: ${item.level}");
                                   Navigator.pop(context);
                                   Navigator.push(
                                       context,
@@ -295,7 +296,7 @@ class _NoteListState extends State<NoteList> with TickerProviderStateMixin {
                 ),
               ),
               Positioned(
-                bottom: 6,
+                bottom: 0,
                 right: 26,
                 child: Wrap(
                   children: <Widget>[
@@ -309,7 +310,7 @@ class _NoteListState extends State<NoteList> with TickerProviderStateMixin {
                             child: Icon(
                               LineAwesomeIcons.question,
                               size: 26,
-                              color: Colors.grey,
+                              color: Colors.grey.withAlpha(160),
                             ),
                           ),
                           Positioned(
@@ -318,7 +319,7 @@ class _NoteListState extends State<NoteList> with TickerProviderStateMixin {
                             child: Icon(
                               LineAwesomeIcons.plus,
                               size: 20,
-                              color: Colors.grey,
+                              color: Colors.grey.withAlpha(160),
                             ),
                           )
                         ],
@@ -338,6 +339,7 @@ class _NoteListState extends State<NoteList> with TickerProviderStateMixin {
                         }
                       },
                     ),
+                    attentionButton(items[i - 1]),
                     bookmarkButton(items[i - 1])
                   ],
                 ),
@@ -359,16 +361,18 @@ class _NoteListState extends State<NoteList> with TickerProviderStateMixin {
         decoration: BoxDecoration(
           color: kPrimaryColor,
         ),
-        child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: children),
+        child: SingleChildScrollView(
+          child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: children),
+        ),
       ),
     );
   }
 
   Widget bookmarkButton(Note item) {
-    Color color = item.bookmark ? kPrimaryColor : Colors.grey;
+    Color color = item.bookmark ? kPrimaryColor : Colors.grey.withAlpha(160);
     return IconButton(
       icon: Icon(
         LineAwesomeIcons.bookmark,
@@ -379,6 +383,23 @@ class _NoteListState extends State<NoteList> with TickerProviderStateMixin {
         setState(() {
           item.bookmark = !item.bookmark;
           widget.store.bookmarkNote(item.id, item.bookmark);
+        });
+      },
+    );
+  }
+
+  Widget attentionButton(Note item) {
+    Color color = item.attention ? Colors.red : Colors.grey.withAlpha(160);
+    return IconButton(
+      icon: Icon(
+        LineAwesomeIcons.exclamation_triangle,
+        size: 30,
+        color: color,
+      ),
+      onPressed: () {
+        setState(() {
+          item.attention = !item.attention;
+          widget.store.attentionNote(item.id, item.attention);
         });
       },
     );

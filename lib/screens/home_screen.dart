@@ -23,7 +23,7 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       body: Container(
         child: Padding(
-          padding: EdgeInsets.all(20),
+          padding: EdgeInsets.all(8),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             mainAxisAlignment: MainAxisAlignment.center,

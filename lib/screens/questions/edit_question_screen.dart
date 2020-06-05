@@ -7,7 +7,7 @@ import 'package:studio/models/question.dart';
 import 'package:studio/models/subject.dart';
 import 'package:studio/widgets/buttons.dart';
 
-import '../constants.dart';
+import '../../constants.dart';
 
 class QuestionEdit extends StatefulWidget {
   final CoursesStore store;

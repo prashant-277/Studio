@@ -12,7 +12,7 @@ import 'package:studio/models/course.dart';
 import 'package:studio/models/question.dart';
 import 'package:studio/models/subject.dart';
 
-import '../constants.dart';
+import '../../constants.dart';
 import 'edit_question_screen.dart';
 
 
@@ -342,7 +342,7 @@ class _QuestionListState extends State<QuestionList> {
                 ),
               ),
               Positioned(
-                  bottom: 6, right: 26, child: bookmarkButton(items[i - 1])),
+                  bottom: 0, right: 26, child: bookmarkButton(items[i - 1])),
             ],
           ),
         );
@@ -361,10 +361,12 @@ class _QuestionListState extends State<QuestionList> {
         decoration: BoxDecoration(
           color: kPrimaryColor,
         ),
-        child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: children),
+        child: SingleChildScrollView(
+          child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: children),
+        ),
       ),
     );
   }

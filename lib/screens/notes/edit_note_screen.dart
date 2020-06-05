@@ -26,17 +26,30 @@ class _NoteEditState extends State<NoteEdit> {
 
   @override
   void initState() {
-    if(widget.data != null) {
+    if (widget.data != null) {
       textCtrl.text = widget.data.text;
       text = widget.data.text;
+      level = widget.data.level;
     }
     super.initState();
   }
 
+  Widget _addLevelChip(int l) {
+    return LevelChip(
+      level: l,
+      selected: level == l,
+      onSelected: (s) {
+        if (s) {
+          setState(() {
+            level = l;
+          });
+        }
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-
-
     return Scaffold(
       appBar: AppBar(
         iconTheme: IconThemeData(color: kDarkBlue),
@@ -109,51 +122,13 @@ class _NoteEditState extends State<NoteEdit> {
                   crossAxisAlignment: WrapCrossAlignment.center,
                   spacing: 10,
                   children: <Widget>[
-                    Text('Level:',
-                      style: TextStyle(
-                        fontSize: 18
-                      ),
+                    Text(
+                      'Level:',
+                      style: TextStyle(fontSize: 18),
                     ),
-                    ChoiceChip(
-                      label: Text('1',
-                      style: TextStyle(
-                        fontWeight: FontWeight.w100
-                      ),),
-                      selected: level == 1,
-                      onSelected: (s) {
-                        if(s) {
-                          setState(() {
-                            level = 1;
-                          });
-                        }
-                      },
-                    ),
-                    ChoiceChip(
-                      label: Text('2',style: TextStyle(
-                          fontWeight: FontWeight.w600
-                      ),),
-                      selected: level == 2,
-                      onSelected: (s) {
-                        if(s) {
-                          setState(() {
-                            level = 2;
-                          });
-                        }
-                      },
-                    ),
-                    ChoiceChip(
-                      label: Text('3',style: TextStyle(
-                          fontWeight: FontWeight.w900
-                      ),),
-                      selected: level == 3,
-                      onSelected: (s) {
-                        if(s) {
-                          setState(() {
-                            level = 3;
-                          });
-                        }
-                      },
-                    ),
+                    _addLevelChip(1),
+                    _addLevelChip(2),
+                    _addLevelChip(3),
                   ],
                 ),
                 SizedBox(
@@ -162,7 +137,6 @@ class _NoteEditState extends State<NoteEdit> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
-
                   children: <Widget>[
 /*                    IconButton(
                       child: Icon(LineAwesomeIcons.camera),
@@ -205,17 +179,15 @@ class _NoteEditState extends State<NoteEdit> {
                     ),*/
                     PrimaryButton(
                       'Save',
-                          () async {
-                        if(text.trim().length == 0) {
-                          Scaffold.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text('Enter a short text'),
-                              )
-                          );
+                      () async {
+                        if (text.trim().length == 0) {
+                          Scaffold.of(context).showSnackBar(SnackBar(
+                            content: Text('Enter a short text'),
+                          ));
                         }
 
                         Note note = widget.data;
-                        if(note == null)
+                        if (note == null)
                           note = Note();
                         else
                           note.id = widget.data.id;
@@ -229,12 +201,37 @@ class _NoteEditState extends State<NoteEdit> {
                     ),
                   ],
                 ),
-
               ],
             ),
           ),
         ),
       ),
     );
+  }
+}
+
+class LevelChip extends StatelessWidget {
+  final int level;
+  final Function onSelected;
+  final bool selected;
+
+  LevelChip({@required this.level, @required this.onSelected, @required this.selected});
+
+  FontWeight _getFontWeight() {
+    if (level == 1) return FontWeight.w100;
+    if (level == 2) return FontWeight.w600;
+
+    return FontWeight.w900;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ChoiceChip(
+        label: Text(
+          level.toString(),
+          style: TextStyle(fontWeight: _getFontWeight()),
+        ),
+        selected: selected,
+        onSelected: onSelected);
   }
 }

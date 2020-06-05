@@ -5,11 +5,11 @@ import 'package:line_awesome_icons/line_awesome_icons.dart';
 import 'package:studio/courses_store.dart';
 import 'package:studio/models/course.dart';
 import 'package:studio/models/subject.dart';
-import 'package:studio/screens/edit_question_screen.dart';
+import 'package:studio/screens/questions/edit_question_screen.dart';
 import 'package:studio/screens/notes/edit_note_screen.dart';
 import 'package:studio/screens/notes/notes_screen.dart';
 import 'package:studio/screens/subjects/edit_subject_screen.dart';
-import 'package:studio/screens/questions_screen.dart';
+import 'package:studio/screens/questions/questions_screen.dart';
 
 import '../../constants.dart';
 

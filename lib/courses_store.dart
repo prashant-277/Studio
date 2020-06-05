@@ -134,6 +134,8 @@ abstract class _CoursesStore with Store {
     data['courseId'] = note.courseId;
     data['userId'] = Globals.userId;
     data['bookmark'] = note.bookmark;
+    data['attention'] = note.attention;
+    data['level'] = note.level;
     if (note.id == null) {
       data['created'] = DateTime.now();
       doc = _notes.document();
@@ -156,10 +158,28 @@ abstract class _CoursesStore with Store {
   }
 
   @action
+  Future<void> attentionNote(String id, bool attention) async {
+    //addLoading(kNotes);
+    DocumentReference doc = _notes.document(id);
+    var data = Map<String, dynamic>();
+    data['attention'] = attention;
+    await doc.setData(data, merge: true);
+    //stopLoading(kNotes);
+  }
+
+  @action
   Future<void> bookmarkQuestion(String id, bool bookmark) async {
     DocumentReference doc = _questions.document(id);
     var data = Map<String, dynamic>();
     data['bookmark'] = bookmark;
+    await doc.setData(data, merge: true);
+  }
+
+  @action
+  Future<void> attentionQuestion(String id, bool attention) async {
+    DocumentReference doc = _questions.document(id);
+    var data = Map<String, dynamic>();
+    data['attention'] = attention;
     await doc.setData(data, merge: true);
   }
 
@@ -174,6 +194,9 @@ abstract class _CoursesStore with Store {
     data['subjectId'] = question.subjectId;
     data['courseId'] = question.courseId;
     data['userId'] = Globals.userId;
+    data['attention'] = question.attention;
+    data['bookmark'] = question.bookmark;
+    data['level'] = question.level;
     if (question.id == null) {
       data['created'] = DateTime.now();
       doc = _questions.document();
@@ -528,6 +551,7 @@ abstract class _CoursesStore with Store {
         note.userId = doc.data['userId'];
         note.text = doc.data['text'];
         note.bookmark = doc.data['bookmark'] ?? false;
+        note.attention = doc.data['attention'] ?? false;
         note.level = doc.data['level'] ?? 1;
         notes.add(note);
       }
@@ -579,7 +603,8 @@ abstract class _CoursesStore with Store {
         question.text = doc.data['text'];
         question.answer = doc.data['answer'];
         question.bookmark = doc.data['bookmark'] ?? false;
-        question.level = doc.data['bookmark'] ?? 1;
+        question.attention = doc.data['attention'] ?? false;
+        question.level = doc.data['level'] ?? 1;
         questions.add(question);
       }
       stopLoading(kQuestions);
