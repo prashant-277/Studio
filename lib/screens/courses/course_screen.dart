@@ -53,8 +53,7 @@ class _CourseScreenState extends State<CourseScreen> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) =>
-                            SubjectsScreen(widget.store)));
+                        builder: (context) => SubjectsScreen(widget.store)));
               },
             ),
             CourseScreenItem(
@@ -66,8 +65,7 @@ class _CourseScreenState extends State<CourseScreen> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) =>
-                            BooksScreen(widget.store)));
+                        builder: (context) => BooksScreen(widget.store)));
               },
             ),
             CourseScreenItem(
@@ -79,8 +77,19 @@ class _CourseScreenState extends State<CourseScreen> {
                 Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
-                        builder: (context) =>
-                            TestHomeScreen(widget.store)));
+                        builder: (context) => TestHomeScreen(widget.store)));
+              },
+            ),
+            CourseScreenItem(
+              title: 'Results',
+              subtitle: 'Subjects to review. Improve your knowledge.',
+              //icon: LineAwesomeIcons.list_ol,
+              image: 'assets/images/chart.png',
+              onTap: () {
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => TestHomeScreen(widget.store)));
               },
             ),
           ]))
@@ -131,7 +140,9 @@ class CourseScreenItem extends StatelessWidget {
             child: Row(
               children: <Widget>[
                 graphic(),
-                SizedBox.fromSize(size: Size.square(20),),
+                SizedBox.fromSize(
+                  size: Size.square(20),
+                ),
                 Expanded(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -140,7 +151,9 @@ class CourseScreenItem extends StatelessWidget {
                       Text(
                         title,
                         style: TextStyle(
-                            fontSize: 20, color: kDarkBlue, fontWeight: FontWeight.w600),
+                            fontSize: 20,
+                            color: kDarkBlue,
+                            fontWeight: FontWeight.w600),
                         overflow: TextOverflow.ellipsis,
                         maxLines: 3,
                       ),
@@ -148,7 +161,6 @@ class CourseScreenItem extends StatelessWidget {
                     ],
                   ),
                 ),
-
               ],
             ),
           ),
@@ -180,136 +192,138 @@ class SliverCourseHeader implements SliverPersistentHeaderDelegate {
 
   @override
   Widget build(
-      BuildContext context, double shrinkOffset, bool overlapsContent) => Observer(builder: (_) {
-    return AppBar(
-      centerTitle: true,
-      elevation: 0,
-      primary: true,
-      iconTheme: IconThemeData(color: kContrastColor),
-      flexibleSpace: Stack(
-        fit: StackFit.loose,
-        children: <Widget>[
-          Hero(
-            tag: 'course-icon-${store.course.icon}',
-            child: Center(
-              child: Opacity(
-                opacity: sliverOpacity(shrinkOffset),
-                child: Image(
-                  image: AssetImage("assets/icons/${store.course.icon}"),
-                  height: 160,
+          BuildContext context, double shrinkOffset, bool overlapsContent) =>
+      Observer(builder: (_) {
+        return AppBar(
+          centerTitle: true,
+          elevation: 0,
+          primary: true,
+          iconTheme: IconThemeData(color: kContrastColor),
+          flexibleSpace: Stack(
+            fit: StackFit.loose,
+            children: <Widget>[
+              Hero(
+                tag: 'course-icon-${store.course.icon}',
+                child: Center(
+                  child: Opacity(
+                    opacity: sliverOpacity(shrinkOffset),
+                    child: Image(
+                      image: AssetImage("assets/icons/${store.course.icon}"),
+                      height: 160,
+                    ),
+                  ),
                 ),
               ),
-            ),
+              Container(
+                decoration: BoxDecoration(
+                    gradient: LinearGradient(colors: [
+                  Colors.black87,
+                  Colors.black87,
+                  Colors.transparent
+                ], stops: [
+                  0,
+                  0.2,
+                  1
+                ], begin: Alignment.bottomCenter, end: Alignment.topCenter)),
+              ),
+              Positioned(
+                bottom: 8,
+                left: 10,
+                right: 10,
+                child: Text(
+                  store.course.name,
+                  style: TextStyle(
+                    color: kContrastColor,
+                    fontSize: 24,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ],
           ),
-          Container(
-            decoration: BoxDecoration(
-                gradient: LinearGradient(colors: [
-              Colors.black87,
-              Colors.black87,
-              Colors.transparent
-            ], stops: [
-              0,
-              0.2,
-              1
-            ], begin: Alignment.bottomCenter, end: Alignment.topCenter)),
-          ),
-          Positioned(
-            bottom: 8,
-            left: 10,
-            right: 10,
-            child: Text(
-              store.course.name,
-              style: TextStyle(
-                color: kContrastColor,
-                fontSize: 24,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ),
-        ],
-      ),
-      backgroundColor: kContrastDarkColor,
-      actions: <Widget>[
-        PopupMenuButton<int>(
-          onSelected: (int) {
-            switch (int) {
-              case kActionEdit:
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => EditCourseScreen(store, store.course)));
-                break;
-              case kActionDelete:
-                showDialog(
-                    context: context,
-                    builder: (_) => AlertDialog(
-                          title: Text('Confirm'),
-                          content: Text('Do you really want to delete '
-                              'course ${store.course.name} and all '
-                              'its subjects, notes and questions?'),
-                          actions: <Widget>[
-                            FlatButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              child: Text('No'),
-                            ),
-                            FlatButton(
-                              child: Text('Yes'),
-                              textColor: Colors.red,
-                              onPressed: () async {
-                                Navigator.pop(context);
-                                await store.deleteCourse(store.course.id);
-                                Navigator.pop(context);
-                              },
-                            )
-                          ],
-                        ));
-                break;
-              case kActionBooks:
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => BooksScreen(store)));
-                break;
-            }
-          },
-          offset: Offset(0, 40),
-          elevation: 20,
-          itemBuilder: (context) => [
-            PopupMenuItem(
-              value: kActionBooks,
-              child: Text(
-                "Books",
-                style: TextStyle(
-                  color: kDarkGrey,
+          backgroundColor: kContrastDarkColor,
+          actions: <Widget>[
+            PopupMenuButton<int>(
+              onSelected: (int) {
+                switch (int) {
+                  case kActionEdit:
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                EditCourseScreen(store, store.course)));
+                    break;
+                  case kActionDelete:
+                    showDialog(
+                        context: context,
+                        builder: (_) => AlertDialog(
+                              title: Text('Confirm'),
+                              content: Text('Do you really want to delete '
+                                  'course ${store.course.name} and all '
+                                  'its subjects, notes and questions?'),
+                              actions: <Widget>[
+                                FlatButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text('No'),
+                                ),
+                                FlatButton(
+                                  child: Text('Yes'),
+                                  textColor: Colors.red,
+                                  onPressed: () async {
+                                    Navigator.pop(context);
+                                    await store.deleteCourse(store.course.id);
+                                    Navigator.pop(context);
+                                  },
+                                )
+                              ],
+                            ));
+                    break;
+                  case kActionBooks:
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => BooksScreen(store)));
+                    break;
+                }
+              },
+              offset: Offset(0, 40),
+              elevation: 20,
+              itemBuilder: (context) => [
+                PopupMenuItem(
+                  value: kActionBooks,
+                  child: Text(
+                    "Books",
+                    style: TextStyle(
+                      color: kDarkGrey,
+                    ),
+                  ),
                 ),
-              ),
-            ),
-            PopupMenuItem(
-              value: kActionEdit,
-              child: Text(
-                "Edit course",
-                style: TextStyle(
-                  color: kDarkGrey,
+                PopupMenuItem(
+                  value: kActionEdit,
+                  child: Text(
+                    "Edit course",
+                    style: TextStyle(
+                      color: kDarkGrey,
+                    ),
+                  ),
                 ),
-              ),
-            ),
-            PopupMenuItem(
-              value: kActionDelete,
-              child: Text(
-                "Delete course",
-                style: TextStyle(
-                  color: Colors.red,
+                PopupMenuItem(
+                  value: kActionDelete,
+                  child: Text(
+                    "Delete course",
+                    style: TextStyle(
+                      color: Colors.red,
+                    ),
+                  ),
                 ),
-              ),
+              ],
+              child: Icon(Icons.more_vert),
             ),
           ],
-          child: Icon(Icons.more_vert),
-        ),
-      ],
-    );
-  });
+        );
+      });
 
   @override
   bool shouldRebuild(SliverPersistentHeaderDelegate oldDelegate) {

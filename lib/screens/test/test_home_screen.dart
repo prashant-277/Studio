@@ -1,9 +1,14 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:line_awesome_icons/line_awesome_icons.dart';
 import 'package:studio/courses_store.dart';
 import 'package:studio/models/course.dart';
+import 'package:studio/models/question.dart';
 import 'package:studio/models/subject.dart';
+import 'package:studio/screens/test/test_screen.dart';
+import 'package:studio/services/test_service.dart';
 import 'package:studio/widgets/course_title.dart';
 import 'package:studio/widgets/drawer.dart';
 import 'package:studio/widgets/shadow_container.dart';
@@ -150,7 +155,8 @@ class _TestHomeScreenState extends State<TestHomeScreen> {
                                 fontWeight: FontWeight.w600,
                                 color: kDarkBlue),
                           ),
-                          Text('Choose the level of the questions for this test'),
+                          Text(
+                              'Choose the level of the questions for this test'),
                           Padding(
                               padding: const EdgeInsets.symmetric(vertical: 10),
                               child: Wrap(
@@ -174,21 +180,25 @@ class _TestHomeScreenState extends State<TestHomeScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
             child: RaisedButton(
               color: questions < 3 ? Colors.blueGrey.shade100 : kPrimaryColor,
-              child: Text('START',
+              child: Text(
+                'START',
                 style: TextStyle(
-                  fontSize: 20,
-                  color: Colors.white,
-                  fontWeight: FontWeight.w600
-                ),
+                    fontSize: 20,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600),
               ),
-
               onPressed: () {
-                if(questions < 3) {
-                  _scaffoldKey.currentState.showSnackBar(
-                      SnackBar(
-                        content: Text('You need at least 3 questions to start a test'),
-                      )
-                  );
+                if (questions < 3) {
+                  _scaffoldKey.currentState.showSnackBar(SnackBar(
+                    content:
+                        Text('You need at least 3 questions to start a test'),
+                  ));
+                } else {
+                  var service = TestService(getSelectedQuestions(), questions);
+                  Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => TestScreen(widget.store, service)));
                 }
               },
             ),
@@ -237,7 +247,7 @@ class _TestHomeScreenState extends State<TestHomeScreen> {
               Slider(
                 min: 3,
                 max: _selectedQuestions().toDouble(),
-                divisions: _selectedQuestions() - 3,
+                divisions: max(1, _selectedQuestions() - 3),
                 label: questions.toString(),
                 value: questions.toDouble(),
                 activeColor: Colors.blueGrey,
@@ -274,12 +284,22 @@ class _TestHomeScreenState extends State<TestHomeScreen> {
     return c;
   }
 
+  List<Question> getSelectedQuestions() {
+    List<Question> list = List();
+    subjects.forEach((item) {
+      list.addAll(widget.store.questions
+          .where((question) =>
+      question.subjectId == item.id && levels.contains(question.level)));
+    });
+    return list;
+  }
+
   _refreshQuestionsCount() {
     int count = 0;
     subjects.forEach((item) {
       count += widget.store.questions
-          .where((question) => question.subjectId == item.id &&
-                  levels.contains(question.level))
+          .where((question) =>
+              question.subjectId == item.id && levels.contains(question.level))
           .length;
     });
 
@@ -292,7 +312,7 @@ class _TestHomeScreenState extends State<TestHomeScreen> {
     questions = _selectedQuestions();
   }
 
-  Widget  _selectedCountText() {
+  Widget _selectedCountText() {
     var subjectIds = subjects.map((e) => e.id);
     int questionsCount = widget.store.questions
         .where((question) => subjectIds.contains(question.subjectId))
