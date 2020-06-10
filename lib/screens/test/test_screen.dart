@@ -59,18 +59,18 @@ class _TestScreenState extends State<TestScreen> {
         ),
       ),
       bottomNavigationBar: BottomAppBar(
-        child: _bottomBar(),
+        child: bottomBar(),
       ),
       body: SafeArea(
         child: Container(
           color: Colors.white,
-          child: _screen(),
+          child: screen(),
         ),
       ),
     );
   }
 
-  _bottomBar() {
+  bottomBar() {
     if(status == TestStatus.Question) {
       return ButtonBar(
         children: <Widget>[
@@ -104,6 +104,7 @@ class _TestScreenState extends State<TestScreen> {
               setState(() {
                 status = TestStatus.Question;
                 widget.service.setResponse(false);
+                widget.store.attentionQuestion(question.id, true);
                 if(widget.service.hasMore())
                   question = widget.service.next();
                 else
@@ -137,7 +138,7 @@ class _TestScreenState extends State<TestScreen> {
     }
   }
 
-  _screen() {
+  screen() {
     if(status == TestStatus.Question) {
       return Padding(
         padding: const EdgeInsets.symmetric(

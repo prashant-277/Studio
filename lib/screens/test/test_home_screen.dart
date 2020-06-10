@@ -27,14 +27,20 @@ class TestHomeScreen extends StatefulWidget {
 
 class _TestHomeScreenState extends State<TestHomeScreen> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-  List<Subject> subjects;
-  List<int> levels;
-  int questions = 0;
+  List<Subject> selectedSubjects;
+  List<int> selectedLevels;
+  int selectedQuestionsCount = 0;
+
+  /*
+  * Used only by the slider
+  * */
+  @deprecated
+  int testLength = 0;
 
   @override
   void initState() {
-    levels = [1, 2, 3];
-    subjects = [];
+    selectedLevels = [1, 2, 3];
+    selectedSubjects = [];
     widget.store.loadSubjects(widget.store.course.id);
     widget.store.loadQuestions(courseId: widget.store.course.id);
     super.initState();
@@ -89,7 +95,7 @@ class _TestHomeScreenState extends State<TestHomeScreen> {
                                       backgroundColor: Colors.blueGrey.shade400,
                                       radius: 20,
                                       child: Text(
-                                        _questionCount(element).toString(),
+                                        _questionsInSubject(element).toString(),
                                         style: TextStyle(
                                             fontSize: 15,
                                             fontWeight: FontWeight.w600,
@@ -99,17 +105,18 @@ class _TestHomeScreenState extends State<TestHomeScreen> {
                                   label: Text(element.name),
                                   backgroundColor: Colors.blueGrey.shade100,
                                   selectedColor: Colors.blue.shade100,
-                                  selected: subjects.contains(element),
+                                  selected: selectedSubjects.contains(element),
                                   onSelected: (s) {
                                     setState(() {
                                       if (s) {
-                                        subjects.add(element);
-                                        countQuestionsBySubjects();
+                                        selectedSubjects.add(element);
+                                        //countQuestionsBySubjects();
                                       } else {
-                                        subjects.remove(element);
-                                        countQuestionsBySubjects();
+                                        selectedSubjects.remove(element);
+                                        //countQuestionsBySubjects();
                                       }
                                     });
+                                    updateCount();
                                   },
                                 );
                               }).toList(),
@@ -122,7 +129,8 @@ class _TestHomeScreenState extends State<TestHomeScreen> {
                                 child: Text('SELECT ALL'),
                                 onPressed: () {
                                   setState(() {
-                                    subjects = withQuestions.toList();
+                                    selectedSubjects = withQuestions.toList();
+                                    updateCount();
                                   });
                                 },
                               ),
@@ -130,7 +138,8 @@ class _TestHomeScreenState extends State<TestHomeScreen> {
                                 child: Text('DESELECT ALL'),
                                 onPressed: () {
                                   setState(() {
-                                    subjects = List();
+                                    selectedSubjects = List();
+                                    updateCount();
                                   });
                                 },
                               ),
@@ -171,7 +180,26 @@ class _TestHomeScreenState extends State<TestHomeScreen> {
                       ),
                     ),
                   ),
-                  _questionsSlider()
+                  ShadowContainer(
+                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 0, vertical: 0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: <Widget>[
+                          Text(
+                            'Test length: $selectedQuestionsCount questions',
+                            style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.w600,
+                                color: kDarkBlue),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  //_questionsSlider()
                 ],
               ),
             ),
@@ -179,7 +207,7 @@ class _TestHomeScreenState extends State<TestHomeScreen> {
           bottomNavigationBar: Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
             child: RaisedButton(
-              color: questions < 3 ? Colors.blueGrey.shade100 : kPrimaryColor,
+              color: selectedQuestionsCount < 3 ? Colors.blueGrey.shade100 : kPrimaryColor,
               child: Text(
                 'START',
                 style: TextStyle(
@@ -188,13 +216,13 @@ class _TestHomeScreenState extends State<TestHomeScreen> {
                     fontWeight: FontWeight.w600),
               ),
               onPressed: () {
-                if (questions < 3) {
+                if (selectedQuestionsCount < 3) {
                   _scaffoldKey.currentState.showSnackBar(SnackBar(
                     content:
                         Text('You need at least 3 questions to start a test'),
                   ));
                 } else {
-                  var service = TestService(getSelectedQuestions(), questions);
+                  var service = TestService(getSelectedQuestions(), selectedQuestionsCount);
                   Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
@@ -207,7 +235,7 @@ class _TestHomeScreenState extends State<TestHomeScreen> {
       });
 
   Widget _questionsSlider() {
-    if (questions < 3) {
+    if (selectedQuestionsCount < 3) {
       return ShadowContainer(
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
           child: Padding(
@@ -246,18 +274,18 @@ class _TestHomeScreenState extends State<TestHomeScreen> {
               ),
               Slider(
                 min: 3,
-                max: _selectedQuestions().toDouble(),
-                divisions: max(1, _selectedQuestions() - 3),
-                label: questions.toString(),
-                value: questions.toDouble(),
+                max: selectedQuestionsCount.toDouble(),
+                divisions: max(1, selectedQuestionsCount - 3),
+                label: testLength.toString(),
+                value: testLength.toDouble(),
                 activeColor: Colors.blueGrey,
                 onChanged: (v) {
                   setState(() {
-                    questions = v.toInt();
+                    testLength = v.toInt();
                   });
                 },
               ),
-              Text("$questions questions")
+              Text("$testLength questions")
             ],
           )),
     );
@@ -270,56 +298,41 @@ class _TestHomeScreenState extends State<TestHomeScreen> {
         0;
   }
 
-  int _questionCount(Subject item) {
+  int _questionsInSubject(Subject item) {
     return widget.store.questions
-        .where((question) => question.subjectId == item.id)
+        .where(
+            (question) => question.subjectId == item.id &&
+                          selectedLevels.contains(question.level)
+          )
         .length;
   }
 
-  int _selectedQuestions() {
-    int c = 0;
-    subjects.forEach((element) {
-      c += _questionCount(element);
+  void updateCount() {
+    setState(() {
+      selectedQuestionsCount = getSelectedQuestions().length;
     });
-    return c;
   }
 
   List<Question> getSelectedQuestions() {
     List<Question> list = List();
-    subjects.forEach((item) {
+    selectedSubjects.forEach((item) {
       list.addAll(widget.store.questions
           .where((question) =>
-      question.subjectId == item.id && levels.contains(question.level)));
+      question.subjectId == item.id && selectedLevels.contains(question.level)));
     });
     return list;
   }
 
-  _refreshQuestionsCount() {
-    int count = 0;
-    subjects.forEach((item) {
-      count += widget.store.questions
-          .where((question) =>
-              question.subjectId == item.id && levels.contains(question.level))
-          .length;
-    });
 
-    setState(() {
-      questions = count;
-    });
-  }
-
-  countQuestionsBySubjects() {
-    questions = _selectedQuestions();
-  }
 
   Widget _selectedCountText() {
-    var subjectIds = subjects.map((e) => e.id);
+    var subjectIds = selectedSubjects.map((e) => e.id);
     int questionsCount = widget.store.questions
         .where((question) => subjectIds.contains(question.subjectId))
         .length;
 
     return Text(questionsCount > 0
-        ? "$questionsCount questions in ${subjects.length} subjects"
+        ? "$questionsCount questions in ${selectedSubjects.length} subjects"
         : "No subjects selected");
   }
 
@@ -333,16 +346,16 @@ class _TestHomeScreenState extends State<TestHomeScreen> {
       label: Text("Level $level"),
       backgroundColor: Colors.blueGrey.shade100,
       selectedColor: Colors.blue.shade100,
-      selected: levels.contains(level),
+      selected: selectedLevels.contains(level),
       onSelected: (s) {
         setState(() {
           if (s) {
-            levels.add(level);
+            selectedLevels.add(level);
           } else {
-            levels.remove(level);
+            selectedLevels.remove(level);
           }
         });
-        _refreshQuestionsCount();
+        updateCount();
       },
     );
   }

@@ -196,6 +196,14 @@ mixin _$CoursesStore on _CoursesStore, Store {
         .run(() => super.bookmarkNote(id, bookmark));
   }
 
+  final _$attentionNoteAsyncAction = AsyncAction('_CoursesStore.attentionNote');
+
+  @override
+  Future<void> attentionNote(String id, bool attention) {
+    return _$attentionNoteAsyncAction
+        .run(() => super.attentionNote(id, attention));
+  }
+
   final _$bookmarkQuestionAsyncAction =
       AsyncAction('_CoursesStore.bookmarkQuestion');
 
@@ -203,6 +211,15 @@ mixin _$CoursesStore on _CoursesStore, Store {
   Future<void> bookmarkQuestion(String id, bool bookmark) {
     return _$bookmarkQuestionAsyncAction
         .run(() => super.bookmarkQuestion(id, bookmark));
+  }
+
+  final _$attentionQuestionAsyncAction =
+      AsyncAction('_CoursesStore.attentionQuestion');
+
+  @override
+  Future<void> attentionQuestion(String id, bool attention) {
+    return _$attentionQuestionAsyncAction
+        .run(() => super.attentionQuestion(id, attention));
   }
 
   final _$saveQuestionAsyncAction = AsyncAction('_CoursesStore.saveQuestion');

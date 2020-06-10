@@ -51,13 +51,14 @@ class _TestResultScreenState extends State<TestResultScreen> {
               ),
               Positioned(
                 top: 34,
-                child: _circle(),
+                child: circle(),
               )
             ],
           ),
           SizedBox(
-            height: 120,
+            height: 100,
           ),
+          resultPanel(),
           FlatButton(
             child: Text('back'),
             onPressed: () {
@@ -72,7 +73,7 @@ class _TestResultScreenState extends State<TestResultScreen> {
     );
   }
 
-  Widget _circle() {
+  Widget circle() {
     return Align(
       alignment: Alignment.center,
       child: Container(
@@ -120,4 +121,39 @@ class _TestResultScreenState extends State<TestResultScreen> {
       ),
     );
   }
+
+  Widget noErrorsPanel() {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: 32
+      ),
+      child: Column(
+        children: <Widget>[
+          Image(
+            image: AssetImage('assets/images/celebrate.png'),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+            child: Text(
+              'All answers are correct, great job!',
+              style: TextStyle(
+                fontSize: 22,
+                color: kDarkBlue.withAlpha(200)
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget resultPanel() {
+    if(! widget.service.hasErrors()) {
+      return noErrorsPanel();
+    }
+
+    return Text('List of questions....');
+  }
+  
 }

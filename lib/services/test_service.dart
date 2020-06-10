@@ -37,4 +37,8 @@ class TestService
     r.wrong = r.questionsCount - r.correct;
     return r;
   }
+
+  bool hasErrors() {
+    return responses.any((element) => !element);
+  }
 }
