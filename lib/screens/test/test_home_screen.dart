@@ -60,7 +60,7 @@ class _TestHomeScreenState extends State<TestHomeScreen> {
               title: CourseTitle(widget.store, widget.store.course, kDarkBlue),
               backgroundColor: kLightGrey,
               bottom: PreferredSize(
-                child: _progressLoading(),
+                child: progressLoading(),
               )),
           body: SafeArea(
               child: SingleChildScrollView(
@@ -122,7 +122,7 @@ class _TestHomeScreenState extends State<TestHomeScreen> {
                               }).toList(),
                             ),
                           ),
-                          _selectedCountText(),
+                          selectedCountText(),
                           ButtonBar(
                             children: <Widget>[
                               FlatButton(
@@ -171,9 +171,9 @@ class _TestHomeScreenState extends State<TestHomeScreen> {
                               child: Wrap(
                                 spacing: 12,
                                 children: <Widget>[
-                                  _levelChip(1),
-                                  _levelChip(2),
-                                  _levelChip(3),
+                                  levelChip(1),
+                                  levelChip(2),
+                                  levelChip(3),
                                 ],
                               )),
                         ],
@@ -223,7 +223,7 @@ class _TestHomeScreenState extends State<TestHomeScreen> {
                   ));
                 } else {
                   var service = TestService(getSelectedQuestions(), selectedQuestionsCount);
-                  Navigator.pushReplacement(
+                  Navigator.push(
                       context,
                       MaterialPageRoute(
                           builder: (context) => TestScreen(widget.store, service)));
@@ -313,19 +313,19 @@ class _TestHomeScreenState extends State<TestHomeScreen> {
     });
   }
 
-  List<Question> getSelectedQuestions() {
+  List<QuestionResult> getSelectedQuestions() {
     List<Question> list = List();
     selectedSubjects.forEach((item) {
       list.addAll(widget.store.questions
           .where((question) =>
       question.subjectId == item.id && selectedLevels.contains(question.level)));
     });
-    return list;
+    return list.map((e) => QuestionResult(e)).toList();
   }
 
 
 
-  Widget _selectedCountText() {
+  Widget selectedCountText() {
     var subjectIds = selectedSubjects.map((e) => e.id);
     int questionsCount = widget.store.questions
         .where((question) => subjectIds.contains(question.subjectId))
@@ -336,7 +336,7 @@ class _TestHomeScreenState extends State<TestHomeScreen> {
         : "No subjects selected");
   }
 
-  Widget _levelChip(int level) {
+  Widget levelChip(int level) {
     return InputChip(
       avatar: CircleAvatar(
         backgroundColor: Colors.blueGrey.shade400,
@@ -360,7 +360,7 @@ class _TestHomeScreenState extends State<TestHomeScreen> {
     );
   }
 
-  Widget _progressLoading() {
+  Widget progressLoading() {
     if (widget.store.isQuestionsLoading || widget.store.isSubjectsLoading) {
       Container(
         child: LinearProgressIndicator(),

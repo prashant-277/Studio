@@ -40,12 +40,6 @@ class _TestScreenState extends State<TestScreen> {
     print(question.text);
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(LineAwesomeIcons.chevron_left),
-          onPressed: () {
-            Navigator.pushNamed(context, CoursesScreen.id);
-          },
-        ),
         centerTitle: true,
         elevation: 0,
         iconTheme: IconThemeData(color: kDarkBlue),
