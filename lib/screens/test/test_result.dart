@@ -25,33 +25,58 @@ class TestResultScreen extends StatefulWidget {
   _TestResultScreenState createState() => _TestResultScreenState();
 }
 
-class _TestResultScreenState extends State<TestResultScreen> {
+class _TestResultScreenState extends State<TestResultScreen> with SingleTickerProviderStateMixin {
   TestResult result;
+  AnimationController progressController;
+  Animation<double> animation;
 
   @override
   void initState() {
-    result = widget.service.result();
     super.initState();
+    result = widget.service.result();
+    progressController = AnimationController(vsync: this,duration: Duration(milliseconds: 1000));
+    animation = Tween<double>(begin: 0,end: result.percentage().toDouble()).animate(progressController)..addListener((){
+      setState(() {
+
+      });
+    });
+    progressController.forward();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.blueGrey.shade50,
       appBar: AppBar(
         centerTitle: true,
         elevation: 0,
-        iconTheme: IconThemeData(color: kDarkBlue),
+        iconTheme: IconThemeData(color: kContrastColor),
         title: Text(
           'Test result',
-          style: TextStyle(color: kDarkBlue),
+          style: TextStyle(color: kContrastColor),
         ),
-        backgroundColor: Colors.blueGrey.shade50,
+        backgroundColor: Colors.blueGrey.shade900,
         bottom: PreferredSize(
           child: Text(
-            widget.store.course.name
+            widget.store.course.name,
+            style: TextStyle(
+              color: kContrastColor
+            ),
           ),
         ),
         leading: Container(),
+        actions: <Widget>[
+          FlatButton(
+            child: Icon(LineAwesomeIcons.times,
+            color: kContrastColor,
+            ),
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(
+                builder: (context) => CourseScreen(widget.store)
+              ));
+            },
+          )
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -60,13 +85,13 @@ class _TestResultScreenState extends State<TestResultScreen> {
             ClipPath(
               clipper: CurvedBottomClipper(),
               child: Container(
-                color: Colors.blueGrey.shade50,
+                color: Colors.blueGrey.shade900,
                 padding: const EdgeInsets.symmetric(vertical: 20),
                 child: circle(),
               ),
             ),
             SizedBox(
-              height: 40,
+              height: widget.service.hasErrors() ? 40 : 0,
             ),
             titlePanel(),
             resultPanel(),
@@ -77,12 +102,19 @@ class _TestResultScreenState extends State<TestResultScreen> {
   }
 
   Widget circle() {
-    var value = widget.service.result().percentage();
+    var value = animation.value;
+
+    var color = Colors.redAccent;
+    if(value > 50)
+      color = Colors.orangeAccent;
+    if(value > 70)
+      color = Colors.greenAccent;
+
     return CustomPaint(
-      foregroundPainter: CircleProgress(value.toDouble()),
+      foregroundPainter: CircleProgress(animation.value, color),
       child: Container(
-        width: 200,
-        height: 200,
+        width: 160,
+        height: 160,
         child: Center(
           child: Row(
             mainAxisSize: MainAxisSize.max,
@@ -91,11 +123,19 @@ class _TestResultScreenState extends State<TestResultScreen> {
             textBaseline: TextBaseline.alphabetic,
             children: <Widget>[
               Text(
-                "$value",
+                "%",
                 style: TextStyle(
-                    fontSize: 50,
+                    fontSize: 20,
                     fontWeight: FontWeight.w600,
-                    color: kDarkBlue
+                    color: kDarkBlue.withAlpha(0)
+                ),
+              ),
+              Text(
+                "${animation.value.toInt()}",
+                style: TextStyle(
+                    fontSize: 40,
+                    fontWeight: FontWeight.w600,
+                    color: color
                 ),
               ),
               Text(
@@ -103,7 +143,7 @@ class _TestResultScreenState extends State<TestResultScreen> {
                 style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w600,
-                    color: kDarkBlue
+                    color: color
                 ),
               ),
             ],
@@ -161,10 +201,12 @@ class _TestResultScreenState extends State<TestResultScreen> {
       child: Column(
           children: subjects
               .map((e) => Card(
+            elevation: 0,
                     child: Padding(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 12, vertical: 8),
                         child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: subjectCard(e),
                         )),
                   ))
@@ -174,157 +216,28 @@ class _TestResultScreenState extends State<TestResultScreen> {
 
   subjectCard(Subject subject) {
     List<Widget> content = [
-      Text(
-        subject.name,
-        style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+      Row(
+        children: <Widget>[
+          Text(
+            subject.name,
+            style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+              color: kDarkBlue,
+              ),
+            textAlign: TextAlign.left,
+          ),
+        ],
       ),
     ];
 
     widget.service.wrongQuestionsBySubject(subject).forEach((element) {
       content.add(ListTile(
+        contentPadding: const EdgeInsets.all(0),
         title: Text(element.text),
       ));
     });
 
     return content;
-  }
-}
-
-class SliverTestResultHeader implements SliverPersistentHeaderDelegate {
-  final double minExtent;
-  final double maxExtent;
-  final CoursesStore store;
-  final TestService service;
-
-  SliverTestResultHeader(
-      {this.minExtent,
-      @required this.maxExtent,
-      @required this.store,
-      @required this.service});
-
-  @override
-  Widget build(
-          BuildContext context, double shrinkOffset, bool overlapsContent) =>
-      Observer(builder: (_) {
-        return AppBar(
-          leading: Container(),
-          centerTitle: true,
-          elevation: 0,
-          primary: true,
-          iconTheme: IconThemeData(color: kContrastColor),
-          flexibleSpace: Stack(
-            fit: StackFit.loose,
-            overflow: Overflow.visible,
-            children: <Widget>[
-              Container(
-                decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                        colors: [Colors.black87, Colors.transparent],
-                        stops: [0, 1],
-                        begin: Alignment.bottomCenter,
-                        end: Alignment.topCenter)),
-              ),
-              Positioned(
-                top: this.maxExtent / 2 - 20,
-                right: 0,
-                left: 0,
-                child: Center(child: circle()),
-              ),
-            ],
-          ),
-          backgroundColor: kContrastDarkColor,
-          actions: <Widget>[
-            FlatButton(
-              child: Icon(
-                LineAwesomeIcons.times_circle,
-                color: Colors.white,
-              ),
-              onPressed: () {
-                Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => CourseScreen(store)));
-              },
-            ),
-          ],
-        );
-      });
-
-  Widget circle() {
-    return CustomPaint(
-      foregroundPainter: CircleProgress(12),
-      child: Container(
-        width: 200,
-        height: 200,
-        child: Center(
-          child: Text(
-            "12 %",
-            style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-          ),
-        ),
-      ),
-    );
-
-    return Align(
-      alignment: Alignment.center,
-      child: Container(
-        width: 180,
-        height: 180,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: kPrimaryColor,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black87.withAlpha(40),
-              spreadRadius: 20,
-              blurRadius: 40,
-            ),
-          ],
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-              child: Text(
-                'Test result',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white.withAlpha(200),
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ),
-            Text(
-              '${service.result().percentage()}%',
-              style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 50,
-                  fontWeight: FontWeight.normal,
-                  height: 1),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  @override
-  bool shouldRebuild(SliverPersistentHeaderDelegate oldDelegate) {
-    return true;
-  }
-
-  @override
-  FloatingHeaderSnapConfiguration get snapConfiguration => null;
-
-  @override
-  OverScrollHeaderStretchConfiguration get stretchConfiguration => null;
-
-  sliverOpacity(double shrinkOffset) {
-    return 1.0 - max(0.0, shrinkOffset) / maxExtent;
   }
 }

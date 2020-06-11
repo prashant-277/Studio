@@ -31,13 +31,12 @@ class _TestScreenState extends State<TestScreen> {
 
   @override
   void initState() {
-    question = widget.service.next();
     super.initState();
+    question = widget.service.next();
   }
 
   @override
   Widget build(BuildContext context) {
-    print(question.text);
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -67,10 +66,14 @@ class _TestScreenState extends State<TestScreen> {
   bottomBar() {
     if(status == TestStatus.Question) {
       return ButtonBar(
+        alignment: MainAxisAlignment.center,
         children: <Widget>[
           RaisedButton(
             color: kPrimaryColor,
             textColor: Colors.white,
+            padding: const EdgeInsets.symmetric(
+                horizontal: 42
+            ),
             child: Text('SHOW ANSWER',
               style: TextStyle(
                   fontWeight: FontWeight.w600,
@@ -87,12 +90,16 @@ class _TestScreenState extends State<TestScreen> {
       );
     } else {
       return ButtonBar(
+        alignment: MainAxisAlignment.center,
         children: <Widget>[
           RaisedButton(
-            color: Colors.redAccent,
+            color: Colors.red,
             textColor: Colors.white,
             child: Icon(
                 LineAwesomeIcons.thumbs_down
+            ),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 42
             ),
             onPressed: () {
               setState(() {
@@ -111,6 +118,9 @@ class _TestScreenState extends State<TestScreen> {
           RaisedButton(
             color: Colors.lightGreen,
             textColor: Colors.white,
+            padding: const EdgeInsets.symmetric(
+                horizontal: 42
+            ),
             child: Icon(
               LineAwesomeIcons.thumbs_up
             ),
@@ -145,7 +155,7 @@ class _TestScreenState extends State<TestScreen> {
           children: <Widget>[
             Padding(
               padding: const EdgeInsets.all(18.0),
-              child: Text('Question ${widget.service.index}/${widget.service.length}'),
+              child: Text('Question ${widget.service.index + 1}/${widget.service.length}'),
             ),
             Expanded(
               child: Container(),
@@ -178,7 +188,7 @@ class _TestScreenState extends State<TestScreen> {
           children: <Widget>[
             Padding(
               padding: const EdgeInsets.all(18.0),
-              child: Text('Question ${widget.service.index}/${widget.service.length}'),
+              child: Text('Question ${widget.service.index + 1}/${widget.service.length}'),
             ),
             Expanded(
               child: Container(),

@@ -4,8 +4,9 @@ import 'dart:math';
 class CircleProgress extends CustomPainter{
 
   double currentProgress;
+  Color color;
 
-  CircleProgress(this.currentProgress);
+  CircleProgress(this.currentProgress, this.color);
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -13,12 +14,12 @@ class CircleProgress extends CustomPainter{
     //this is base circle
     Paint outerCircle = Paint()
       ..strokeWidth = 5
-      ..color = Colors.blueGrey.shade100
+      ..color = Colors.blueGrey.shade400
       ..style = PaintingStyle.stroke;
 
     Paint completeArc = Paint()
       ..strokeWidth = 10
-      ..color = Colors.redAccent
+      ..color = color
       ..style = PaintingStyle.stroke
       ..strokeCap  = StrokeCap.round;
 
