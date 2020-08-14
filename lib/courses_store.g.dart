@@ -6,7 +6,7 @@ part of 'courses_store.dart';
 // StoreGenerator
 // **************************************************************************
 
-// ignore_for_file: non_constant_identifier_names, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
+// ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$CoursesStore on _CoursesStore, Store {
   Computed<bool> _$isCourseLoadingComputed;
@@ -79,6 +79,36 @@ mixin _$CoursesStore on _CoursesStore, Store {
   set course(Course value) {
     _$courseAtom.reportWrite(value, super.course, () {
       super.course = value;
+    });
+  }
+
+  final _$courseNameAtom = Atom(name: '_CoursesStore.courseName');
+
+  @override
+  String get courseName {
+    _$courseNameAtom.reportRead();
+    return super.courseName;
+  }
+
+  @override
+  set courseName(String value) {
+    _$courseNameAtom.reportWrite(value, super.courseName, () {
+      super.courseName = value;
+    });
+  }
+
+  final _$courseIdAtom = Atom(name: '_CoursesStore.courseId');
+
+  @override
+  String get courseId {
+    _$courseIdAtom.reportRead();
+    return super.courseId;
+  }
+
+  @override
+  set courseId(String value) {
+    _$courseIdAtom.reportWrite(value, super.courseId, () {
+      super.courseId = value;
     });
   }
 
@@ -172,13 +202,26 @@ mixin _$CoursesStore on _CoursesStore, Store {
     });
   }
 
+  final _$testsAtom = Atom(name: '_CoursesStore.tests');
+
+  @override
+  ObservableList<TestResult> get tests {
+    _$testsAtom.reportRead();
+    return super.tests;
+  }
+
+  @override
+  set tests(ObservableList<TestResult> value) {
+    _$testsAtom.reportWrite(value, super.tests, () {
+      super.tests = value;
+    });
+  }
+
   final _$saveCourseAsyncAction = AsyncAction('_CoursesStore.saveCourse');
 
   @override
-  Future<void> saveCourse(
-      {String id, String name, String icon, Function callback}) {
-    return _$saveCourseAsyncAction.run(() =>
-        super.saveCourse(id: id, name: name, icon: icon, callback: callback));
+  Future<void> saveCourse(Course course) {
+    return _$saveCourseAsyncAction.run(() => super.saveCourse(course));
   }
 
   final _$saveNoteAsyncAction = AsyncAction('_CoursesStore.saveNote');
@@ -297,6 +340,13 @@ mixin _$CoursesStore on _CoursesStore, Store {
     return _$loadCoursesAsyncAction.run(() => super.loadCourses());
   }
 
+  final _$loadTestsAsyncAction = AsyncAction('_CoursesStore.loadTests');
+
+  @override
+  Future<void> loadTests() {
+    return _$loadTestsAsyncAction.run(() => super.loadTests());
+  }
+
   final _$loadCourseAsyncAction = AsyncAction('_CoursesStore.loadCourse');
 
   @override
@@ -307,8 +357,9 @@ mixin _$CoursesStore on _CoursesStore, Store {
   final _$loadSubjectsAsyncAction = AsyncAction('_CoursesStore.loadSubjects');
 
   @override
-  Future<void> loadSubjects(String courseId) {
-    return _$loadSubjectsAsyncAction.run(() => super.loadSubjects(courseId));
+  Future<void> loadSubjects({String courseId}) {
+    return _$loadSubjectsAsyncAction
+        .run(() => super.loadSubjects(courseId: courseId));
   }
 
   final _$loadBooksAsyncAction = AsyncAction('_CoursesStore.loadBooks');
@@ -321,8 +372,9 @@ mixin _$CoursesStore on _CoursesStore, Store {
   final _$loadNotesAsyncAction = AsyncAction('_CoursesStore.loadNotes');
 
   @override
-  Future<void> loadNotes(String subjectId) {
-    return _$loadNotesAsyncAction.run(() => super.loadNotes(subjectId));
+  Future<void> loadNotes({String subjectId}) {
+    return _$loadNotesAsyncAction
+        .run(() => super.loadNotes(subjectId: subjectId));
   }
 
   final _$loadQuestionsAsyncAction = AsyncAction('_CoursesStore.loadQuestions');
@@ -385,12 +437,15 @@ mixin _$CoursesStore on _CoursesStore, Store {
     return '''
 loading: ${loading},
 course: ${course},
+courseName: ${courseName},
+courseId: ${courseId},
 subject: ${subject},
 courses: ${courses},
 subjects: ${subjects},
 notes: ${notes},
 questions: ${questions},
 books: ${books},
+tests: ${tests},
 isCourseLoading: ${isCourseLoading},
 isCoursesLoading: ${isCoursesLoading},
 isSubjectsLoading: ${isSubjectsLoading},

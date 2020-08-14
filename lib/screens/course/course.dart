@@ -4,9 +4,9 @@ import 'package:line_awesome_icons/line_awesome_icons.dart';
 import 'package:studio/globals.dart';
 import 'package:studio/widgets/subtitle.dart';
 
-import '../colors.dart';
-import '../constants.dart';
-import 'edit_course.dart';
+import '../../colors.dart';
+import '../../constants.dart';
+import '../edit_course.dart';
 
 class CourseScreen extends StatefulWidget {
 
@@ -36,7 +36,10 @@ class _CourseScreenState extends State<CourseScreen> {
             onSelected: (int) {
               switch (int) {
                 case kActionEdit:
-                  Navigator.pushNamed(context, EditCourseScreen.id);
+
+                  Navigator.push(context, MaterialPageRoute(
+                    builder: (context) => EditCourseScreen(data: Globals.coursesStore.course,)
+                  ));
                   break;
                 case kActionDelete:
                   showDialog(

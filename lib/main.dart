@@ -1,22 +1,22 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:mobx/mobx.dart';
 import 'package:studio/globals.dart';
-import 'package:studio/screens/subjects/edit_subject_screen.dart';
-import 'package:studio/screens/courses/courses_screen.dart';
-import 'package:studio/screens/home_screen.dart';
-import 'package:studio/screens/courses/edit_course_screen.dart';
+import 'package:studio/screens/course/course.dart';
+import 'package:studio/screens/edit_course.dart';
+import 'package:studio/screens/home/home.dart';
 import 'auth_store.dart';
-import 'constants.dart';
+import 'colors.dart';
 import 'courses_store.dart';
-import 'screens/login_signup_screen.dart';
+import 'screens/login_signup.dart';
 
-final auth = AuthStore();
+final authStore = AuthStore();
 final coursesStore = CoursesStore();
 
 void main() {
-  Globals.auth = auth;
+  WidgetsFlutterBinding.ensureInitialized();
+  Globals.authStore = authStore;
+  Globals.coursesStore = coursesStore;
   runApp(StudioApp());
 }
 
@@ -24,28 +24,39 @@ class StudioApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Studio',
+      title: 'Studio Hero',
       theme: ThemeData(
-        fontFamily: 'Baloo Paaji 2',
+        fontFamily: 'Nunito',
         appBarTheme: AppBarTheme(
           elevation: 0,
-          color: kLightGrey,
+          brightness: Brightness.light,
+          color: kBackgroundColor,
+          iconTheme: IconThemeData(color: kTextColor),
           textTheme: TextTheme(
-            title: TextStyle(
-              color: Colors.white,
-              fontFamily: 'Baloo Paaji 2',
-              fontWeight: FontWeight.bold,
-              fontSize: 20,
-            )
-          )
+            headline6: TextStyle(
+              color: kTextColor,
+              fontFamily: 'Quicksand',
+              fontWeight: FontWeight.normal,
+              fontSize: 24,
+            ),
+          ),
+        ),
+        backgroundColor: kBackgroundColor,
+        accentColor: kAccentColor,
+        textTheme: TextTheme(
+          headline6: TextStyle(
+            color: kTextColor,
+            fontFamily: 'Nunito',
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+          ),
         ),
       ),
       initialRoute: SplashScreen.id,
       routes: {
         SplashScreen.id: (context) => SplashScreen(),
-        EditCourseScreen.id: (context) => EditCourseScreen(coursesStore, null),
-        CoursesScreen.id: (context) => CoursesScreen(coursesStore),
-        EditSubjectScreen.id: (context) => EditSubjectScreen(coursesStore, null, null)
+        CourseScreen.id: (context) => CourseScreen(),
+        EditCourseScreen.id: (context) => EditCourseScreen(),
       },
     );
   }
@@ -62,18 +73,23 @@ class _SplashScreenState extends State<SplashScreen> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   Future<FirebaseUser> _checkLogged() async {
+    print("checkLogged");
     _auth.currentUser().then((user) {
-      if (user != null)
-        auth.loggedIn(user.uid);
-      else
-        auth.loggedOut();
+      if (user != null) {
+        Globals.authStore.loggedIn(user.uid);
+        Globals.authStore.loggedUser(user);
+      } else
+        Globals.authStore.loggedOut();
     });
   }
 
   Widget getScreen() {
-    if (auth.status == kStatusLoggedOut) return LoginSignupScreen(auth);
+    print("getScreen");
+    if (Globals.authStore.status == kStatusLoggedOut)
+      return LoginSignupScreen();
 
-    if (auth.status == kStatusLoggedIn) return CoursesScreen(coursesStore);
+    if (Globals.authStore.status == kStatusLoggedIn)
+      return HomeScreen();
 
     return Scaffold(
       body: Container(),
@@ -81,8 +97,8 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   @override
-  Widget build(BuildContext context) => Observer(builder: (_) {
+  Widget build(BuildContext context) {
     _checkLogged();
-    return getScreen();
-  });
+    return Observer(builder: (_) => getScreen());
+  }
 }

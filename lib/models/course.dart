@@ -1,3 +1,6 @@
+import 'package:studio/globals.dart';
+import 'package:studio/models/subject.dart';
+
 class Course {
   String userId;
   String id;
@@ -5,6 +8,11 @@ class Course {
   String name;
   String nameDb;
   int subjectsCount;
+  List<Subject> subjects;
+
+  Course() {
+    this.userId = Globals.userId;
+  }
 
   static Course withData(Map<String, dynamic> data) {
     var course = Course();

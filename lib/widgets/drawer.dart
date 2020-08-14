@@ -4,17 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:line_awesome_icons/line_awesome_icons.dart';
 import 'package:studio/courses_store.dart';
-import 'package:studio/models/course.dart';
-import 'package:studio/screens/courses/courses_screen.dart';
-
 import '../auth_store.dart';
 import '../constants.dart';
 import '../globals.dart';
 final auth = AuthStore();
 
 class MainDrawer extends StatefulWidget {
-  final CoursesStore store;
-  MainDrawer(this.store);
 
   @override
   _MainDrawerState createState() => _MainDrawerState();
@@ -24,7 +19,7 @@ class _MainDrawerState extends State<MainDrawer> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   @override
-  Widget build(BuildContext context) => Observer(builder: (_) {
+  Widget build(BuildContext context) {
         return Drawer(
           child: SafeArea(
             child: Column(
@@ -68,7 +63,7 @@ class _MainDrawerState extends State<MainDrawer> {
                               fontSize: kDrawerItemSize, fontWeight: FontWeight.w600),
                         ),
                         onTap: () {
-                          Navigator.pushReplacementNamed(context, CoursesScreen.id);
+                          //Navigator.pushReplacementNamed(context, CoursesScreen.id);
                         },
                       ),
                       ListTile(
@@ -80,10 +75,12 @@ class _MainDrawerState extends State<MainDrawer> {
                         title: Text(
                           "How to study",
                           style: TextStyle(
-                              fontSize: kDrawerItemSize, fontWeight: FontWeight.w600),
+                              fontSize: kDrawerItemSize,
+                              fontWeight: FontWeight.w600,
+                          ),
                         ),
                         onTap: () {
-                          Navigator.pushReplacementNamed(context, CoursesScreen.id);
+                          //Navigator.pushReplacementNamed(context, CoursesScreen.id);
                         },
                       ),
                       ListTile(
@@ -98,7 +95,7 @@ class _MainDrawerState extends State<MainDrawer> {
                               fontSize: kDrawerItemSize, fontWeight: FontWeight.w600),
                         ),
                         onTap: () {
-                          Navigator.pushReplacementNamed(context, CoursesScreen.id);
+                          //Navigator.pushReplacementNamed(context, CoursesScreen.id);
                         },
                       ),
                       ListTile(
@@ -113,7 +110,7 @@ class _MainDrawerState extends State<MainDrawer> {
                               fontSize: kDrawerItemSize, fontWeight: FontWeight.w600),
                         ),
                         onTap: () {
-                          Navigator.pushReplacementNamed(context, CoursesScreen.id);
+                          //Navigator.pushReplacementNamed(context, CoursesScreen.id);
                         },
                       ),
                       ListTile(
@@ -128,7 +125,7 @@ class _MainDrawerState extends State<MainDrawer> {
                               fontSize: kDrawerItemSize, fontWeight: FontWeight.w600),
                         ),
                         onTap: () {
-                          Navigator.pushReplacementNamed(context, CoursesScreen.id);
+                          //Navigator.pushReplacementNamed(context, CoursesScreen.id);
                         },
                       ),
                       ListTile(
@@ -143,7 +140,7 @@ class _MainDrawerState extends State<MainDrawer> {
                               fontSize: kDrawerItemSize, fontWeight: FontWeight.w600),
                         ),
                         onTap: () {
-                          Navigator.pushReplacementNamed(context, CoursesScreen.id);
+                          //Navigator.pushReplacementNamed(context, CoursesScreen.id);
                         },
                       ),
                       ListTile(
@@ -158,7 +155,7 @@ class _MainDrawerState extends State<MainDrawer> {
                               fontSize: kDrawerItemSize, fontWeight: FontWeight.w600),
                         ),
                         onTap: () {
-                          Navigator.pushReplacementNamed(context, CoursesScreen.id);
+                          //Navigator.pushReplacementNamed(context, CoursesScreen.id);
                         },
                       ),
                       ListTile(
@@ -173,7 +170,7 @@ class _MainDrawerState extends State<MainDrawer> {
                               fontSize: kDrawerItemSize, fontWeight: FontWeight.w600),
                         ),
                         onTap: () {
-                          Globals.auth.loggedOut();
+                          Globals.authStore.loggedOut();
                         },
                       ),
                     ],
@@ -203,5 +200,5 @@ class _MainDrawerState extends State<MainDrawer> {
             ),
           ),
         );
-      });
+      }
 }
