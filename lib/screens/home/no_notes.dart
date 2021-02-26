@@ -10,7 +10,6 @@ import '../../colors.dart';
 import '../../globals.dart';
 
 class NoNotesScreen extends StatelessWidget {
-
   final CourseStats course;
   final SubjectStat subject;
 
@@ -24,19 +23,18 @@ class NoNotesScreen extends StatelessWidget {
       mainAxisSize: MainAxisSize.max,
       children: <Widget>[
         ProfCard(
-          text: "${subject.name} has no keynotes yet!",
+          text: "${subject.name} has no key concepts yet!",
           fontWeight: FontWeight.bold,
           buttons: <Widget>[
             FlatButton(
-              child: Text('ADD A KEYNOTE'),
+              child: Text('ADD A KEY CONCEPT'),
               onPressed: () {
                 Globals.coursesStore.courseName = course.name;
                 Globals.coursesStore.courseId = course.id;
                 Globals.coursesStore.subjectName = subject.name;
                 Globals.coursesStore.subjectId = subject.id;
-                Navigator.push(context, MaterialPageRoute(
-                    builder: (_) => EditNoteScreen()
-                ));
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (_) => EditNoteScreen()));
               },
               color: kAccentColor,
               shape: RoundedRectangleBorder(

@@ -40,34 +40,34 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) => Observer(builder: (_) {
-    print("build home");
-    return Scaffold(
-      backgroundColor: kBackgroundColor,
-      appBar: AppBar(
-        title: Text('Study Hero'),
-        centerTitle: true,
-        backgroundColor: kBackgroundColor,
-      ),
-      drawer: MainDrawer(),
-      floatingActionButton: _getFAB(),
-      body: SingleChildScrollView(
-        child: Container(
-          color: kBackgroundColor,
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: homeWidgets(),
+        print("build home");
+        return Scaffold(
+          backgroundColor: kBackgroundColor,
+          appBar: AppBar(
+            title: Text('Study Hero'),
+            centerTitle: true,
+            backgroundColor: kBackgroundColor,
+          ),
+          drawer: MainDrawer(),
+          floatingActionButton: _getFAB(),
+          body: SingleChildScrollView(
+            child: Container(
+              color: kBackgroundColor,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: homeWidgets(),
+                ),
+              ),
             ),
           ),
-        ),
-      ),
-    );
-  });
+        );
+      });
 
   SpeedDial _getFAB() {
-    if(Globals.coursesStore.courses.length > 0) {
+    if (Globals.coursesStore.courses.length > 0) {
       return SpeedDial(
         child: Icon(LineAwesomeIcons.plus),
         overlayOpacity: 0.5,
@@ -78,20 +78,17 @@ class _HomeScreenState extends State<HomeScreen> {
               labelStyle: TextStyle(fontSize: 14.0),
               onTap: () {
                 Navigator.pushNamed(context, EditCourseScreen.id);
-              }
-          ),
+              }),
           SpeedDialChild(
               child: Icon(LineAwesomeIcons.book_open),
               label: 'Add subject',
               labelStyle: TextStyle(fontSize: 14.0),
-              onTap: () => print('FIRST CHILD')
-          ),
+              onTap: () => print('FIRST CHILD')),
           SpeedDialChild(
               child: Icon(LineAwesomeIcons.marker),
-              label: 'Add keynote',
+              label: 'Add key concept',
               labelStyle: TextStyle(fontSize: 14.0),
-              onTap: () => print('FIRST CHILD')
-          ),
+              onTap: () => print('FIRST CHILD')),
         ],
       );
     }
@@ -131,9 +128,13 @@ class _HomeScreenState extends State<HomeScreen> {
                     leading: Image(
                       image: AssetImage("assets/icons/${course.icon}"),
                     ),
-                    trailing: Icon(Icons.chevron_right,
+                    trailing: Icon(
+                      Icons.chevron_right,
                     ),
                     onTap: () {
+                      if (Globals.coursesStore.course != course)
+                        Globals.coursesStore.subjects.clear();
+
                       Globals.coursesStore.course = course;
                       Navigator.pushNamed(context, CourseScreen.id);
                     },

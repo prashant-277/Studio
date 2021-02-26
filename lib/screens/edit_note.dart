@@ -12,17 +12,15 @@ import '../colors.dart';
 import '../globals.dart';
 
 class EditNoteScreen extends StatefulWidget {
-
   final Note data;
 
-  EditNoteScreen({ this.data });
+  EditNoteScreen({this.data});
 
   @override
   _EditNoteScreenState createState() => _EditNoteScreenState();
 }
 
 class _EditNoteScreenState extends State<EditNoteScreen> {
-
   final _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   String bookId;
@@ -54,115 +52,112 @@ class _EditNoteScreenState extends State<EditNoteScreen> {
 
   @override
   Widget build(BuildContext context) => Observer(builder: (_) {
-    return Scaffold(
-      key: _scaffoldKey,
-      appBar: AppBar(
-        title: Text(Globals.coursesStore.courseName),
-      ),
-      backgroundColor: kBackgroundColor,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(
-              horizontal: 16
+        return Scaffold(
+          key: _scaffoldKey,
+          appBar: AppBar(
+            title: Text(Globals.coursesStore.courseName),
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              MiniSubtitle(text: Globals.coursesStore.subjectName),
-              Subtitle(text: widget.data == null ? 'Add keynote' : 'Edit keynote'),
-              Form(
-                key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    TextFormField(
-                      autofocus: true,
-                      maxLines: 2,
-                      minLines: 2,
-                      controller: textCtrl,
-                      decoration: InputDecoration(
-                          labelText: 'Enter the keynote',
-                      ),
-                      validator: (value) {
-                        if (value.isEmpty) {
-                          return 'Please enter some text';
-                        }
-                        return null;
-                      },
-                      onChanged: (text) {
-                        setState(() {
-                          _text = text;
-                        });
-                      },
-                    ),
-
-                    TipCard(text: '👉 Write a very short keynote. A keynote is like a memorandum about what you have to study.',),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 12,
-                      ),
-                      child: Label(text: 'Level:'),
-                    ),
-                    ListTile(
-                      title: const
-                        Text('1: Essential, I must know this keynote',
-                        style: TextStyle(
-                            fontSize: 16
+          backgroundColor: kBackgroundColor,
+          body: SafeArea(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  MiniSubtitle(text: Globals.coursesStore.subjectName),
+                  Subtitle(
+                      text: widget.data == null
+                          ? 'Add key concept'
+                          : 'Edit key concept'),
+                  Form(
+                    key: _formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        TextFormField(
+                          autofocus: true,
+                          maxLines: 2,
+                          minLines: 2,
+                          controller: textCtrl,
+                          decoration: InputDecoration(
+                            labelText: 'Enter the key concept',
+                          ),
+                          validator: (value) {
+                            if (value.isEmpty) {
+                              return 'Please enter some text';
+                            }
+                            return null;
+                          },
+                          onChanged: (text) {
+                            setState(() {
+                              _text = text;
+                            });
+                          },
                         ),
-                      ),
-                      leading: Radio(
-                        value: 1,
-                        groupValue: _level,
-                        onChanged: (int value) {
-                          setState(() {
-                            _level = value;
-                          });
-                        },
-                      ),
-                    ),
-                    ListTile(
-                      title: const
-                        Text('2: Important but not essential',
-                        style: TextStyle(
-                          fontSize: 16
+                        TipCard(
+                          text:
+                              '👉 Write a very short key concept. Key concept is like a memorandum about what you have to study.',
                         ),
-                      ),
-                      leading: Radio(
-                        value: 2,
-                        groupValue: _level,
-                        onChanged: (int value) {
-                          setState(() {
-                            _level = value;
-                          });
-                        },
-                      ),
-                    ),
-                    ListTile(
-                      title: const
-                      Text('3: Not essential',
-                        style: TextStyle(
-                            fontSize: 16
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 12,
+                          ),
+                          child: Label(text: 'Level:'),
                         ),
-                      ),
-                      leading: Radio(
-                        value: 3,
-                        groupValue: _level,
-                        onChanged: (int value) {
-                          setState(() {
-                            _level = value;
-                          });
-                        },
-                      ),
+                        ListTile(
+                          title: const Text(
+                            '1: Essential, I must know this key concept',
+                            style: TextStyle(fontSize: 16),
+                          ),
+                          leading: Radio(
+                            value: 1,
+                            groupValue: _level,
+                            onChanged: (int value) {
+                              setState(() {
+                                _level = value;
+                              });
+                            },
+                          ),
+                        ),
+                        ListTile(
+                          title: const Text(
+                            '2: Important but not essential',
+                            style: TextStyle(fontSize: 16),
+                          ),
+                          leading: Radio(
+                            value: 2,
+                            groupValue: _level,
+                            onChanged: (int value) {
+                              setState(() {
+                                _level = value;
+                              });
+                            },
+                          ),
+                        ),
+                        ListTile(
+                          title: const Text(
+                            '3: Not essential',
+                            style: TextStyle(fontSize: 16),
+                          ),
+                          leading: Radio(
+                            value: 3,
+                            groupValue: _level,
+                            onChanged: (int value) {
+                              setState(() {
+                                _level = value;
+                              });
+                            },
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
-        ),
-      ),
-      bottomNavigationBar: BottomAppBar(
-          child: Row(
+          bottomNavigationBar: BottomAppBar(
+              child: Row(
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
@@ -170,7 +165,6 @@ class _EditNoteScreenState extends State<EditNoteScreen> {
                 child: Text('SAVE'),
                 onPressed: () async {
                   if (_formKey.currentState.validate()) {
-
                     Note note = Note();
                     note.courseId = Globals.coursesStore.courseId;
                     note.subjectId = Globals.coursesStore.subjectId;
@@ -179,8 +173,7 @@ class _EditNoteScreenState extends State<EditNoteScreen> {
                     note.attention = false;
                     note.level = _level;
 
-                    if(widget.data != null)
-                      note.id = widget.data.id;
+                    if (widget.data != null) note.id = widget.data.id;
 
                     final ProgressDialog pr = _getProgress(context);
                     pr.update(message: "Please wait...");
@@ -198,8 +191,7 @@ class _EditNoteScreenState extends State<EditNoteScreen> {
                 ),
               ),
             ],
-          )
-      ),
-    );
-  });
+          )),
+        );
+      });
 }

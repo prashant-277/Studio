@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:studio/globals.dart';
 import 'package:studio/screens/course/course.dart';
+import 'package:studio/screens/course/subject.dart';
 import 'package:studio/screens/edit_course.dart';
+import 'package:studio/screens/edit_subject.dart';
 import 'package:studio/screens/home/home.dart';
 import 'auth_store.dart';
 import 'colors.dart';
@@ -56,7 +58,9 @@ class StudioApp extends StatelessWidget {
       routes: {
         SplashScreen.id: (context) => SplashScreen(),
         CourseScreen.id: (context) => CourseScreen(),
+        SubjectScreen.id: (context) => SubjectScreen(),
         EditCourseScreen.id: (context) => EditCourseScreen(),
+        EditSubjectScreen.id: (context) => EditSubjectScreen(),
       },
     );
   }
@@ -88,8 +92,7 @@ class _SplashScreenState extends State<SplashScreen> {
     if (Globals.authStore.status == kStatusLoggedOut)
       return LoginSignupScreen();
 
-    if (Globals.authStore.status == kStatusLoggedIn)
-      return HomeScreen();
+    if (Globals.authStore.status == kStatusLoggedIn) return HomeScreen();
 
     return Scaffold(
       body: Container(),

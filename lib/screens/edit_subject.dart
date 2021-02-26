@@ -13,17 +13,16 @@ import 'package:studio/widgets/tip_card.dart';
 import '../colors.dart';
 
 class EditSubjectScreen extends StatefulWidget {
-
+  static const id = 'edit_subject';
   final Subject data;
 
-  EditSubjectScreen({ this.data });
+  EditSubjectScreen({this.data});
 
   @override
   _EditSubjectScreenState createState() => _EditSubjectScreenState();
 }
 
 class _EditSubjectScreenState extends State<EditSubjectScreen> {
-
   final _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   String bookId;
@@ -132,118 +131,123 @@ class _EditSubjectScreenState extends State<EditSubjectScreen> {
   }
 
   List<Widget> _booksChips() {
-    return Globals.coursesStore.books.map((e) => ChoiceChip(
-      label: Text(e.title),
-      selected: bookId == e.id,
-      onSelected: (v) {
-        setState(() {
-          if (v) {
-            bookId = e.id;
-            bookTitle = e.title;
-          } else {
-            bookId = bookTitle = null;
-          }
-        });
-      },
-    )).toList();
+    return Globals.coursesStore.books
+        .map((e) => ChoiceChip(
+              label: Text(e.title),
+              selected: bookId == e.id,
+              onSelected: (v) {
+                setState(() {
+                  if (v) {
+                    bookId = e.id;
+                    bookTitle = e.title;
+                  } else {
+                    bookId = bookTitle = null;
+                  }
+                });
+              },
+            ))
+        .toList();
   }
 
   @override
   Widget build(BuildContext context) => Observer(builder: (_) {
-    return Scaffold(
-      key: _scaffoldKey,
-      appBar: AppBar(
-        title: Text(Globals.coursesStore.courseName),
-      ),
-      backgroundColor: kBackgroundColor,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 16
+        return Scaffold(
+          key: _scaffoldKey,
+          appBar: AppBar(
+            title: Text(Globals.coursesStore.courseName),
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+          backgroundColor: kBackgroundColor,
+          body: SafeArea(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  Subtitle(
+                      text:
+                          widget.data == null ? 'Add subject' : 'Edit subject'),
+                  Form(
+                    key: _formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        TextFormField(
+                          autofocus: true,
+                          controller: textCtrl,
+                          decoration: InputDecoration(
+                              labelText: 'Enter the name of the subject'),
+                          validator: (value) {
+                            if (value.isEmpty) {
+                              return 'Please enter some text';
+                            }
+                            return null;
+                          },
+                          onChanged: (text) {
+                            setState(() {
+                              name = text;
+                            });
+                          },
+                        ),
+                        TipCard(
+                          text:
+                              '👉 A subject is a unit of a course. Usually they match with the chapter of a book.',
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(12, 20, 12, 0),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Label(text: 'Book'),
+                              Wrap(spacing: 4, children: bookRow()),
+                            ],
+                          ),
+                        ),
+                        TipCard(
+                          text:
+                              '👉 If this subject is from a book, then add it to the library.',
+                        )
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          bottomNavigationBar: BottomAppBar(
+              child: Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Subtitle(text: widget.data == null ? 'Add subject' : 'Edit subject'),
-              Form(
-                key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    TextFormField(
-                      autofocus: true,
-                      controller: textCtrl,
-                      decoration: InputDecoration(
-                          labelText: 'Enter the name of the subject'
-                      ),
-                      validator: (value) {
-                        if (value.isEmpty) {
-                          return 'Please enter some text';
-                        }
-                        return null;
-                      },
-                      onChanged: (text) {
-                        setState(() {
-                          name = text;
-                        });
-                      },
-                    ),
+              FlatButton(
+                child: Text('SAVE'),
+                onPressed: () async {
+                  if (_formKey.currentState.validate()) {
+                    Subject subject = Subject();
+                    subject.courseId = Globals.coursesStore.courseId;
+                    subject.name = name;
+                    if (widget.data != null) subject.id = widget.data.id;
 
-                    TipCard(text: '👉 A subject is a unit of a course. Usually they match with the chapter of a book.',),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(12, 20, 12, 0),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Label(text: 'Book'),
-                          Wrap(spacing: 4, children: bookRow()),
-                        ],
-                      ),
-                    ),
-                    TipCard(text: '👉 If this subject is from a book, then add it to the library.',)
-                  ],
+                    final ProgressDialog pr = _getProgress(context);
+                    pr.update(message: "Please wait...");
+                    await pr.show();
+                    Globals.coursesStore
+                        .saveSubject(subject)
+                        .then((value) async {
+                      await Globals.authStore.loadStats();
+                      pr.hide();
+                      Navigator.pop(context);
+                    });
+                  }
+                },
+                color: kAccentColor,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(18.0),
                 ),
               ),
             ],
-          ),
-        ),
-      ),
-      bottomNavigationBar: BottomAppBar(
-        child: Row(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            FlatButton(
-              child: Text('SAVE'),
-              onPressed: () async {
-                if (_formKey.currentState.validate()) {
-
-                  Subject subject = Subject();
-                  subject.courseId = Globals.coursesStore.courseId;
-                  subject.name = name;
-                  if(widget.data != null)
-                    subject.id = widget.data.id;
-
-                  final ProgressDialog pr = _getProgress(context);
-                  pr.update(message: "Please wait...");
-                  await pr.show();
-                  Globals.coursesStore.saveSubject(subject).then((value) async {
-                    await Globals.authStore.loadStats();
-                    pr.hide();
-                    Navigator.pop(context);
-                  });
-                }
-              },
-              color: kAccentColor,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(18.0),
-              ),
-            ),
-          ],
-        )
-      ),
-    );
-  });
+          )),
+        );
+      });
 }

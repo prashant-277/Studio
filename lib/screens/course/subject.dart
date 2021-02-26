@@ -2,34 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:line_awesome_icons/line_awesome_icons.dart';
-import 'package:studio/globals.dart';
-import 'package:studio/screens/course/subject.dart';
-import 'package:studio/screens/edit_subject.dart';
 import 'package:studio/widgets/subtitle.dart';
 
 import '../../colors.dart';
 import '../../constants.dart';
-import '../edit_course.dart';
+import '../../globals.dart';
 
-class CourseScreen extends StatefulWidget {
-  static const id = "course";
+class SubjectScreen extends StatefulWidget {
+  static const id = "subject";
+  SubjectScreen({Key key}) : super(key: key);
 
   @override
-  _CourseScreenState createState() => _CourseScreenState();
+  _SubjectScreenState createState() => _SubjectScreenState();
 }
 
-class _CourseScreenState extends State<CourseScreen> {
-  @override
-  void initState() {
-    Globals.coursesStore.loadSubjects(courseId: Globals.coursesStore.course.id);
-    super.initState();
-  }
-
+class _SubjectScreenState extends State<SubjectScreen> {
   @override
   Widget build(BuildContext context) => Observer(builder: (_) {
         return Scaffold(
           appBar: AppBar(
-            title: Text(Globals.coursesStore.course.name),
+            title: Text(Globals.coursesStore.subject.name),
             centerTitle: true,
             backgroundColor: kAccentColor,
             actions: <Widget>[
@@ -37,12 +29,6 @@ class _CourseScreenState extends State<CourseScreen> {
                 onSelected: (int) {
                   switch (int) {
                     case kActionEdit:
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => EditCourseScreen(
-                                    data: Globals.coursesStore.course,
-                                  )));
                       break;
                     case kActionDelete:
                       showDialog(
@@ -91,7 +77,7 @@ class _CourseScreenState extends State<CourseScreen> {
                   PopupMenuItem(
                     value: kActionEdit,
                     child: Text(
-                      "Edit course",
+                      "Edit subject",
                       style: TextStyle(
                           //color: kDarkGrey,
                           ),
@@ -100,7 +86,7 @@ class _CourseScreenState extends State<CourseScreen> {
                   PopupMenuItem(
                     value: kActionDelete,
                     child: Text(
-                      "Delete course",
+                      "Delete subject",
                       style: TextStyle(
                         color: Colors.red,
                       ),
@@ -129,9 +115,7 @@ class _CourseScreenState extends State<CourseScreen> {
                 child: Icon(LineAwesomeIcons.book_open),
                 label: 'Add subject',
                 labelStyle: TextStyle(fontSize: 14.0),
-                onTap: () {
-                  Navigator.pushNamed(context, EditSubjectScreen.id);
-                },
+                onTap: () {},
               ),
               SpeedDialChild(
                   child: Icon(LineAwesomeIcons.marker),
@@ -145,7 +129,7 @@ class _CourseScreenState extends State<CourseScreen> {
 
   List<Widget> _widgets() {
     var list = List<Widget>();
-    if (Globals.coursesStore.isCourseLoading) {
+    if (Globals.coursesStore.isSubjectsLoading) {
       list.add(LinearProgressIndicator());
     }
     list.add(Container(
@@ -161,7 +145,6 @@ class _CourseScreenState extends State<CourseScreen> {
               title: Text(s.name),
               trailing: Icon(Icons.chevron_right),
               onTap: () {
-                Globals.coursesStore.subject = s;
                 Navigator.pushNamed(context, SubjectScreen.id);
               },
             ),
