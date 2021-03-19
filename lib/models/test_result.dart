@@ -1,12 +1,5 @@
-import 'package:studio/models/question.dart';
-
 class TestResult
 {
-  String id;
-  String userId;
-  String courseId;
-  List<Question> questions;
-
   int questionsCount;
   int correct;
   int wrong;

@@ -15,6 +15,22 @@
       },
       "oauth_client": [
         {
+          "client_id": "76436391410-688bgdjvb1v077tle0fa8l66frt46drb.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.greentreelabs.studio",
+            "certificate_hash": "83450e1436408ed02df7de58ef06ed4737e17e6b"
+          }
+        },
+        {
+          "client_id": "76436391410-f5lj59sgsglgcn0dm53ssu5925egm7se.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.greentreelabs.studio",
+            "certificate_hash": "0e51793ab453e96f90f79221c8ca7d492dd15def"
+          }
+        },
+        {
           "client_id": "76436391410-fi09jt9pr93e9n1s3l6qk378rnn4ntmi.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

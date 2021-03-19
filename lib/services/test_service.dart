@@ -1,6 +1,8 @@
-import 'package:studio/models/question.dart';
-import 'package:studio/models/subject.dart';
-import 'package:studio/models/test_result.dart';
+
+
+import '../models/question.dart';
+import '../models/subject.dart';
+import '../models/test_result.dart';
 
 class TestService
 {

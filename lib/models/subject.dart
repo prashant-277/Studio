@@ -1,8 +1,7 @@
-import 'package:studio/globals.dart';
-import 'package:studio/models/question.dart';
-import 'package:studio/models/subject_item.dart';
+
 
 import 'note.dart';
+import 'question.dart';
 
 class Subject {
   String id;

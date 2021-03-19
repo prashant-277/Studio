@@ -38,9 +38,12 @@ dependencies:
   carousel_slider: ^2.1.0
   flutter_speed_dial: ^1.2.5
   flutter_launcher_icons: ^0.7.5
-  easy_localization: 2.3.2
+  easy_localization:
   easy_localization_loader: 0.0.2
   progress_dialog: ^1.2.4
+  webview_flutter:
+  flutter_auth_buttons:
+  flutter_facebook_login: ^3.0.0
 
 
 dev_dependencies:
