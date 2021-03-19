@@ -77,7 +77,7 @@ class _loginWithEmailState extends State<loginWithEmail> {
             child: WhiteButton("Sign In", () {
               if (_formKey.currentState.validate()) {
                 print("done");
-                loginWith_Email();
+                //loginWith_Email();
               }
             }),
           )
@@ -86,7 +86,7 @@ class _loginWithEmailState extends State<loginWithEmail> {
     );
   }
 
-  void loginWith_Email() {
+  /*void loginWith_Email() {
     FirebaseAuth.instance
         .createUserWithEmailAndPassword(
             email: email_controller.text, password: password_controller.text)
@@ -105,5 +105,5 @@ class _loginWithEmailState extends State<loginWithEmail> {
     }).catchError((e) {
       print(e);
     });
-  }
+  }*/
 }

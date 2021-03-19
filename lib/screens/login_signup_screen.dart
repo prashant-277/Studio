@@ -1,7 +1,6 @@
-import 'dart:convert';
 import 'dart:ffi';
 import 'dart:io';
-import 'package:http/http.dart' as http;
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -9,13 +8,15 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_auth_buttons/flutter_auth_buttons.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:studio/screens/loginWithEmail.dart';
+import 'package:studio/widgets/buttons.dart';
+import 'package:modal_progress_hud/modal_progress_hud.dart';
 
 import '../auth_store.dart';
 import '../constants.dart';
 
 class LoginSignupScreen extends StatefulWidget {
+
   const LoginSignupScreen(this.store);
 
   static String id = 'login_screen';
@@ -27,23 +28,16 @@ class LoginSignupScreen extends StatefulWidget {
 
 class _LoginSignupScreenState extends State<LoginSignupScreen>
     with SingleTickerProviderStateMixin {
-
   var loggedIn = false;
   var _loading = false;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
-
-  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-
-  static final FacebookLogin facebookSignIn = new FacebookLogin();
-  bool isLoggedIn = false;
-  var profileData;
-
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   AnimationController _controller;
 
   Future<FirebaseUser> _handleSignIn() async {
     final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
     final GoogleSignInAuthentication googleAuth =
-        await googleUser.authentication;
+    await googleUser.authentication;
 
     final AuthCredential credential = GoogleAuthProvider.getCredential(
       accessToken: googleAuth.accessToken,
@@ -51,18 +45,17 @@ class _LoginSignupScreenState extends State<LoginSignupScreen>
     );
 
     final FirebaseUser user =
-        (await _firebaseAuth.signInWithCredential(credential)).user;
+        (await _auth.signInWithCredential(credential)).user;
     print("signed in " + user.displayName);
     return user;
   }
 
   Animation<double> opacity;
-
   @override
   void initState() {
     super.initState();
 
-      precacheImage(new AssetImage('assets/images/bg-login-2.jpg'), context);
+    //  precacheImage(new AssetImage('assets/images/bg-login-2.jpg'), context);
 
     _controller = AnimationController(
         duration: const Duration(milliseconds: 1000), vsync: this);
@@ -72,8 +65,8 @@ class _LoginSignupScreenState extends State<LoginSignupScreen>
   }
 
   @override
-  dispose() {
-    _controller.dispose(); // you need this
+  void dispose() {
+    _controller.dispose();
     super.dispose();
   }
 
@@ -148,9 +141,9 @@ class _LoginSignupScreenState extends State<LoginSignupScreen>
                               children: <Widget>[
                                 Container(
                                   width:
-                                      MediaQuery.of(context).size.width / 1.60,
+                                  MediaQuery.of(context).size.width / 1.60,
                                   child: FacebookSignInButton(
-                                    onPressed: () => initiateFacebookLogin(),
+                                    onPressed: () => fb_email_login(),
                                     text: "Join using Facebook",
                                     textStyle: TextStyle(
                                         color: Colors.white, fontSize: 18),
@@ -163,7 +156,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen>
                                 ),
                                 Container(
                                   width:
-                                      MediaQuery.of(context).size.width / 1.60,
+                                  MediaQuery.of(context).size.width / 1.60,
                                   child: GoogleSignInButton(
                                     text: "Join using Google",
                                     textStyle: TextStyle(
@@ -190,21 +183,21 @@ class _LoginSignupScreenState extends State<LoginSignupScreen>
                                 SizedBox(
                                   height: 5,
                                 ),
-                                Platform.isAndroid
+                                Platform.isIOS
                                     ? Container(
-                                        width:
-                                            MediaQuery.of(context).size.width /
-                                                1.60,
-                                        child: AppleSignInButton(
-                                          text: "Join using Apple",
-                                          textStyle: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 18),
-                                          onPressed: () {},
-                                          borderRadius: 5,
-                                          centered: true,
-                                        ),
-                                      )
+                                  width:
+                                  MediaQuery.of(context).size.width /
+                                      1.60,
+                                  child: AppleSignInButton(
+                                    text: "Join using Apple",
+                                    textStyle: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 18),
+                                    onPressed: () {},
+                                    borderRadius: 5,
+                                    centered: true,
+                                  ),
+                                )
                                     : Container(),
                                 SizedBox(
                                   height: 5,
@@ -235,7 +228,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen>
                                 ),
                                 Container(
                                   width:
-                                      MediaQuery.of(context).size.width / 1.60,
+                                  MediaQuery.of(context).size.width / 1.60,
                                   child: FlatButton(
                                     color: Colors.white,
                                     child: Text(
@@ -276,32 +269,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen>
     );
   }
 
-  Future<Null> initiateFacebookLogin() async {
-    /*final facebookLoginResult = await facebookSignIn.logIn(['email']);
-
-    switch (facebookLoginResult.status) {
-      case FacebookLoginStatus.error:
-        onLoginStatusChanged(false);
-        break;
-      case FacebookLoginStatus.cancelledByUser:
-        onLoginStatusChanged(false);
-        break;
-      case FacebookLoginStatus.loggedIn:
-        var graphResponse = await http.get(Uri.parse(
-            'https://graph.facebook.com/v2.12/me?fields=name,first_name,last_name,email,picture.height(200)&access_token=${facebookLoginResult
-                .accessToken.token}'));
-
-        var profile = json.decode(graphResponse.body);
-
-        print("profile******* " + profile.toString());
-        print("user Id +++++ " + profile["id"].toString());
-
-        onLoginStatusChanged(true, profileData: profile);
-        print(facebookLoginResult.accessToken.token);
-
-        break;
-    }*/
-
+  fb_email_login() async {
     final facebookLogin = new FacebookLogin();
 
     final facebookLoginResult =
@@ -324,25 +292,18 @@ class _LoginSignupScreenState extends State<LoginSignupScreen>
         print("Facebook UserDetail /////  " + firebaseUser.toString());
     }
   }
-
   Future<FirebaseUser> firebaseAuthWithFacebook(
       {@required FacebookAccessToken token}) async {
     AuthCredential credential =
-        FacebookAuthProvider.getCredential(accessToken: token.toString());
+    FacebookAuthProvider.getCredential(accessToken: token.toString());
 
     FirebaseUser firebaseUser =
-        (await _firebaseAuth.signInWithCredential(credential)).user;
+        (await _auth.signInWithCredential(credential)).user;
     print("signed in " + firebaseUser.displayName);
     return firebaseUser;
   }
-
-  void onLoginStatusChanged(bool isLoggedIn, {profileData}) {
-    setState(() {
-      this.isLoggedIn = isLoggedIn;
-      this.profileData = profileData;
-    });
-  }
 }
+
 
 class Logo extends StatelessWidget {
   @override
