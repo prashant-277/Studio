@@ -41,11 +41,11 @@ mixin _$AuthStore on _AuthStore, Store {
   void loggedOut() {
     final _$actionInfo =
         _$_AuthStoreActionController.startAction(name: '_AuthStore.loggedOut');
+
     try {
       return super.loggedOut();
     } finally {
       _$_AuthStoreActionController.endAction(_$actionInfo);
-
     }
   }
 

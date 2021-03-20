@@ -45,7 +45,6 @@ dependencies:
   flutter_auth_buttons:
   flutter_facebook_login: ^3.0.0
 
-
 dev_dependencies:
   build_runner: ^1.7.2
   mobx_codegen: ^1.0.0

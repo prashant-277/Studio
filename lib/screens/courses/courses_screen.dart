@@ -128,7 +128,8 @@ class CourseItemsView extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(
-                'No courses yet, let\'s start with the first one!',
+                'No courses yet, \nlet\'s start with the first one!',
+                textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 18,
                 ),
@@ -136,7 +137,7 @@ class CourseItemsView extends StatelessWidget {
             ),
           ),
           Image(
-            image: AssetImage('assets/images/study.png'),
+            image: AssetImage('assets/images/professor-new.png'),
           ),
           Expanded(
             child: Container(),

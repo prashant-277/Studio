@@ -1,5 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:studio/auth_store.dart';
 import 'package:studio/widgets/buttons.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -7,6 +10,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../constants.dart';
 
 class loginWithEmail extends StatefulWidget {
+
+  loginWithEmail(this.store);
+
+  AuthStore store;
+
+
   @override
   _loginWithEmailState createState() => _loginWithEmailState();
 }
@@ -14,11 +23,14 @@ class loginWithEmail extends StatefulWidget {
 class _loginWithEmailState extends State<loginWithEmail> {
   final _firestore = Firestore.instance;
 
+
   final _formKey = GlobalKey<FormState>();
   String email = '';
 
   TextEditingController email_controller = new TextEditingController();
   TextEditingController password_controller = new TextEditingController();
+
+  var _loading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -77,7 +89,9 @@ class _loginWithEmailState extends State<loginWithEmail> {
             child: WhiteButton("Sign In", () {
               if (_formKey.currentState.validate()) {
                 print("done");
-                //loginWith_Email();
+
+                loginWith_Email();
+
               }
             }),
           )
@@ -86,7 +100,7 @@ class _loginWithEmailState extends State<loginWithEmail> {
     );
   }
 
-  /*void loginWith_Email() {
+  void loginWith_Email() {
     FirebaseAuth.instance
         .createUserWithEmailAndPassword(
             email: email_controller.text, password: password_controller.text)
@@ -95,9 +109,15 @@ class _loginWithEmailState extends State<loginWithEmail> {
         'email': email_controller.text,
         'pass': password_controller.text,
       }).then((value) {
+
+        Navigator.pop(context);
+              widget.store.loggedIn(signedInUser.user.uid);
+
         if (signedInUser != null) {
-          //Navigator.pushNamed(context, '/homepage');
+          Navigator.pushNamed(context, '/homepage');
           print("null");
+        }else{
+
         }
       }).catchError((e) {
         print(e);
@@ -105,5 +125,5 @@ class _loginWithEmailState extends State<loginWithEmail> {
     }).catchError((e) {
       print(e);
     });
-  }*/
+  }
 }

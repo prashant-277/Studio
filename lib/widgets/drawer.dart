@@ -180,6 +180,8 @@ class _MainDrawerState extends State<MainDrawer> {
                       ),
                       onTap: () {
                         Globals.auth.loggedOut();
+
+
                       },
                     ),
                     ListTile(
