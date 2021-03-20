@@ -13,7 +13,7 @@ class ShadowContainer extends StatelessWidget {
       elevation: 16,
       shadowColor: Colors.blueGrey.shade100.withAlpha(100),
       child: Container(
-        padding: padding ?? EdgeInsets.symmetric(vertical: 14, horizontal: 10),
+        padding: padding ?? EdgeInsets.symmetric(vertical: 0, horizontal: 10),
         margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 0),
         child: child,
       ),

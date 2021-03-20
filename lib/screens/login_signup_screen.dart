@@ -1,5 +1,3 @@
-import 'dart:ffi';
-import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -7,9 +5,8 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_auth_buttons/flutter_auth_buttons.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:studio/main.dart';
 import 'package:studio/screens/loginWithEmail.dart';
-
+import 'package:studio/utils/Utils.dart';
 
 import '../auth_store.dart';
 import '../constants.dart';
@@ -72,39 +69,38 @@ class _LoginSignupScreenState extends State<LoginSignupScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        elevation: 00,
-        centerTitle: true,
-        title: Text(
-          "My Professor",
-          style: TextStyle(
-              fontSize: 20,
-              fontFamily: "Quicksand",
-              color: Colors.black,
-              fontWeight: FontWeight.w100),
-        ),
-      ),
       body: SafeArea(
         child: Container(
           height: MediaQuery.of(context).size.height,
+          color: HexColor("F3F3F5"),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
+              Text(
+                "My Professor",
+                style: TextStyle(
+                    fontSize: 23,
+                    fontFamily: "Quicksand",
+                    color: HexColor("5D646B"),
+                    fontWeight: FontWeight.w200),
+              ),
               Image.asset(
                 "assets/images/professor-new.png",
                 height: MediaQuery.of(context).size.height / 3.5,
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 30.0),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 15.0,
+                ),
                 child: Card(
-                  elevation: 1,
+                  elevation: 0.3,
                   child: Container(
                     color: Colors.white,
                     child: Column(
                       children: <Widget>[
-                        SizedBox(height: 10),
+                        SizedBox(height: 18),
                         Container(
-                          width: MediaQuery.of(context).size.width / 1.60,
+                          width: MediaQuery.of(context).size.width / 1.26,
                           child: FacebookSignInButton(
                             onPressed: () => fb_email_login(),
                             text: "Join using Facebook",
@@ -117,10 +113,11 @@ class _LoginSignupScreenState extends State<LoginSignupScreen>
                           ),
                         ),
                         SizedBox(
-                          height: 5,
+                          height: 8,
                         ),
+                        //Join using Google
                         Container(
-                          width: MediaQuery.of(context).size.width / 1.60,
+                          width: MediaQuery.of(context).size.width / 1.26,
                           child: GoogleSignInButton(
                             text: "Join using Google",
                             textStyle: TextStyle(
@@ -147,25 +144,27 @@ class _LoginSignupScreenState extends State<LoginSignupScreen>
                           ),
                         ),
                         SizedBox(
-                          height: 5,
+                          height: 8,
                         ),
-                        Platform.isAndroid
-                            ? Container(
+                        //join using apple
+                        /*Platform.isAndroid
+                            ?*/
+                        Container(
+                          color: Colors.white,
+                          width: MediaQuery.of(context).size.width / 1.26,
+                          child: AppleSignInButton(
+                            style: AppleButtonStyle.black,
+                            text: "Join using Apple",
+                            textStyle: TextStyle(
                                 color: Colors.white,
-                                width: MediaQuery.of(context).size.width / 1.60,
-                                child: AppleSignInButton(
-                                  style: AppleButtonStyle.black,
-                                  text: "Join using Apple",
-                                  textStyle: TextStyle(
-                                      color: Colors.white,
-                                      fontFamily: "nunito",
-                                      fontWeight: FontWeight.w600),
-                                  onPressed: () {},
-                                  borderRadius: 5,
-                                  centered: true,
-                                ),
-                              )
-                            : Container(),
+                                fontFamily: "nunito",
+                                fontWeight: FontWeight.w600),
+                            onPressed: () {},
+                            borderRadius: 5,
+                            centered: true,
+                          ),
+                        ),
+                        // : Container(),
                         SizedBox(
                           height: 5,
                         ),
@@ -174,36 +173,42 @@ class _LoginSignupScreenState extends State<LoginSignupScreen>
                           children: [
                             Container(
                               color: Colors.black26,
-                              width: MediaQuery.of(context).size.width / 3.5,
-                              height: 2,
+                              width: MediaQuery.of(context).size.width / 2.95,
+                              height: 1.5,
                             ),
-                            Text(
-                              "OR",
-                              style: TextStyle(
-                                  color: Colors.black26,
-                                  fontFamily: "nunito",
-                                  fontWeight: FontWeight.w600),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 8.0),
+                              child: Text(
+                                "OR",
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontFamily: "nunito",
+                                    fontWeight: FontWeight.w600),
+                              ),
                             ),
                             Container(
                               color: Colors.black26,
-                              width: MediaQuery.of(context).size.width / 3.5,
-                              height: 2,
+                              width: MediaQuery.of(context).size.width / 2.95,
+                              height: 1.5,
                             )
                           ],
                         ),
                         SizedBox(
                           height: 5,
                         ),
+                        //join using email
                         Container(
-                          width: MediaQuery.of(context).size.width / 1.60,
+                          width: MediaQuery.of(context).size.width / 1.26,
                           child: FlatButton(
-                            color: Colors.black26,
+                            height: 40.5,
+                            color: HexColor("E5E5E5"),
                             child: Text(
                               "Join using Email",
                               style: TextStyle(
-                                  color: Colors.black,
+                                  color: HexColor("1F1F1F"),
                                   fontFamily: "nunito",
-                                  fontWeight: FontWeight.w600),
+                                  fontWeight: FontWeight.w800),
                             ),
                             onPressed: () {
                               showDialog(
@@ -219,7 +224,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen>
                           ),
                         ),
                         SizedBox(
-                          height: 10,
+                          height: 18,
                         ),
                       ],
                     ),
@@ -227,15 +232,29 @@ class _LoginSignupScreenState extends State<LoginSignupScreen>
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Text(
-                  "Existing user? Log In",
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontFamily: "nunito",
-                      fontWeight: FontWeight.w600),
-                ),
-              )
+                  padding: const EdgeInsets.all(10.0),
+                  child: Text.rich(
+                    TextSpan(
+                      text: 'Existing user? ',
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontFamily: "nunito",
+                          fontSize: 15,
+                          fontWeight: FontWeight.w700),
+                      children: <TextSpan>[
+                        TextSpan(
+                          text: 'Log In',
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontFamily: "nunito",
+                              fontSize: 15,
+                              decoration: TextDecoration.underline,
+                              fontWeight: FontWeight.w700),
+                        ),
+                        // can add more TextSpans here...
+                      ],
+                    ),
+                  ))
             ],
           ),
         ),

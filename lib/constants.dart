@@ -2,13 +2,14 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
-const kLightGrey = Color(0xFFFBFBFB);
+const kLightGrey = Color(0xFFF3F3F5);
 const kDarkGrey = Color(0xCC000000);
 const kDarkBlue = Color(0xFF313964);
 final kBackground = kLightGrey;
 final kContrastColor = Colors.white;
 final kContrastDarkColor = Colors.blueGrey.shade900;
-const kPrimaryColor = Color(0xFFF5A623);
+const kPrimaryColor = Color(0xFFFFCE00);
+const kTitleColor = Color(0xFF5D646B);
 
 const int kTabNotes = 0;
 const int kTabQuestions = 1;
