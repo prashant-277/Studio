@@ -9,8 +9,7 @@ import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:studio/main.dart';
 import 'package:studio/screens/loginWithEmail.dart';
-import 'package:studio/widgets/buttons.dart';
-import 'package:modal_progress_hud/modal_progress_hud.dart';
+
 
 import '../auth_store.dart';
 import '../constants.dart';
@@ -73,174 +72,171 @@ class _LoginSignupScreenState extends State<LoginSignupScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        elevation: 00,
+        centerTitle: true,
+        title: Text(
+          "My Professor",
+          style: TextStyle(
+              fontSize: 20,
+              fontFamily: "Quicksand",
+              color: Colors.black,
+              fontWeight: FontWeight.w100),
+        ),
+      ),
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Container(
-            height: MediaQuery.of(context).size.height,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Container(
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8.0),
-                        child: Text(
-                          "My Professor",
-                          style:
-                              TextStyle(fontSize: 20, fontFamily: "Quicksand"),
+        child: Container(
+          height: MediaQuery.of(context).size.height,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Image.asset(
+                "assets/images/professor-new.png",
+                height: MediaQuery.of(context).size.height / 3.5,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 30.0),
+                child: Card(
+                  elevation: 1,
+                  child: Container(
+                    color: Colors.white,
+                    child: Column(
+                      children: <Widget>[
+                        SizedBox(height: 10),
+                        Container(
+                          width: MediaQuery.of(context).size.width / 1.60,
+                          child: FacebookSignInButton(
+                            onPressed: () => fb_email_login(),
+                            text: "Join using Facebook",
+                            textStyle: TextStyle(
+                                color: Colors.white,
+                                fontFamily: "nunito",
+                                fontWeight: FontWeight.w600),
+                            centered: true,
+                            borderRadius: 5,
+                          ),
                         ),
-                      ),
-                      SizedBox(height: 20),
-                      Image.asset(
-                        "assets/images/professor-new.png",
-                        height: MediaQuery.of(context).size.height / 3.5,
-                      ),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 30.0),
-                  child: Card(
-                    elevation: 1,
-                    child: Container(
-                      color: Colors.white,
-                      child: Column(
-                        children: <Widget>[
-                          SizedBox(height: 10),
-                          Container(
-                            width: MediaQuery.of(context).size.width / 1.60,
-                            child: FacebookSignInButton(
-                              onPressed: () => fb_email_login(),
-                              text: "Join using Facebook",
-                              textStyle: TextStyle(
-                                  color: Colors.white,
+                        SizedBox(
+                          height: 5,
+                        ),
+                        Container(
+                          width: MediaQuery.of(context).size.width / 1.60,
+                          child: GoogleSignInButton(
+                            text: "Join using Google",
+                            textStyle: TextStyle(
+                                color: Colors.black,
+                                fontFamily: "nunito",
+                                fontWeight: FontWeight.w600),
+                            centered: true,
+                            borderRadius: 5,
+                            onPressed: () {
+                              print('Sign in');
+                              setState(() {
+                                _loading = true;
+                              });
+                              _handleSignIn().then((FirebaseUser user) {
+                                print(user.displayName);
+                                setState(() {
+                                  _loading = false;
+                                });
+                                widget.store.loggedIn(user.uid);
+                                //Navigator.of(context).pushReplacementNamed(HomeScreen.id);
+                                //Navigator.pushNamed(context, HomeScreen.id);
+                              }).catchError((e) => print(e));
+                            },
+                          ),
+                        ),
+                        SizedBox(
+                          height: 5,
+                        ),
+                        Platform.isAndroid
+                            ? Container(
+                                color: Colors.white,
+                                width: MediaQuery.of(context).size.width / 1.60,
+                                child: AppleSignInButton(
+                                  style: AppleButtonStyle.black,
+                                  text: "Join using Apple",
+                                  textStyle: TextStyle(
+                                      color: Colors.white,
+                                      fontFamily: "nunito",
+                                      fontWeight: FontWeight.w600),
+                                  onPressed: () {},
+                                  borderRadius: 5,
+                                  centered: true,
+                                ),
+                              )
+                            : Container(),
+                        SizedBox(
+                          height: 5,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Container(
+                              color: Colors.black26,
+                              width: MediaQuery.of(context).size.width / 3.5,
+                              height: 2,
+                            ),
+                            Text(
+                              "OR",
+                              style: TextStyle(
+                                  color: Colors.black26,
                                   fontFamily: "nunito",
                                   fontWeight: FontWeight.w600),
-                              centered: true,
-                              borderRadius: 5,
                             ),
-                          ),
-                          SizedBox(
-                            height: 5,
-                          ),
-                          Container(
-                            width: MediaQuery.of(context).size.width / 1.60,
-                            child: GoogleSignInButton(
-                              text: "Join using Google",
-                              textStyle: TextStyle(
+                            Container(
+                              color: Colors.black26,
+                              width: MediaQuery.of(context).size.width / 3.5,
+                              height: 2,
+                            )
+                          ],
+                        ),
+                        SizedBox(
+                          height: 5,
+                        ),
+                        Container(
+                          width: MediaQuery.of(context).size.width / 1.60,
+                          child: FlatButton(
+                            color: Colors.black26,
+                            child: Text(
+                              "Join using Email",
+                              style: TextStyle(
                                   color: Colors.black,
                                   fontFamily: "nunito",
                                   fontWeight: FontWeight.w600),
-                              centered: true,
-                              borderRadius: 5,
-                              onPressed: () {
-                                print('Sign in');
-                                setState(() {
-                                  _loading = true;
-                                });
-                                _handleSignIn().then((FirebaseUser user) {
-                                  print(user.displayName);
-                                  setState(() {
-                                    _loading = false;
-                                  });
-                                  widget.store.loggedIn(user.uid);
-                                  //Navigator.of(context).pushReplacementNamed(HomeScreen.id);
-                                  //Navigator.pushNamed(context, HomeScreen.id);
-                                }).catchError((e) => print(e));
-                              },
                             ),
+                            onPressed: () {
+                              showDialog(
+                                  context: context,
+                                  builder: (_) => AlertDialog(
+                                      backgroundColor: kDarkBlue,
+                                      title: Text(
+                                        "Login with Email",
+                                        style: TextStyle(color: Colors.white),
+                                      ),
+                                      content: loginWithEmail(widget.store)));
+                            },
                           ),
-                          SizedBox(
-                            height: 5,
-                          ),
-                          Platform.isAndroid
-                              ? Container(
-                                  color: Colors.white,
-                                  width:
-                                      MediaQuery.of(context).size.width / 1.60,
-                                  child: AppleSignInButton(
-                                    style: AppleButtonStyle.black,
-                                    text: "Join using Apple",
-                                    textStyle: TextStyle(
-                                        color: Colors.white,
-                                        fontFamily: "nunito",
-                                        fontWeight: FontWeight.w600),
-                                    onPressed: () {},
-                                    borderRadius: 5,
-                                    centered: true,
-                                  ),
-                                )
-                              : Container(),
-                          SizedBox(
-                            height: 5,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Container(
-                                color: Colors.black26,
-                                width: MediaQuery.of(context).size.width / 3.5,
-                                height: 2,
-                              ),
-                              Text(
-                                "OR",
-                                style: TextStyle(
-                                    color: Colors.black26,
-                                    fontFamily: "nunito",
-                                    fontWeight: FontWeight.w600),
-                              ),
-                              Container(
-                                color: Colors.black26,
-                                width: MediaQuery.of(context).size.width / 3.5,
-                                height: 2,
-                              )
-                            ],
-                          ),
-                          SizedBox(
-                            height: 5,
-                          ),
-                          Container(
-                            width: MediaQuery.of(context).size.width / 1.60,
-                            child: FlatButton(
-                              color: Colors.black26,
-                              child: Text(
-                                "Join using Email",
-                                style: TextStyle(
-                                    color: Colors.black,
-                                    fontFamily: "nunito",
-                                    fontWeight: FontWeight.w600),
-                              ),
-                              onPressed: () {
-                                showDialog(
-                                    context: context,
-                                    builder: (_) => AlertDialog(
-                                        backgroundColor: kDarkBlue,
-                                        title: Text(
-                                          "Login with Email",
-                                          style: TextStyle(color: Colors.white),
-                                        ),
-                                        content: loginWithEmail(widget.store)));
-                              },
-                            ),
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                        ],
-                      ),
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                      ],
                     ),
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Text(
-                    "Existing user? Log In",
-                    style: TextStyle(color: Colors.black,fontFamily: "nunito",fontWeight: FontWeight.w600),
-                  ),
-                )
-              ],
-            ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Text(
+                  "Existing user? Log In",
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontFamily: "nunito",
+                      fontWeight: FontWeight.w600),
+                ),
+              )
+            ],
           ),
         ),
       ),
