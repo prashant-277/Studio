@@ -5,6 +5,7 @@ import 'package:flutter/painting.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:line_awesome_icons/line_awesome_icons.dart';
+import 'package:studio/widgets/buttons.dart';
 
 import '../../constants.dart';
 import '../../courses_store.dart';
@@ -14,7 +15,6 @@ import '../../services/test_service.dart';
 import '../../widgets/circle_progress.dart';
 import '../../widgets/curved_bottom_clipper.dart';
 import '../courses/course_screen.dart';
-
 
 class TestResultScreen extends StatefulWidget {
   final CoursesStore store;
@@ -26,7 +26,8 @@ class TestResultScreen extends StatefulWidget {
   _TestResultScreenState createState() => _TestResultScreenState();
 }
 
-class _TestResultScreenState extends State<TestResultScreen> with SingleTickerProviderStateMixin {
+class _TestResultScreenState extends State<TestResultScreen>
+    with SingleTickerProviderStateMixin {
   TestResult result;
   AnimationController progressController;
   Animation<double> animation;
@@ -35,61 +36,74 @@ class _TestResultScreenState extends State<TestResultScreen> with SingleTickerPr
   void initState() {
     super.initState();
     result = widget.service.result();
-    progressController = AnimationController(vsync: this,duration: Duration(milliseconds: 1000));
-    animation = Tween<double>(begin: 0,end: result.percentage().toDouble()).animate(progressController)..addListener((){
-      setState(() {
-
-      });
-    });
+    progressController = AnimationController(
+        vsync: this, duration: Duration(milliseconds: 1000));
+    animation = Tween<double>(begin: 0, end: result.percentage().toDouble())
+        .animate(progressController)
+          ..addListener(() {
+            setState(() {});
+          });
     progressController.forward();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blueGrey.shade50,
+      backgroundColor: kBackgroundColor,
       appBar: AppBar(
         centerTitle: true,
         elevation: 0,
         iconTheme: IconThemeData(color: kContrastColor),
         title: Text(
-          'Test result',
-          style: TextStyle(color: kContrastColor),
+          widget.store.course.name,
+          style: TextStyle(
+              color: kTitleColor,
+              fontSize: 23,
+              fontFamily: "Quicksand",
+              fontWeight: FontWeight.w200),
         ),
-        backgroundColor: Colors.blueGrey.shade900,
-        bottom: PreferredSize(
-          preferredSize: Size.fromHeight(0),
-          child: Text(
-            widget.store.course.name,
-            style: TextStyle(
-              color: kContrastColor
-            ),
-          ),
-        ),
+        titleTextStyle: TextStyle(
+            color: kTitleColor,
+            fontSize: 23,
+            fontFamily: "Quicksand",
+            fontWeight: FontWeight.w200),
+        backgroundColor: kBackgroundColor,
         leading: Container(),
-        actions: <Widget>[
+        /*actions: <Widget>[
           FlatButton(
-            child: Icon(LineAwesomeIcons.times,
-            color: kContrastColor,
+            child: Icon(
+              LineAwesomeIcons.times,
+              color: kContrastColor,
             ),
             onPressed: () {
-              Navigator.push(context, MaterialPageRoute(
-                builder: (context) => CourseScreen(widget.store)
-              ));
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => CourseScreen(widget.store)));
             },
           )
-        ],
+        ],*/
       ),
       body: SingleChildScrollView(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
+            Text(
+              'Test result',
+              style: TextStyle(
+                  color: kTitleColor,
+                  fontSize: 18,
+                  fontFamily: "Quicksand",
+                  fontWeight: FontWeight.w200),
+            ),
             ClipPath(
               clipper: CurvedBottomClipper(),
               child: Container(
-                color: Colors.blueGrey.shade900,
                 padding: const EdgeInsets.symmetric(vertical: 20),
                 child: circle(),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                ),
               ),
             ),
             SizedBox(
@@ -100,6 +114,27 @@ class _TestResultScreenState extends State<TestResultScreen> with SingleTickerPr
           ],
         ),
       ),
+      bottomNavigationBar: BottomAppBar(
+        elevation: 0,
+        color: kBackgroundColor,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(0, 20, 0, 10),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              PrimaryButton(
+                "CLOSE",
+                () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => CourseScreen(widget.store)));
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
@@ -107,10 +142,8 @@ class _TestResultScreenState extends State<TestResultScreen> with SingleTickerPr
     var value = animation.value;
 
     var color = Colors.redAccent;
-    if(value > 50)
-      color = Colors.orangeAccent;
-    if(value > 70)
-      color = Colors.greenAccent;
+    if (value > 50) color = Colors.orangeAccent;
+    if (value > 70) color = Colors.greenAccent;
 
     return CustomPaint(
       foregroundPainter: CircleProgress(animation.value, color),
@@ -118,57 +151,112 @@ class _TestResultScreenState extends State<TestResultScreen> with SingleTickerPr
         width: 160,
         height: 160,
         child: Center(
-          child: Row(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.baseline,
-            textBaseline: TextBaseline.alphabetic,
-            children: <Widget>[
-              Text(
-                "%",
-                style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w600,
-                    color: kDarkBlue.withAlpha(0)
-                ),
-              ),
-              Text(
-                "${animation.value.toInt()}",
-                style: TextStyle(
-                    fontSize: 40,
-                    fontWeight: FontWeight.w600,
-                    color: color
-                ),
-              ),
-              Text(
-                "%",
-                style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w600,
-                    color: color
-                ),
-              ),
-            ],
-          )
-        ),
+            child: Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.baseline,
+          textBaseline: TextBaseline.alphabetic,
+          children: <Widget>[
+            Text(
+              "%",
+              style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
+                  color: kDarkBlue.withAlpha(0)),
+            ),
+            Text(
+              "${animation.value.toInt()}",
+              style: TextStyle(
+                  fontSize: 40, fontWeight: FontWeight.w600, color: color),
+            ),
+            Text(
+              "%",
+              style: TextStyle(
+                  fontSize: 20, fontWeight: FontWeight.w600, color: color),
+            ),
+          ],
+        )),
       ),
     );
   }
 
   Widget noErrorsPanel() {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 32),
+      padding: const EdgeInsets.symmetric(horizontal: 30),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Image(
-            image: AssetImage('assets/images/celebrate.png'),
-          ),
+
           Padding(
-            padding: const EdgeInsets.fromLTRB(0, 16, 0, 0),
+            padding: const EdgeInsets.fromLTRB(0, 0, 0, 16),
             child: Text(
               'All answers are correct, great job!',
-              style: TextStyle(fontSize: 18, color: kDarkBlue.withAlpha(200)),
+              style: TextStyle(
+                  color: kTitleColor,
+                  fontSize: 18,
+                  fontFamily: "Quicksand",
+                  fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
+            ),
+          ),
+          Text(
+            'Improve the following subjects:',
+            style: TextStyle(
+                color: kTitleColor,
+                fontSize: 14,
+                fontFamily: "Quicksand",
+                fontWeight: FontWeight.bold),
+            textAlign: TextAlign.center,
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top:8.0),
+            child: Card(
+              child: Container(
+                child: Padding(
+                  padding: const EdgeInsets.all(15.0),
+                  child: Center(
+                      child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.info_outline,
+                            color: kTitleColor,
+                          ),
+                          Text(
+                            "  Cartography",
+                            style: TextStyle(
+                                color: kTitleColor,
+                                fontSize: 18,
+                                fontFamily: "Quicksand",
+                                fontWeight: FontWeight.w400),
+                          ),
+                        ],
+                      ),
+                      Divider(
+                        color: Colors.black26,
+                      ),
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.info_outline,
+                            color: kTitleColor,
+                          ),
+                          Text(
+                            "  Geopolitics",
+                            style: TextStyle(
+                                color: kTitleColor,
+                                fontSize: 18,
+                                fontFamily: "Quicksand",
+                                fontWeight: FontWeight.w400),
+                          ),
+                        ],
+                      ),
+                    ],
+                  )),
+                ),
+              ),
             ),
           ),
         ],
@@ -203,7 +291,7 @@ class _TestResultScreenState extends State<TestResultScreen> with SingleTickerPr
       child: Column(
           children: subjects
               .map((e) => Card(
-            elevation: 0,
+                    elevation: 0,
                     child: Padding(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 12, vertical: 8),
@@ -223,10 +311,10 @@ class _TestResultScreenState extends State<TestResultScreen> with SingleTickerPr
           Text(
             subject.name,
             style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
               color: kDarkBlue,
-              ),
+            ),
             textAlign: TextAlign.left,
           ),
         ],

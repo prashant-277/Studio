@@ -157,82 +157,89 @@ class _QuestionListState extends State<QuestionList> {
           final item = items[index - 1];
 
           return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 20),
-            child: Container(
-              decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.all(Radius.circular(10)),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withAlpha(10),
-                      blurRadius:
-                      20.0, // has the effect of softening the shadow
-                      spreadRadius:
-                      10.0, // has the effect of extending the shadow
-                      offset: Offset(
-                        0.0, // horizontal, move right 10
-                        0.0, // vertical, move down 10
+            padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
+            child: Column(
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.all(Radius.circular(0)),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withAlpha(10),
+                          blurRadius:
+                          20.0, // has the effect of softening the shadow
+                          spreadRadius:
+                          10.0, // has the effect of extending the shadow
+                          offset: Offset(
+                            0.0, // horizontal, move right 10
+                            0.0, // vertical, move down 10
+                          ),
+                        )
+                      ]),
+                  child: ListTile(
+                    onTap: () {
+                      setState(() {
+                        editState = -1;
+                      });
+                    },
+                    onLongPress: () {
+                      /*setState(() {
+                        editState = index;
+                      });*/
+
+                      var text = item.text;
+                      if (item.text.length > 100)
+                        text = item.text.substring(0, 100) + '...';
+
+                      showDialog(
+                          context: context,
+                          builder: (_) => AlertDialog(
+                            //title: Text('Confirm'),
+                            content: Text(text),
+                            actions: <Widget>[
+                              FlatButton(
+                                child: Text('Delete'),
+                                textColor: Colors.red,
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                  widget.store.deleteQuestion(item.id, () {
+                                    widget.store.loadQuestions(subjectId: widget.subject.id);
+                                  });
+                                },
+                              ),
+                              FlatButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => QuestionEdit(
+                                              widget.store,
+                                              widget.course,
+                                              widget.subject,
+                                              item)));
+                                },
+                                child: Text('Edit'),
+                              ),
+                            ],
+                          ));
+                    },
+                    //contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 4),
+                    title: Container(
+                      child: Text(
+                        item.text,
+                        style:
+                        TextStyle(fontWeight: FontWeight.normal, fontSize: 18),
                       ),
-                    )
-                  ]),
-              child: ListTile(
-                onTap: () {
-                  setState(() {
-                    editState = -1;
-                  });
-                },
-                onLongPress: () {
-                  /*setState(() {
-                    editState = index;
-                  });*/
-
-                  var text = item.text;
-                  if (item.text.length > 100)
-                    text = item.text.substring(0, 100) + '...';
-
-                  showDialog(
-                      context: context,
-                      builder: (_) => AlertDialog(
-                        //title: Text('Confirm'),
-                        content: Text(text),
-                        actions: <Widget>[
-                          FlatButton(
-                            child: Text('Delete'),
-                            textColor: Colors.red,
-                            onPressed: () {
-                              Navigator.pop(context);
-                              widget.store.deleteQuestion(item.id, () {
-                                widget.store.loadQuestions(subjectId: widget.subject.id);
-                              });
-                            },
-                          ),
-                          FlatButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => QuestionEdit(
-                                          widget.store,
-                                          widget.course,
-                                          widget.subject,
-                                          item)));
-                            },
-                            child: Text('Edit'),
-                          ),
-                        ],
-                      ));
-                },
-                //contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 4),
-                title: Container(
-                  child: Text(
-                    item.text,
-                    style:
-                    TextStyle(fontWeight: FontWeight.normal, fontSize: 18),
+                    ),
+                    trailing: getTrailingIcon(index),
                   ),
                 ),
-                trailing: getTrailingIcon(index),
-              ),
+                Divider(
+                  height: 1.5,
+                )
+              ],
             ),
           );
         });
@@ -266,11 +273,11 @@ class _QuestionListState extends State<QuestionList> {
             SizedBox(
               height: 30,
             ),
-            Text(
+            /*Text(
               widget.subject.bookTitle,
               style: TextStyle(fontSize: 18, color: Colors.white),
               textAlign: TextAlign.center,
-            )
+            )*/
           ]);
         }
 

@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:line_awesome_icons/line_awesome_icons.dart';
 
@@ -35,6 +36,8 @@ class _TestHomeScreenState extends State<TestHomeScreen> {
   @deprecated
   int testLength = 0;
 
+  bool isToggled = false;
+
   @override
   void initState() {
     selectedLevels = [1, 2, 3];
@@ -49,12 +52,18 @@ class _TestHomeScreenState extends State<TestHomeScreen> {
         var withQuestions =
             widget.store.subjects.where((element) => _hasQuestions(element));
         return Scaffold(
+          backgroundColor: kBackgroundColor,
           key: _scaffoldKey,
           appBar: AppBar(
             centerTitle: true,
             elevation: 0,
             iconTheme: IconThemeData(color: kDarkBlue),
             title: CourseTitle(widget.store, widget.store.course, kDarkBlue),
+            titleTextStyle: TextStyle(
+                color: kTitleColor,
+                fontSize: 23,
+                fontFamily: "Quicksand",
+                fontWeight: FontWeight.w200),
             backgroundColor: kLightGrey,
             /*bottom: PreferredSize(
               child: progressLoading(),
@@ -63,122 +72,207 @@ class _TestHomeScreenState extends State<TestHomeScreen> {
           body: SafeArea(
               child: SingleChildScrollView(
             child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+              padding: const EdgeInsets.symmetric(vertical: 00, horizontal: 16),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  ShadowContainer(
-                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 0, vertical: 0),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.max,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            'Subjects',
+                  Padding(
+                    padding: EdgeInsets.all(10),
+                    child: Text('Prepare a new test',
+                        style: TextStyle(
+                            color: kDarkBlue,
+                            fontSize: 15,
+                            fontFamily: "Quicksand",
+                            fontWeight: FontWeight.w600)),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        Text('Difficulty: ',
                             style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.w600,
-                                color: kDarkBlue),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 10),
-                            child: Wrap(
-                              spacing: 12,
-                              children: withQuestions.map((element) {
-                                return InputChip(
-                                  avatar: CircleAvatar(
-                                      backgroundColor: Colors.blueGrey.shade400,
-                                      radius: 20,
-                                      child: Text(
-                                        _questionsInSubject(element).toString(),
-                                        style: TextStyle(
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.w600,
-                                            color: Colors.white),
-                                      )),
-                                  isEnabled: _hasQuestions(element),
-                                  label: Text(element.name),
-                                  backgroundColor: Colors.blueGrey.shade100,
-                                  selectedColor: Colors.blue.shade100,
-                                  selected: selectedSubjects.contains(element),
-                                  onSelected: (s) {
-                                    setState(() {
-                                      if (s) {
-                                        selectedSubjects.add(element);
-                                        //countQuestionsBySubjects();
-                                      } else {
-                                        selectedSubjects.remove(element);
-                                        //countQuestionsBySubjects();
-                                      }
-                                    });
-                                    updateCount();
-                                  },
-                                );
-                              }).toList(),
-                            ),
-                          ),
-                          selectedCountText(),
-                          ButtonBar(
-                            children: <Widget>[
-                              FlatButton(
-                                child: Text('SELECT ALL'),
-                                onPressed: () {
-                                  setState(() {
-                                    selectedSubjects = withQuestions.toList();
-                                    updateCount();
-                                  });
-                                },
-                              ),
-                              FlatButton(
-                                child: Text('DESELECT ALL'),
-                                onPressed: () {
-                                  setState(() {
-                                    selectedSubjects = List();
-                                    updateCount();
-                                  });
-                                },
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
+                                color: kDarkBlue,
+                                fontSize: 17,
+                                fontFamily: "Quicksand",
+                                fontWeight: FontWeight.w600)),
+                        Padding(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 10, horizontal: 0),
+                            child: Row(
+                              children: <Widget>[
+                                levelChip(1),
+                                levelChip(2),
+                                levelChip(3),
+                              ],
+                            )),
+                      ],
                     ),
                   ),
-                  ShadowContainer(
-                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 0, vertical: 0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: <Widget>[
-                          Text(
-                            'Level',
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('Number of selected questions:',
                             style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.w600,
-                                color: kDarkBlue),
+                                color: kDarkBlue,
+                                fontSize: 15,
+                                fontFamily: "Quicksand",
+                                fontWeight: FontWeight.w600)),
+                        Container(
+                          width: 40,
+                          height: 25,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(20),
+                            ),
+                            color: kDarkGrey,
                           ),
-                          Text(
-                              'Choose the level of the questions for this test'),
-                          Padding(
+                          child: Padding(
+                            padding: const EdgeInsets.all(3.0),
+                            child: Center(
+                              child: Text(" $selectedQuestionsCount",
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 15,
+                                      fontFamily: "Quicksand",
+                                      fontWeight: FontWeight.w600)),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 25.0),
+                    child: Wrap(
+                      spacing: 12,
+                      children: withQuestions.map((element) {
+                        return Container(
+                          height: MediaQuery.of(context).size.height/11.0,
+                          decoration: new BoxDecoration(
+                              border: new Border(
+                                  bottom: new BorderSide(
+                                      color: Color(0xfff4f4f4)))),
+                          child: ListTile(
+                            tileColor: Colors.white,
+                            dense: true,
+                            enabled: true,
+                            title: Text(element.name,
+                                style: TextStyle(
+                                    color: selectedSubjects.contains(element)
+                                        ? kDarkBlue
+                                        : Color(0xffb3b3b4),
+                                    fontSize: 18,
+                                    fontFamily: "Quicksand",
+                                    fontWeight: FontWeight.w600)),
+                            subtitle: Text(
+                                _questionsInSubject(element).toString() +
+                                    " Questions",
+                                style: TextStyle(
+                                    color: selectedSubjects.contains(element)
+                                        ? Colors.grey
+                                        : Color(0xffb3b3b4),
+                                    fontFamily: "Quicksand",
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w400)),
+                            trailing: Switch(
+                              value: isToggled == true
+                                  ? selectedSubjects.contains(element)
+                                  : selectedSubjects.contains(element),
+                              onChanged: (value) {
+                                setState(() {
+                                  isToggled = value;
+                                  print(isToggled);
+
+                                  if (isToggled == true) {
+                                    selectedSubjects.add(element);
+                                    _hasQuestions(element);
+                                  } else {
+                                    selectedSubjects.remove(element);
+                                  }
+                                });
+                                updateCount();
+                              },
+                              activeTrackColor: Color(0xffE1E1E1),
+                              inactiveThumbColor: Color(0xffb3b3b4),
+                              inactiveTrackColor: Color(0xffE1E1E1),
+                              activeColor: Color(0xff2b9afb),
+                              splashRadius: 20.0,
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+
+                    /*Padding(
                               padding: const EdgeInsets.symmetric(vertical: 10),
                               child: Wrap(
                                 spacing: 12,
-                                children: <Widget>[
-                                  levelChip(1),
-                                  levelChip(2),
-                                  levelChip(3),
-                                ],
-                              )),
-                        ],
-                      ),
-                    ),
+                                children: withQuestions.map((element) {
+                                  return InputChip(
+                                    avatar: CircleAvatar(
+                                        backgroundColor:
+                                            Colors.blueGrey.shade400,
+                                        radius: 20,
+                                        child: Text(
+                                          _questionsInSubject(element)
+                                              .toString(),
+                                          style: TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.w600,
+                                              color: Colors.white),
+                                        )),
+                                    isEnabled: _hasQuestions(element),
+                                    label: Text(element.name),
+                                    backgroundColor: Colors.blueGrey.shade100,
+                                    selectedColor: Colors.blue.shade100,
+                                    selected:
+                                        selectedSubjects.contains(element),
+                                    onSelected: (s) {
+                                      setState(() {
+                                        if (s) {
+                                          selectedSubjects.add(element);
+                                          //countQuestionsBySubjects();
+                                        } else {
+                                          selectedSubjects.remove(element);
+                                          //countQuestionsBySubjects();
+                                        }
+                                      });
+                                      updateCount();
+                                    },
+                                    showCheckmark: false,
+                                  );
+                                }).toList(),
+                              ),
+                            ),
+                            selectedCountText(),
+                            ButtonBar(
+                              children: <Widget>[
+                                FlatButton(
+                                  child: Text('SELECT ALL'),
+                                  onPressed: () {
+                                    setState(() {
+                                      selectedSubjects = withQuestions.toList();
+                                      updateCount();
+                                    });
+                                  },
+                                ),
+                                FlatButton(
+                                  child: Text('DESELECT ALL'),
+                                  onPressed: () {
+                                    setState(() {
+                                      selectedSubjects = List();
+                                      updateCount();
+                                    });
+                                  },
+                                ),
+                              ],
+                            ),*/
                   ),
-                  ShadowContainer(
+
+                  /*ShadowContainer(
                     padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
@@ -196,41 +290,56 @@ class _TestHomeScreenState extends State<TestHomeScreen> {
                         ],
                       ),
                     ),
-                  ),
+                  ),*/
                   //_questionsSlider()
                 ],
               ),
             ),
           )),
-          bottomNavigationBar: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-            child: RaisedButton(
-              color: selectedQuestionsCount < 3
-                  ? Colors.blueGrey.shade100
-                  : kPrimaryColor,
-              child: Text(
-                'START',
-                style: TextStyle(
-                    fontSize: 20,
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600),
+          bottomNavigationBar: BottomAppBar(
+            elevation: 0,
+            color: kBackgroundColor,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(0, 00, 0, 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  FlatButton(
+                    padding: EdgeInsets.fromLTRB(30, 10, 30, 10),
+
+                    color: selectedQuestionsCount < 3
+                        ? Colors.blueGrey.shade100
+                        : kPrimaryColor,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(50)),
+                    ),
+                    child: Text(
+                      'START TEST',
+                      style: TextStyle(
+                          color: kTitleColor,
+                          fontSize: 18,
+                          fontFamily: "Quicksand",
+                          fontWeight: FontWeight.w500),
+                    ),
+                    onPressed: () {
+                      if (selectedQuestionsCount < 3) {
+                        _scaffoldKey.currentState.showSnackBar(SnackBar(
+                          content: Text(
+                              'You need at least 3 questions to start a test'),
+                        ));
+                      } else {
+                        var service = TestService(
+                            getSelectedQuestions(), selectedQuestionsCount);
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    TestScreen(widget.store, service)));
+                      }
+                    },
+                  ),
+                ],
               ),
-              onPressed: () {
-                if (selectedQuestionsCount < 3) {
-                  _scaffoldKey.currentState.showSnackBar(SnackBar(
-                    content:
-                        Text('You need at least 3 questions to start a test'),
-                  ));
-                } else {
-                  var service = TestService(
-                      getSelectedQuestions(), selectedQuestionsCount);
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) =>
-                              TestScreen(widget.store, service)));
-                }
-              },
             ),
           ),
         );
@@ -336,26 +445,39 @@ class _TestHomeScreenState extends State<TestHomeScreen> {
   }
 
   Widget levelChip(int level) {
-    return InputChip(
-      avatar: CircleAvatar(
-        backgroundColor: Colors.blueGrey.shade400,
-        radius: 20,
-        child: Icon(LineAwesomeIcons.minus),
+    return Transform(
+      //transform: new Matrix4.identity()..scale(0.6),
+      transform: new Matrix4.rotationX(7.0)..scale(0.8),
+      alignment: Alignment.center,
+
+      child: InputChip(
+        padding: EdgeInsets.symmetric(vertical: 0, horizontal: 00),
+        labelPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 3),
+        label: Text(
+          "$level",
+          style: TextStyle(
+              color: selectedLevels.contains(level) == true
+                  ? Colors.white
+                  : Colors.black,
+              fontSize: 18),
+        ),
+        backgroundColor: Color(0xffE1E1E1),
+        selectedColor: Color(0xff2b9afb),
+        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        selected: selectedLevels.contains(level),
+        onSelected: (s) {
+          setState(() {
+            if (s) {
+              selectedLevels.add(level);
+              print(s);
+            } else {
+              selectedLevels.remove(level);
+            }
+          });
+          updateCount();
+        },
+        showCheckmark: false,
       ),
-      label: Text("Level $level"),
-      backgroundColor: Colors.blueGrey.shade100,
-      selectedColor: Colors.blue.shade100,
-      selected: selectedLevels.contains(level),
-      onSelected: (s) {
-        setState(() {
-          if (s) {
-            selectedLevels.add(level);
-          } else {
-            selectedLevels.remove(level);
-          }
-        });
-        updateCount();
-      },
     );
   }
 

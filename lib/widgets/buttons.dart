@@ -39,15 +39,14 @@ class PrimaryButton extends StatelessWidget {
       color: kPrimaryColor,
       textColor: kDarkBlue,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(Radius.circular(40)),
-      ),
+          borderRadius: BorderRadius.circular(50)),
       child: Text(
         text,
         style: TextStyle(
+            color: kTitleColor,
             fontSize: 18,
-            fontWeight: FontWeight.bold,
-          color: Colors.white,
-        ),
+            fontFamily: "Quicksand",
+            fontWeight: FontWeight.w500),
       ),
       onPressed: onPressed,
       padding: EdgeInsets.fromLTRB(30, 10, 30, 10),

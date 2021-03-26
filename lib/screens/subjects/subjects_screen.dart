@@ -5,6 +5,7 @@ import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:line_awesome_icons/line_awesome_icons.dart';
 import 'package:mobx/mobx.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
+import 'package:studio/utils/Utils.dart';
 
 import '../../constants.dart';
 import '../../courses_store.dart';
@@ -45,7 +46,7 @@ class _SubjectsScreenState extends State<SubjectsScreen>
       appBar: AppBar(
         centerTitle: true,
         elevation: 0,
-        iconTheme: IconThemeData(color: kDarkBlue),
+        iconTheme: IconThemeData(color: kTitleColor),
         title:
             CourseTitle(widget.store, widget.store.course, kContrastDarkColor),
         backgroundColor: kLightGrey,
@@ -132,43 +133,44 @@ class _SubjectsScreenState extends State<SubjectsScreen>
           ),
         ],
       ),
-      floatingActionButton: SpeedDial(
-          backgroundColor: kPrimaryColor,
-          foregroundColor: Colors.white,
-          child: Icon(LineAwesomeIcons.plus),
-          children: [
-            SpeedDialChild(
-              child: Icon(Icons.class_),
+      floatingActionButton: widget.store.subjects.length == 0
+          ? SizedBox()
+          : SpeedDial(
               backgroundColor: kPrimaryColor,
-              label: 'Add subject',
-              labelStyle: TextStyle(fontSize: 18.0),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => EditSubjectScreen(
-                            widget.store, widget.store.course, null)));
-              },
-            ),
-            SpeedDialChild(
-              child: Icon(LineAwesomeIcons.book),
-              backgroundColor: kPrimaryColor,
-              label: 'Add book',
-              labelStyle: TextStyle(fontSize: 18.0),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => EditBookScreen(
-                            widget.store, widget.store.course, null)));
-              },
-            ),
-          ]),
+              foregroundColor: Colors.white,
+              child: Icon(LineAwesomeIcons.plus),
+              children: [
+                  SpeedDialChild(
+                    child: Icon(Icons.class_),
+                    backgroundColor: kPrimaryColor,
+                    label: 'Add subject',
+                    labelStyle: TextStyle(fontSize: 18.0),
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => EditSubjectScreen(
+                                  widget.store, widget.store.course, null)));
+                    },
+                  ),
+                  SpeedDialChild(
+                    child: Icon(LineAwesomeIcons.book),
+                    backgroundColor: kPrimaryColor,
+                    label: 'Add book',
+                    labelStyle: TextStyle(fontSize: 18.0),
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => EditBookScreen(
+                                  widget.store, widget.store.course, null)));
+                    },
+                  ),
+                ]),
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-
             Expanded(
               child: SubjectItemsView(widget.store, widget.store.course),
             )
@@ -241,26 +243,95 @@ class SubjectItemsView extends StatelessWidget {
 
   resultWidget(BuildContext context, List<Subject> items) {
     if (!store.isSubjectsLoading && items.length == 0) {
-      return Column(
-        children: <Widget>[
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                'No subjects yet, let\'s start with the first one!',
-                style: TextStyle(
-                  fontSize: 18,
-                ),
+      return SingleChildScrollView(
+        child: Container(
+          //height: MediaQuery.of(context).size.height/3.2,
+          padding: EdgeInsets.symmetric(vertical: 20),
+          margin: EdgeInsets.symmetric(horizontal: 15, vertical: 24),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(10),
+                topRight: Radius.circular(10),
+                bottomLeft: Radius.circular(10),
+                bottomRight: Radius.circular(10)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.2),
+                spreadRadius: 2,
+                blurRadius: 3,
+                offset: Offset(0, 1.2), // changes position of shadow
               ),
-            ),
+            ],
           ),
-          Image(
-            image: AssetImage('assets/images/study.png'),
+          child: Row(
+            children: [
+              Image(
+                image: AssetImage('assets/images/professor-new.png'),
+                height: 150,
+                width: 150,
+              ),
+              Column(
+                children: [
+                  Container(
+                    width: MediaQuery.of(context).size.width/2,
+                    child: Text.rich(
+                      TextSpan(
+                        text: "${store.course.name}",
+                        style: TextStyle(
+                            fontSize: 20,
+                            fontFamily: "Quicksand",
+                            color: HexColor("5D646B"),
+                            fontWeight: FontWeight.bold),
+                        children: <TextSpan>[
+                          TextSpan(
+                            text: " has no subject yet, let's add some!",
+                            style: TextStyle(
+                                fontSize: 20,
+                                fontFamily: "Quicksand",
+                                color: HexColor("5D646B"),
+                                fontWeight: FontWeight.w200),
+                          ),
+                          // can add more TextSpans here...
+                        ],
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 28,
+                  ),
+                  FlatButton(
+                    color: kPrimaryColor,
+                    textColor: kDarkBlue,
+                    shape: RoundedRectangleBorder(
+                        side: BorderSide(
+                            color: HexColor("F5A638"),
+                            width: 2,
+                            style: BorderStyle.solid),
+                        borderRadius: BorderRadius.circular(50)),
+                    child: Text(
+                      "ADD SUBJECTS",
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.black,
+                        fontFamily: "Quicksand",
+                        fontWeight: FontWeight.w200,
+                      ),
+                    ),
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => EditSubjectScreen(
+                                  store, store.course, null)));
+                    },
+                    padding: EdgeInsets.fromLTRB(30, 12, 30, 12),
+                  )
+                ],
+              )
+            ],
           ),
-          Expanded(
-            child: Container(),
-          )
-        ],
+        ),
       );
     }
 

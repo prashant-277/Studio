@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
-import 'package:line_awesome_icons/line_awesome_icons.dart';
+import 'package:flutter/widgets.dart';
 
 import '../constants.dart';
 import '../courses_store.dart';
@@ -23,7 +23,7 @@ class EditBookScreen extends StatefulWidget {
 
 class _EditBookScreenState extends State<EditBookScreen> {
   String name;
-  String title = 'Add book';
+  String title = 'Add new book';
   TextEditingController textCtrl = TextEditingController();
 
   @override
@@ -39,55 +39,91 @@ class _EditBookScreenState extends State<EditBookScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        iconTheme: IconThemeData(color: kDarkBlue),
-        title: Text(widget.course.name),
-        centerTitle: true,
-      ),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(22.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 0, horizontal: 16),
-                child: Text(
-                  title + ':',
-                  style: TextStyle(fontSize: 18),
+        backgroundColor: kBackgroundColor,
+        appBar: AppBar(
+          iconTheme: IconThemeData(color: kTitleColor),
+          title: Text(widget.course.name,
+              style: TextStyle(
+                  color: kTitleColor,
+                  fontSize: 25,
+                  fontFamily: "Quicksand",
+                  fontWeight: FontWeight.w500)),
+          centerTitle: true,
+        ),
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        title + ':',
+                        style: TextStyle(
+                            color: kTitleColor,
+                            fontSize: 15,
+                            fontFamily: "Quicksand",
+                            fontWeight: FontWeight.w600),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              TextField(
-                autocorrect: true,
-                controller: textCtrl,
-                decoration: InputDecoration(
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.white, width: 0),
-                      borderRadius: BorderRadius.circular(12),
+                SizedBox(
+                  height: MediaQuery.of(context).size.height / 9.0,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 20, right: 20),
+                  child: TextField(
+                    style: TextStyle(
+                      color: kTitleColor,
+                      fontSize: 14,
+                      fontFamily: "Quicksand",
+                      fontWeight: FontWeight.w500,
                     ),
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide(width: 0, color: Colors.white),
-                      borderRadius: BorderRadius.circular(12),
+                    autocorrect: true,
+                    controller: textCtrl,
+                    decoration: InputDecoration(
+                        hintText: 'Title of the book:',
+                        filled: true,
+                        isDense: true,
+                        fillColor: kBackgroundColor,
+                        contentPadding: EdgeInsets.symmetric(horizontal: 2,vertical: 3),
+                        hintStyle: TextStyle(
+                          color: kTitleColor,
+                          fontSize: 14,
+                          fontFamily: "Quicksand",
+                          fontWeight: FontWeight.w500,
+                        ),
+
+
                     ),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(width: 0, color: Colors.white),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    hintText: 'Book name',
-                    fillColor: Colors.white,
-                    filled: true,
-                    contentPadding: EdgeInsets.all(8),
-                    prefixIcon: Icon(Icons.chevron_right)),
-                onChanged: (text) {
-                  setState(() {
-                    name = text;
-                  });
-                },
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(0, 20, 0, 10),
-                child: PrimaryButton('Save', () {
+                    onChanged: (text) {
+                      setState(() {
+                        name = text;
+                      });
+                    },
+                  ),
+                ),
+
+              ],
+            ),
+          ),
+        ),
+        bottomNavigationBar: BottomAppBar(
+          elevation: 0,
+          color: kBackgroundColor,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(0, 20, 0, 10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                PrimaryButton('ADD BOOK', () {
                   var id = widget.data == null ? null : widget.data.id;
                   Book book = Book();
                   book.id = id;
@@ -96,11 +132,9 @@ class _EditBookScreenState extends State<EditBookScreen> {
                   widget.store.saveBook(book);
                   Navigator.pop(context);
                 }),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-      ),
-    );
+        ));
   }
 }

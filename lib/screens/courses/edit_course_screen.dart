@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
+import 'package:progress_dialog/progress_dialog.dart';
 
 import '../../constants.dart';
 import '../../courses_store.dart';
@@ -77,7 +77,7 @@ class _EditCourseScreenState extends State<EditCourseScreen> {
 
   @override
   void initState() {
-    if(widget.data != null) {
+    if (widget.data != null) {
       textCtrl.text = widget.data.name;
       name = widget.data.name;
       title = 'Edit course';
@@ -86,111 +86,156 @@ class _EditCourseScreenState extends State<EditCourseScreen> {
     super.initState();
   }
 
+  _displaySnackBar(BuildContext context, String text) {
+    final snackBar = SnackBar(content: Text(text));
+    _scaffoldKey.currentState.showSnackBar(snackBar);
+  }
+
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: kBackgroundColor,
       appBar: AppBar(
-        title: Text(title,style: TextStyle(color: kDarkBlue),),
+        title: Text(title,
+            style: TextStyle(
+                color: kTitleColor,
+                fontSize: 23,
+                fontFamily: "Quicksand",
+                fontWeight: FontWeight.w200)),
         centerTitle: true,
         leading: Container(
             child: FlatButton(
-          child: Icon(
-            Icons.chevron_left,
-            color: kDarkBlue,
-          ),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        )),
+              child: Icon(
+                Icons.arrow_back,
+                color: kTitleColor,
+              ),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            )),
       ),
       body: SafeArea(
-          child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: <Widget>[
-            Container(
-              decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.all(Radius.circular(10)),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withAlpha(10),
-                      blurRadius: 20.0, // has the effect of softening the shadow
-                      spreadRadius: 10.0, // has the effect of extending the shadow
-                      offset: Offset(
-                        0.0, // horizontal, move right 10
-                        0.0, // vertical, move down 10
-                      ),
-                    )
-                  ]
-              ),
-              child: TextField(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              TextField(
                 autocorrect: true,
                 controller: textCtrl,
+                autofocus: true,
+
                 decoration: InputDecoration(
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.white, width: 0),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide(width: 0, color: Colors.white),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(width: 0, color: Colors.white),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    hintText: 'Course name',
-                    fillColor: Colors.white,
-                    filled: true,
-                    contentPadding: EdgeInsets.all(8),
-                    prefixIcon: Icon(Icons.chevron_right)),
+                    contentPadding: EdgeInsets.all(0),
+                    fillColor: kBackgroundColor,
+                    labelText: 'Name of the course:'),
                 onChanged: (text) {
                   setState(() {
                     name = text;
                   });
                 },
               ),
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            Expanded(
-              child: CustomScrollView(
-                primary: false,
-                slivers: <Widget>[
-                  SliverPadding(
-                    padding: const EdgeInsets.all(20),
-                    sliver: SliverGrid.count(
-                      crossAxisCount: 4,
-                      crossAxisSpacing: 20,
-                      mainAxisSpacing: 20,
-                      children: icons(),
-                    ),
-                  )
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(0, 20, 0, 10),
-              child: SizedBox(
-                width: double.infinity,
-                child: PrimaryButton(
-                  'Save',
-                  () async {
-                    String id = widget.data == null ? null : widget.data.id;
-                    await widget.store.saveCourse(id: id, name: name, icon: selectedIcon, callback: () {
-                      print("Saved!");
-                      Navigator.pop(context);
-                    });
-                    widget.store.loadCourses();
-                  },
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 12.0),
+                child: Text(
+                  "Choose an icon:",
+                  style: TextStyle(fontSize: 14),
+                  textAlign: TextAlign.left,
                 ),
               ),
-            )
-          ],
+              GridView.count(
+                physics: ScrollPhysics(),
+                crossAxisCount: 4,
+                shrinkWrap: true,
+                children: courseIcons.map((e) => iconButton(e)).toList(),
+              ),
+            ],
+          ),
         ),
-      )),
+      ),
+      bottomNavigationBar: BottomAppBar(
+          elevation: 0,
+          color: kBackgroundColor,
+          child: Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.fromLTRB(0, 20, 0, 10),
+                child: SizedBox(
+                  child: PrimaryButton(
+                    'ADD COURSE',
+                        () async {
+
+                      if(selectedIcon == null) {
+                        _displaySnackBar(context, 'Choose an icon');
+                        return;
+                      }
+
+                      final ProgressDialog pr = _getProgress(context);
+                      pr.update(message: "Please wait...");
+                      await pr.show();
+
+
+                      Course course = Course();
+                      course.name = name;
+                      course.icon = selectedIcon;
+                      if(widget.data != null)
+                        course.id = widget.data.id;
+
+                      String id = widget.data == null ? null : widget.data.id;
+                      await widget.store.saveCourse(
+                          id: id,
+                          name: name,
+                          icon: selectedIcon,
+                          callback: () {
+                            print("Saved!");
+                            pr.hide();
+                            Navigator.pop(context);
+                          });
+                      widget.store.loadCourses();
+                    },
+                  ),
+                ),
+              ),
+            ],
+          )),
     );
+  }
+
+  Widget iconButton(String icon) {
+    List<Widget> widgets = List();
+    if (selectedIcon == icon) {
+      widgets.add(Positioned(
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          child: Container(
+            decoration: BoxDecoration(
+              color: kAccentColor,
+              shape: BoxShape.circle,
+            ),
+          )));
+    }
+
+    widgets.add(Image(
+      image: AssetImage('assets/icons/$icon'),
+    ));
+
+    return FlatButton(
+      child: Stack(fit: StackFit.loose, children: widgets),
+      onPressed: () {
+        setState(() {
+          selectedIcon = icon;
+        });
+      },
+    );
+  }
+
+  ProgressDialog _getProgress(BuildContext context) {
+    return ProgressDialog(context);
   }
 }

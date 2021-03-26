@@ -1,20 +1,19 @@
+/*
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:studio/auth_store.dart';
 import 'package:studio/widgets/buttons.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-
 import '../constants.dart';
 
 class loginWithEmail extends StatefulWidget {
-
   loginWithEmail(this.store);
 
   AuthStore store;
-
 
   @override
   _loginWithEmailState createState() => _loginWithEmailState();
@@ -23,7 +22,6 @@ class loginWithEmail extends StatefulWidget {
 class _loginWithEmailState extends State<loginWithEmail> {
   final _firestore = Firestore.instance;
 
-
   final _formKey = GlobalKey<FormState>();
   String email = '';
 
@@ -31,6 +29,8 @@ class _loginWithEmailState extends State<loginWithEmail> {
   TextEditingController password_controller = new TextEditingController();
 
   var _loading = false;
+
+  String errorMessage;
 
   @override
   Widget build(BuildContext context) {
@@ -91,7 +91,6 @@ class _loginWithEmailState extends State<loginWithEmail> {
                 print("done");
 
                 loginWith_Email();
-
               }
             }),
           )
@@ -101,29 +100,44 @@ class _loginWithEmailState extends State<loginWithEmail> {
   }
 
   void loginWith_Email() {
-    FirebaseAuth.instance
-        .createUserWithEmailAndPassword(
-            email: email_controller.text, password: password_controller.text)
-        .then((signedInUser) {
-      _firestore.collection('users').add({
-        'email': email_controller.text,
-        'pass': password_controller.text,
-      }).then((value) {
+    try {
+      FirebaseAuth.instance
+          .createUserWithEmailAndPassword(
+              email: email_controller.text, password: password_controller.text)
+          .then((signedInUser) {
+        _firestore.collection('users').add({
+          'email': email_controller.text,
+          'pass': password_controller.text,
+        }).then((value) {
+          Navigator.pop(context);
+          widget.store.loggedIn(signedInUser.user.uid);
 
-        Navigator.pop(context);
-              widget.store.loggedIn(signedInUser.user.uid);
-
-        if (signedInUser != null) {
-          Navigator.pushNamed(context, '/homepage');
-          print("null");
-        }else{
-
-        }
+          if (signedInUser != null) {
+            Navigator.pushNamed(context, '/homepage');
+            print("null");
+          } else {}
+        }).catchError((e) {
+          print(e);
+        });
       }).catchError((e) {
         print(e);
       });
-    }).catchError((e) {
-      print(e);
-    });
+    } on PlatformException catch (exception) {
+      switch (exception.code) {
+        case 'ERROR_EMAIL_ALREADY_IN_USE':
+          errorMessage = "Your email address is already in use.";
+          print("Your email address is already in use.");
+          break;
+
+        case 'ERROR_ACCOUNT_EXISTS_WITH_DIFFERENT_CREDENTIAL':
+          errorMessage = "Your account already exists with different credential.";
+          break;
+
+        case 'ERROR_CREDENTIAL_ALREADY_IN_USE':
+          errorMessage = "Entered credential already in use.";
+          break;
+      }
+    }
   }
 }
+*/

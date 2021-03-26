@@ -10,6 +10,11 @@ final kContrastColor = Colors.white;
 final kContrastDarkColor = Colors.blueGrey.shade900;
 const kPrimaryColor = Color(0xFFFFCE00);
 const kTitleColor = Color(0xFF5D646B);
+const kAccentColor = Colors.amberAccent;
+const kBackgroundColor = Color.fromRGBO(243, 243, 245, 1);
+const kdarkgreyfont = Color(0xff5A5A5A);
+
+
 
 const int kTabNotes = 0;
 const int kTabQuestions = 1;

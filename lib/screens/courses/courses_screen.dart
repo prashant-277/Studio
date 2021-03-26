@@ -50,7 +50,7 @@ class _CoursesScreenState extends State<CoursesScreen>
     return Scaffold(
         backgroundColor: kBackground,
         appBar: AppBar(
-          iconTheme: IconThemeData(color: kContrastDarkColor),
+          iconTheme: IconThemeData(color: kTitleColor),
           centerTitle: true,
           elevation: 0,
           backgroundColor: kBackground,
@@ -67,19 +67,18 @@ class _CoursesScreenState extends State<CoursesScreen>
           ),
         ),
         drawer: MainDrawer(widget.store),
-        floatingActionButton:
-            widget.store.courses.length == 0
-                ? SizedBox()
-                : FloatingActionButton(
-                    child: const Icon(
-                      Icons.add,
-                      color: Colors.white,
-                    ),
-                    backgroundColor: kPrimaryColor,
-                    onPressed: () {
-                      Navigator.pushNamed(context, EditCourseScreen.id);
-                    },
-                  ),
+        floatingActionButton: widget.store.courses.length == 0
+            ? SizedBox()
+            : FloatingActionButton(
+                child: const Icon(
+                  Icons.add,
+                  color: Colors.white,
+                ),
+                backgroundColor: kPrimaryColor,
+                onPressed: () {
+                  Navigator.pushNamed(context, EditCourseScreen.id);
+                },
+              ),
         body: CoursesView(widget.store));
   }
 }
@@ -180,7 +179,7 @@ class CourseItemsView extends StatelessWidget {
                           fontSize: 20,
                           fontFamily: "Quicksand",
                           color: HexColor("5D646B"),
-                          fontWeight: FontWeight.w200),
+                          fontWeight: FontWeight.w500),
                       maxLines: 2,
                     ),
                     SizedBox(
@@ -217,14 +216,18 @@ class CourseItemsView extends StatelessWidget {
         if (items.length != 0)
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 5),
-            child: Text(
-              "Your courses:",
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.black,
-                fontFamily: "Quicksand",
-                fontWeight: FontWeight.w200,
-              ),
+            child: Row(
+              children: [
+                Text(
+                  "Your courses:",
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.black,
+                    fontFamily: "Quicksand",
+                    fontWeight: FontWeight.w200,
+                  ),
+                ),
+              ],
             ),
           ),
         Expanded(
@@ -263,8 +266,9 @@ class CourseItemsView extends StatelessWidget {
                           child: Text(
                             item.name,
                             style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                            ),
+                                fontWeight: FontWeight.w600,
+                                fontFamily: "Nunito",
+                                fontSize: 18),
                           ),
                         ),
                         // subtitle: Text('${item.subjectsCount} subjects'),

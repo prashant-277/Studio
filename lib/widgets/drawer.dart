@@ -197,7 +197,7 @@ class _MainDrawerState extends State<MainDrawer> {
                       ),
                       onTap: () =>
                           Navigator.push(context, MaterialPageRoute(
-                              builder: (context) => premium_screen())))
+                              builder: (context) => premium_screen(widget.store))))
                       ],
                     )),
                 Container(
